@@ -33,7 +33,7 @@ const crimesPorLei = {
     ],
     "Lei de Drogas": [
         { article: "Art. 33", name: "Tráfico de drogas" },
-        { article: "Art. 28", name: "Posse para consumo" }
+        { article: "Art. 28", name: "Posse para consumo/Porte de entorpecente" }
     ],
     "Lei de Armas": [
         { article: "Art. 14", name: "Porte ilegal de arma de fogo" },
