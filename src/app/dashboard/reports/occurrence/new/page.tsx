@@ -21,8 +21,8 @@ export default function NewOccurrenceReportPage() {
   const [reportId, setReportId] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const generateReportId = () => {
+    // Sugestão: BO<timestamp> para garantir um ID único e simples por enquanto.
     const newReportId = `BO${Date.now()}`;
     setReportId(newReportId);
   };
@@ -32,7 +32,15 @@ export default function NewOccurrenceReportPage() {
   };
 
   const handleCancel = () => {
-    router.push('/dashboard');
+    if (reportId) {
+      setReportId(null);
+    } else {
+      router.push('/dashboard');
+    }
+  };
+
+  const handleNewReport = () => {
+    setReportId(null);
   };
 
   const consultationUrl = reportId
@@ -57,7 +65,7 @@ export default function NewOccurrenceReportPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="grid gap-6" onSubmit={handleSubmit}>
+                <div className="grid gap-6">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="date">Data e Hora</Label>
@@ -97,9 +105,11 @@ export default function NewOccurrenceReportPage() {
                     >
                       Cancelar
                     </Button>
-                    <Button type="submit">Salvar Ocorrência</Button>
+                    <Button type="button" onClick={generateReportId}>
+                      Salvar Ocorrência
+                    </Button>
                   </div>
-                </form>
+                </div>
               </CardContent>
             </>
           ) : (
@@ -127,10 +137,7 @@ export default function NewOccurrenceReportPage() {
                     <Printer className="mr-2" />
                     Imprimir
                   </Button>
-                  <Button
-                    onClick={() => setReportId(null)}
-                    className="w-full"
-                  >
+                  <Button onClick={handleNewReport} className="w-full">
                     Criar Novo BO
                   </Button>
                 </div>
