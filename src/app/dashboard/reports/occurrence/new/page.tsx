@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ import { Printer } from 'lucide-react';
 
 export default function NewOccurrenceReportPage() {
   const [reportId, setReportId] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,6 +29,10 @@ export default function NewOccurrenceReportPage() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleCancel = () => {
+    router.push('/dashboard');
   };
 
   const consultationUrl = reportId
@@ -84,7 +90,11 @@ export default function NewOccurrenceReportPage() {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" type="button">
+                    <Button
+                      variant="outline"
+                      type="button"
+                      onClick={handleCancel}
+                    >
                       Cancelar
                     </Button>
                     <Button type="submit">Salvar Ocorrência</Button>
