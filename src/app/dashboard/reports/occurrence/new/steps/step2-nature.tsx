@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 
 const crimesPorLei = {
@@ -26,7 +25,7 @@ export function Step2Nature() {
   const { formData, updateField } = useOccurrenceForm();
   const [searchTerm, setSearchTerm] = useState('');
   
-  const selectedNatures = formData.nature ? formData.nature.split(',').map(s => s.trim()) : [];
+  const selectedNatures = formData.nature ? formData.nature.split(',').filter(n => n).map(s => s.trim()) : [];
 
   const handleNatureChange = (nature: string, isSelected: boolean) => {
     let newNatures = [...selectedNatures];
@@ -100,21 +99,6 @@ export function Step2Nature() {
                     <p className="text-sm text-muted-foreground">Nenhuma natureza selecionada.</p>
                 )}
             </div>
-        </div>
-
-        <div>
-            <Label htmlFor="nature-others">Outras Naturezas / Observações</Label>
-            <Textarea
-                id="nature-others"
-                placeholder="Se a natureza não estiver na lista ou se houver observações, descreva aqui."
-                // Este campo pode ser salvo separadamente se necessário
-                // Por ora, vamos adicionar ao campo `nature` existente
-                onBlur={(e) => {
-                    if (e.target.value && !selectedNatures.includes(e.target.value)) {
-                       updateField({ nature: [...selectedNatures, e.target.value].join(', ') });
-                    }
-                }}
-            />
         </div>
     </div>
   );
