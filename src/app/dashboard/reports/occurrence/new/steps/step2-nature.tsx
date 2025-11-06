@@ -10,16 +10,45 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 
 const crimesPorLei = {
-    "Código Penal": ["Furto", "Roubo", "Estelionato", "Apropriação Indébita", "Dano", "Lesão Corporal", "Homicídio"],
-    "CTB": ["Dirigir sob efeito de álcool", "Excesso de velocidade", "Avançar sinal vermelho", "Manobra perigosa"],
-    "Código do Consumidor": ["Produto com defeito", "Publicidade enganosa"],
-    "Lei de Drogas": ["Tráfico de drogas", "Posse para consumo"],
-    "Lei de Armas": ["Porte ilegal de arma de fogo", "Disparo de arma de fogo"],
-    "Lei de Contravenções Penais": ["Perturbação do sossego", "Vias de fato"],
-    "Lei Ambiental": ["Desmatamento ilegal", "Maus-tratos a animais"],
+    "Código Penal": [
+        { article: "Art. 155", name: "Furto" },
+        { article: "Art. 157", name: "Roubo" },
+        { article: "Art. 171", name: "Estelionato" },
+        { article: "Art. 168", name: "Apropriação Indébita" },
+        { article: "Art. 163", name: "Dano" },
+        { article: "Art. 129", name: "Lesão Corporal" },
+        { article: "Art. 121", name: "Homicídio" }
+    ],
+    "CTB": [
+        { article: "Art. 306", name: "Dirigir sob efeito de álcool" },
+        { article: "Art. 311", name: "Excesso de velocidade próximo a escolas/hospitais" },
+        { article: "Art. 208", name: "Avançar sinal vermelho" },
+        { article: "Art. 175", name: "Manobra perigosa" }
+    ],
+    "Código do Consumidor": [
+        { article: "Art. 18", name: "Produto com defeito" },
+        { article: "Art. 67", name: "Publicidade enganosa" }
+    ],
+    "Lei de Drogas": [
+        { article: "Art. 33", name: "Tráfico de drogas" },
+        { article: "Art. 28", name: "Posse para consumo" }
+    ],
+    "Lei de Armas": [
+        { article: "Art. 14", name: "Porte ilegal de arma de fogo" },
+        { article: "Art. 15", name: "Disparo de arma de fogo" }
+    ],
+    "Lei de Contravenções Penais": [
+        { article: "Art. 42", name: "Perturbação do sossego" },
+        { article: "Art. 21", name: "Vias de fato" }
+    ],
+    "Lei Ambiental": [
+        { article: "Art. 50", name: "Desmatamento ilegal" },
+        { article: "Art. 32", name: "Maus-tratos a animais" }
+    ],
 };
 
 type CrimeKey = keyof typeof crimesPorLei;
+type Crime = { article: string; name: string };
 
 export function Step2Nature() {
   const { formData, updateField } = useOccurrenceForm();
@@ -27,14 +56,15 @@ export function Step2Nature() {
   
   const selectedNatures = formData.nature ? formData.nature.split(',').filter(n => n).map(s => s.trim()) : [];
 
-  const handleNatureChange = (nature: string, isSelected: boolean) => {
+  const handleNatureChange = (crime: Crime, isSelected: boolean) => {
+    const natureString = `${crime.name} (${crime.article})`;
     let newNatures = [...selectedNatures];
     if (isSelected) {
-      if (!newNatures.includes(nature)) {
-        newNatures.push(nature);
+      if (!newNatures.includes(natureString)) {
+        newNatures.push(natureString);
       }
     } else {
-      newNatures = newNatures.filter(n => n !== nature);
+      newNatures = newNatures.filter(n => n !== natureString);
     }
     updateField({ nature: newNatures.join(', ') });
   };
@@ -42,7 +72,8 @@ export function Step2Nature() {
   const filteredCrimes = Object.keys(crimesPorLei).reduce((acc, lei) => {
       const key = lei as CrimeKey;
       const filtered = crimesPorLei[key].filter(crime => 
-          crime.toLowerCase().includes(searchTerm.toLowerCase())
+          crime.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          crime.article.toLowerCase().includes(searchTerm.toLowerCase())
       );
       if (filtered.length > 0) {
           acc[key] = filtered;
@@ -56,7 +87,7 @@ export function Step2Nature() {
             <Label htmlFor="search-nature">Pesquisar Natureza</Label>
             <Input
                 id="search-nature"
-                placeholder="Digite para filtrar os crimes..."
+                placeholder="Digite para filtrar por crime ou artigo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -68,18 +99,22 @@ export function Step2Nature() {
                     <AccordionTrigger>{lei}</AccordionTrigger>
                     <AccordionContent>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
-                            {(filteredCrimes[lei as CrimeKey]).map(crime => (
-                                <div key={crime} className="flex items-center space-x-2">
+                            {(filteredCrimes[lei as CrimeKey]).map(crime => {
+                                const natureString = `${crime.name} (${crime.article})`;
+                                const crimeId = `${lei}-${crime.name}-${crime.article}`.replace(/\s/g, '-');
+                                return (
+                                <div key={crimeId} className="flex items-center space-x-2">
                                     <Checkbox
-                                        id={`crime-${crime}`}
-                                        checked={selectedNatures.includes(crime)}
+                                        id={crimeId}
+                                        checked={selectedNatures.includes(natureString)}
                                         onCheckedChange={(checked) => handleNatureChange(crime, !!checked)}
                                     />
-                                    <Label htmlFor={`crime-${crime}`} className="font-normal cursor-pointer">
-                                        {crime}
+                                    <Label htmlFor={crimeId} className="font-normal cursor-pointer">
+                                        {crime.name} <span className="text-muted-foreground text-xs">({crime.article})</span>
                                     </Label>
                                 </div>
-                            ))}
+                            )}
+                            )}
                         </div>
                     </AccordionContent>
                 </AccordionItem>
