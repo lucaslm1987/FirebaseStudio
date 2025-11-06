@@ -5,7 +5,7 @@ import {
   ClipboardList,
   ClipboardPlus,
   FilePlus2,
-  FileTicket,
+  FileText,
   Search,
   Ticket,
 } from 'lucide-react';
@@ -40,7 +40,7 @@ export default function DashboardPage() {
       title: 'Criar Talão',
       description: 'Emita um novo talão de ocorrência.',
       href: '/dashboard/summons/new',
-      Icon: FileTicket,
+      Icon: FileText,
     },
     {
       title: 'Consultar Talão',

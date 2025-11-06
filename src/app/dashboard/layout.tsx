@@ -20,7 +20,7 @@ import {
   ClipboardList,
   ClipboardPlus,
   FilePlus2,
-  FileTicket,
+  FileText,
   LayoutDashboard,
   LogOut,
   Search,
@@ -107,7 +107,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   tooltip="Criar Talão"
                   isActive={isActive('/dashboard/summons/new')}
                 >
-                  <FileTicket />
+                  <FileText />
                   <span>Criar Talão</span>
                 </SidebarMenuButton>
               </Link>
