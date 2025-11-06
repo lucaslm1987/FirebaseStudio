@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 const crimesPorLei = {
     "Código Penal": [
@@ -69,6 +71,11 @@ export function Step2Nature() {
     updateField({ nature: newNatures.join(', ') });
   };
   
+  const handleRemoveNature = (natureToRemove: string) => {
+    const newNatures = selectedNatures.filter(n => n !== natureToRemove);
+    updateField({ nature: newNatures.join(', ') });
+  }
+
   const filteredCrimes = Object.keys(crimesPorLei).reduce((acc, lei) => {
       const key = lei as CrimeKey;
       const filtered = crimesPorLei[key].filter(crime => 
@@ -126,12 +133,21 @@ export function Step2Nature() {
             <div className="mt-2 flex flex-wrap gap-2 min-h-[40px] p-2 rounded-md border border-input">
                 {selectedNatures.length > 0 ? (
                     selectedNatures.map(nature => (
-                        <Badge key={nature} variant="secondary" className="text-sm">
-                            {nature}
+                        <Badge key={nature} variant="secondary" className="text-sm font-medium">
+                           {nature}
+                           <Button 
+                             variant="ghost" 
+                             size="icon" 
+                             className="ml-1 h-4 w-4 rounded-full"
+                             onClick={() => handleRemoveNature(nature)}
+                           >
+                               <X className="h-3 w-3" />
+                               <span className="sr-only">Remover {nature}</span>
+                           </Button>
                         </Badge>
                     ))
                 ) : (
-                    <p className="text-sm text-muted-foreground">Nenhuma natureza selecionada.</p>
+                    <p className="text-sm text-muted-foreground p-1">Nenhuma natureza selecionada.</p>
                 )}
             </div>
         </div>
