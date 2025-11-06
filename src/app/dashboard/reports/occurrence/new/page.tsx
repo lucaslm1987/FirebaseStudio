@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import QRCode from 'react-qr-code';
-import { Printer, Check, FileText, Users, Search, BookText, Package, ShieldQuestion } from 'lucide-react';
+import { Printer, Check, FileText, Users, Scale, BookText, Package } from 'lucide-react';
 import { Step1GeneralData } from './steps/step1-general-data';
 import { Step2Nature } from './steps/step2-nature';
 import { Step3Involved } from './steps/step3-involved';
@@ -19,7 +19,7 @@ import { Step6Review } from './steps/step6-review';
 
 const steps = [
   { id: 1, name: 'Dados Gerais', icon: FileText },
-  { id: 2, name: 'Natureza da Ocorrência', icon: ShieldQuestion },
+  { id: 2, name: 'Natureza da Ocorrência', icon: Scale },
   { id: 3, name: 'Envolvidos', icon: Users },
   { id: 4, name: 'Veículos/Objetos', icon: Package },
   { id: 5, name: 'Narrativa', icon: BookText },
