@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
+            <Button variant="ghost" size="icon">
               <Menu />
               <span className="sr-only">Toggle menu</span>
             </Button>
@@ -73,29 +73,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <nav className="hidden items-center gap-4 md:flex">
-          {features.slice(0, 6).map((feature) => (
-             <Link
-                key={feature.title}
-                href={feature.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {feature.title}
-              </Link>
-          ))}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild><Link href="/dashboard">Dashboard</Link></DropdownMenuItem>
-              <DropdownMenuItem asChild><Link href="/">Sair</Link></DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
       </header>
       <main className="flex-1 overflow-auto bg-background">{children}</main>
     </div>
