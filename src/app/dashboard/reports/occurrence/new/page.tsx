@@ -6,40 +6,67 @@ import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import QRCode from 'react-qr-code';
-import { Printer } from 'lucide-react';
+import { Printer, Check, FileText, Users, Search, BookText, Package, ShieldQuestion } from 'lucide-react';
+import { Step1GeneralData } from './steps/step1-general-data';
+import { Step2Nature } from './steps/step2-nature';
+import { Step3Involved } from './steps/step3-involved';
+import { Step4Items } from './steps/step4-items';
+import { Step5Narrative } from './steps/step5-narrative';
+import { Step6Review } from './steps/step6-review';
+
+const steps = [
+  { id: 1, name: 'Dados Gerais', icon: FileText },
+  { id: 2, name: 'Natureza da Ocorrência', icon: ShieldQuestion },
+  { id: 3, name: 'Envolvidos', icon: Users },
+  { id: 4, name: 'Veículos/Objetos', icon: Package },
+  { id: 5, name: 'Narrativa', icon: BookText },
+  { id: 6, name: 'Revisão e Encerramento', icon: Check },
+];
+
 
 export default function NewOccurrenceReportPage() {
+  const [currentStep, setCurrentStep] = useState(1);
   const [reportId, setReportId] = useState<string | null>(null);
   const router = useRouter();
 
+
+  const handleNext = () => {
+    if (currentStep < 6) {
+      setCurrentStep(currentStep + 1);
+    } else {
+        // Final step logic
+        generateReportId();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    } else {
+        router.push('/dashboard');
+    }
+  };
+
+
   const generateReportId = () => {
-    // Sugestão: BO<timestamp> para garantir um ID único e simples por enquanto.
-    const newReportId = `BO${Date.now()}`;
+    const year = new Date().getFullYear();
+    // This is a simplified sequential number. In a real app, you'd fetch the last sequence number from a database.
+    const sequential = Date.now() % 10000; // Placeholder
+    const newReportId = `BO${year}${String(sequential).padStart(5, '0')}`;
     setReportId(newReportId);
+    setCurrentStep(7); // Go to the final screen
   };
 
   const handlePrint = () => {
     window.print();
   };
 
-  const handleCancel = () => {
-    if (reportId) {
-      setReportId(null);
-    } else {
-      router.push('/dashboard');
-    }
-  };
 
   const handleNewReport = () => {
+    setCurrentStep(1);
     setReportId(null);
   };
 
@@ -49,102 +76,96 @@ export default function NewOccurrenceReportPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
+       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Criar Boletim de Ocorrência
         </h1>
       </header>
       <main className="flex-1 overflow-auto p-4 md:p-6">
-        <Card>
-          {!reportId ? (
-            <>
-              <CardHeader>
-                <CardTitle>Novo Boletim de Ocorrência</CardTitle>
-                <CardDescription>
-                  Preencha os campos abaixo para registrar um novo BO.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-6">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Data e Hora</Label>
-                      <Input id="date" type="datetime-local" required />
+        <div className="mx-auto max-w-5xl">
+            {/* Stepper */}
+            {currentStep <= 6 && (
+                 <div className="mb-8 flex items-center justify-between">
+                 {steps.map((step, index) => (
+                   <div key={step.id} className="flex items-center">
+                     <div className="flex flex-col items-center">
+                       <div
+                         className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
+                           currentStep > step.id
+                             ? 'border-primary bg-primary text-primary-foreground'
+                             : currentStep === step.id
+                               ? 'border-primary'
+                               : 'border-border'
+                         }`}
+                       >
+                         {currentStep > step.id ? <Check size={20} /> : <step.icon size={20} />}
+                       </div>
+                       <p className={`mt-2 text-center text-xs font-medium ${currentStep >= step.id ? 'text-foreground' : 'text-muted-foreground'}`}>{step.name}</p>
+                     </div>
+                     {index < steps.length - 1 && (
+                       <div className={`flex-auto border-t-2 mx-4 ${currentStep > index + 1 ? 'border-primary' : 'border-border'}`} />
+                     )}
+                   </div>
+                 ))}
+               </div>
+            )}
+
+
+          <Card>
+            <CardContent className="p-6">
+              {currentStep === 1 && <Step1GeneralData />}
+              {currentStep === 2 && <Step2Nature />}
+              {currentStep === 3 && <Step3Involved />}
+              {currentStep === 4 && <Step4Items />}
+              {currentStep === 5 && <Step5Narrative />}
+              {currentStep === 6 && <Step6Review />}
+              {currentStep === 7 && reportId && (
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold mb-2">Ocorrência Registrada com Sucesso</h2>
+                    <p className="text-muted-foreground mb-6">
+                    Utilize o QR Code abaixo para consultar ou compartilhar os
+                    detalhes.
+                    </p>
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="rounded-lg border bg-white p-4 shadow-sm inline-block">
+                            <QRCode value={consultationUrl} size={200} />
+                        </div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                            ID do Relatório: {reportId}
+                        </p>
+                        <div className="flex w-full max-w-sm flex-col gap-2 print:hidden sm:flex-row">
+                        <Button
+                            onClick={handlePrint}
+                            className="w-full"
+                            variant="outline"
+                        >
+                            <Printer className="mr-2" />
+                            Imprimir
+                        </Button>
+                        <Button onClick={handleNewReport} className="w-full">
+                            Criar Novo BO
+                        </Button>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="location">Local da Ocorrência</Label>
-                      <Input
-                        id="location"
-                        placeholder="Endereço completo"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="involved">Envolvidos</Label>
-                    <Textarea
-                      id="involved"
-                      placeholder="Nomes, documentos e tipo de envolvimento"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Descrição dos Fatos</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Descreva detalhadamente a ocorrência"
-                      rows={6}
-                      required
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
+                </div>
+              )}
+
+              {currentStep <= 6 && (
+                <div className="mt-8 flex justify-between">
                     <Button
-                      variant="outline"
-                      type="button"
-                      onClick={handleCancel}
+                        variant="outline"
+                        onClick={handleBack}
                     >
-                      Cancelar
+                       {currentStep === 1 ? 'Cancelar' : 'Voltar'}
                     </Button>
-                    <Button type="button" onClick={generateReportId}>
-                      Salvar Ocorrência
+                    <Button onClick={handleNext}>
+                        {currentStep === 6 ? 'Finalizar e Gerar BO' : 'Avançar'}
                     </Button>
-                  </div>
                 </div>
-              </CardContent>
-            </>
-          ) : (
-            <>
-              <CardHeader className="text-center">
-                <CardTitle>Ocorrência Registrada com Sucesso</CardTitle>
-                <CardDescription>
-                  Utilize o QR Code abaixo para consultar ou compartilhar os
-                  detalhes.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center gap-6">
-                <div className="rounded-lg border bg-white p-4 shadow-sm">
-                  <QRCode value={consultationUrl} size={200} />
-                </div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  ID do Relatório: {reportId}
-                </p>
-                <div className="flex w-full max-w-sm flex-col gap-2 print:hidden sm:flex-row">
-                  <Button
-                    onClick={handlePrint}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    <Printer className="mr-2" />
-                    Imprimir
-                  </Button>
-                  <Button onClick={handleNewReport} className="w-full">
-                    Criar Novo BO
-                  </Button>
-                </div>
-              </CardContent>
-            </>
-          )}
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   );
