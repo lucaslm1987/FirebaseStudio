@@ -53,7 +53,7 @@ export default function DashboardPage() {
     <div className="flex h-full flex-col">
       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
-          Dashboard
+          Bem-vindo ao sistema de Gestão da Guarda Civil Municipal
         </h1>
       </header>
       <main className="flex-1 overflow-auto p-4 md:p-6">
