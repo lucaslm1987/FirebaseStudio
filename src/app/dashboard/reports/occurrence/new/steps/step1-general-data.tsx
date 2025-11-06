@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -13,7 +14,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Camera, MapPin, PlusCircle, Trash2, User } from 'lucide-react';
+import { Camera, MapPin, PlusCircle, Trash2, User, Calendar, Globe, Users, Car } from 'lucide-react';
 
 const states = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -118,7 +119,10 @@ export function Step1GeneralData() {
     <div className="space-y-8">
        {/* Data e Hora */}
        <div className="space-y-4">
-        <h3 className="text-lg font-medium">Data e Hora</h3>
+        <h3 className="text-lg font-medium flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Data e Hora
+        </h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
                 <Label htmlFor="data-fato">Data do Fato</Label>
@@ -195,7 +199,10 @@ export function Step1GeneralData() {
 
       {/* Local */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Local da Ocorrência</h3>
+        <h3 className="text-lg font-medium flex items-center gap-2">
+            <Globe className="h-5 w-5 text-primary" />
+            Local da Ocorrência
+        </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="space-y-2 sm:col-span-2 md:col-span-3">
                 <Label htmlFor="rua">Rua</Label>
@@ -241,7 +248,10 @@ export function Step1GeneralData() {
       
        {/* Equipe */}
        <div className="space-y-4">
-        <h3 className="text-lg font-medium">Equipe</h3>
+        <h3 className="text-lg font-medium flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Equipe
+        </h3>
         <div className="space-y-2">
             <Label htmlFor="team-member">Membro da Equipe</Label>
             <div className="flex items-start gap-2">
@@ -312,7 +322,10 @@ export function Step1GeneralData() {
 
        {/* Viatura */}
        <div className="space-y-4">
-        <h3 className="text-lg font-medium">Viatura</h3>
+        <h3 className="text-lg font-medium flex items-center gap-2">
+            <Car className="h-5 w-5 text-primary" />
+            Viatura
+        </h3>
          <div className="w-full max-w-xs">
             <Label htmlFor="viatura">Viatura</Label>
             <Select>
@@ -331,5 +344,7 @@ export function Step1GeneralData() {
     </div>
   );
 }
+
+    
 
     
