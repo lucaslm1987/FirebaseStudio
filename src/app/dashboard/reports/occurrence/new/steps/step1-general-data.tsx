@@ -13,8 +13,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { MapPin, PlusCircle, Trash2, User } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Camera, MapPin, PlusCircle, Trash2, User } from 'lucide-react';
 
 const states = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -66,10 +65,17 @@ const allTeamMembers = [
     "VITOR MOREIRA DE SOUZA - GCM 1ª CL",
 ];
 
+const roles = ['Encarregado', 'Motorista', 'Auxiliar'];
+
+type TeamMember = {
+    name: string;
+    bodyCam: boolean;
+    role: string;
+}
 
 export function Step1GeneralData() {
   const [selectedMember, setSelectedMember] = useState('');
-  const [team, setTeam] = useState<string[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
 
 
   const handleGetLocation = () => {
@@ -91,14 +97,20 @@ export function Step1GeneralData() {
   };
 
   const handleAddMember = () => {
-    if (selectedMember && !team.includes(selectedMember)) {
-      setTeam([...team, selectedMember]);
+    if (selectedMember && !team.find(m => m.name === selectedMember)) {
+      setTeam([...team, { name: selectedMember, bodyCam: false, role: '' }]);
       setSelectedMember('');
     }
   };
 
-  const handleRemoveMember = (memberToRemove: string) => {
-    setTeam(team.filter(member => member !== memberToRemove));
+  const handleRemoveMember = (memberName: string) => {
+    setTeam(team.filter(member => member.name !== memberName));
+  };
+  
+  const handleTeamMemberChange = (memberName: string, field: 'bodyCam' | 'role', value: string | boolean) => {
+    setTeam(team.map(member => 
+      member.name === memberName ? { ...member, [field]: value } : member
+    ));
   };
 
 
@@ -232,7 +244,7 @@ export function Step1GeneralData() {
         <h3 className="text-lg font-medium">Equipe</h3>
         <div className="space-y-2">
             <Label htmlFor="team-member">Membro da Equipe</Label>
-            <div className="flex items-center gap-2">
+            <div className="flex items-start gap-2">
                  <Select value={selectedMember} onValueChange={setSelectedMember}>
                     <SelectTrigger id="team-member">
                         <SelectValue placeholder="Selecione um membro..." />
@@ -253,17 +265,44 @@ export function Step1GeneralData() {
         {team.length > 0 && (
             <div className="rounded-md border p-4 space-y-3">
                 <h4 className="text-sm font-medium">Membros Selecionados:</h4>
-                <ul className="space-y-2">
-                    {team.map(member => (
-                        <li key={member} className="flex items-center justify-between text-sm p-2 rounded-md bg-muted/50">
-                            <span className="flex items-center gap-2">
+                <ul className="space-y-4">
+                    {team.map((member, index) => (
+                        <li key={member.name} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-3 rounded-md bg-muted/50">
+                            <div className="flex items-center gap-2 font-medium">
                                 <User className="h-4 w-4 text-muted-foreground" />
-                                {member}
-                            </span>
-                             <Button onClick={() => handleRemoveMember(member)} size="icon" variant="ghost" className="h-6 w-6">
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                                <span className="sr-only">Remover</span>
-                            </Button>
+                                {member.bodyCam && <Camera className="h-4 w-4 text-primary" title="Body Cam Ativa" />}
+                                <span className='flex-1'>{member.name}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <Label htmlFor={`bodycam-${index}`} className='text-xs'>Body Cam?</Label>
+                                    <Switch 
+                                        id={`bodycam-${index}`} 
+                                        checked={member.bodyCam} 
+                                        onCheckedChange={(checked) => handleTeamMemberChange(member.name, 'bodyCam', checked)}
+                                    />
+                                </div>
+                                 <div className="flex items-center gap-2">
+                                    <Label htmlFor={`role-${index}`} className='text-xs'>Cargo</Label>
+                                    <Select 
+                                        value={member.role}
+                                        onValueChange={(value) => handleTeamMemberChange(member.name, 'role', value)}
+                                    >
+                                        <SelectTrigger id={`role-${index}`} className="h-8 w-[120px] text-xs">
+                                            <SelectValue placeholder="Cargo..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {roles.map(role => (
+                                                <SelectItem key={role} value={role}>{role}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button onClick={() => handleRemoveMember(member.name)} size="icon" variant="ghost" className="h-7 w-7">
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                    <span className="sr-only">Remover</span>
+                                </Button>
+                            </div>
                         </li>
                     ))}
                 </ul>
@@ -292,3 +331,5 @@ export function Step1GeneralData() {
     </div>
   );
 }
+
+    
