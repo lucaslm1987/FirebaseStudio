@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useOccurrenceForm } from '../form-context';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -15,6 +16,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Camera, MapPin, PlusCircle, Trash2, User, Calendar, Globe, Users, Car } from 'lucide-react';
+import type { TeamMember } from '../form-context';
 
 const states = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -68,25 +70,36 @@ const allTeamMembers = [
 
 const roles = ['Encarregado', 'Motorista', 'Auxiliar'];
 
-type TeamMember = {
-    name: string;
-    bodyCam: boolean;
-    role: string;
-}
 
 export function Step1GeneralData() {
+  const { formData, updateField, updateTeamMember, addTeamMember, removeTeamMember } = useOccurrenceForm();
   const [selectedMember, setSelectedMember] = useState('');
-  const [team, setTeam] = useState<TeamMember[]>([]);
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    updateField({ [e.target.id]: e.target.value });
+  };
+  
+  const handleSelectChange = (id: string) => (value: string) => {
+    updateField({ [id]: value });
+  };
+
+  const handleSwitchChange = (id: string) => (checked: boolean) => {
+    updateField({ [id]: checked });
+  };
+
+  const handleRadioChange = (id: string) => (value: string) => {
+    updateField({ [id]: value });
+  };
 
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLatitude(String(position.coords.latitude));
-          setLongitude(String(position.coords.longitude));
+          updateField({ 
+              latitude: String(position.coords.latitude),
+              longitude: String(position.coords.longitude)
+          });
         },
         (error) => {
           console.error("Error getting location: ", error);
@@ -99,22 +112,11 @@ export function Step1GeneralData() {
   };
 
   const handleAddMember = () => {
-    if (selectedMember && !team.find(m => m.name === selectedMember)) {
-      setTeam([...team, { name: selectedMember, bodyCam: false, role: '' }]);
+    if (selectedMember && !formData.team.find(m => m.name === selectedMember)) {
+      addTeamMember(selectedMember);
       setSelectedMember('');
     }
   };
-
-  const handleRemoveMember = (memberName: string) => {
-    setTeam(team.filter(member => member.name !== memberName));
-  };
-  
-  const handleTeamMemberChange = (memberName: string, field: 'bodyCam' | 'role', value: string | boolean) => {
-    setTeam(team.map(member => 
-      member.name === memberName ? { ...member, [field]: value } : member
-    ));
-  };
-
 
   return (
     <div className="space-y-8">
@@ -126,20 +128,20 @@ export function Step1GeneralData() {
         </h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-                <Label htmlFor="data-fato">Data do Fato</Label>
-                <Input id="data-fato" type="date" required />
+                <Label htmlFor="factDate">Data do Fato</Label>
+                <Input id="factDate" type="date" value={formData.factDate || ''} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="hora-fato">Hora do Fato</Label>
-                <Input id="hora-fato" type="time" required />
+                <Label htmlFor="factTime">Hora do Fato</Label>
+                <Input id="factTime" type="time" value={formData.factTime || ''} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="data-comunicacao">Data da Comunicação</Label>
-                <Input id="data-comunicacao" type="date" required />
+                <Label htmlFor="communicationDate">Data da Comunicação</Label>
+                <Input id="communicationDate" type="date" value={formData.communicationDate || ''} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="hora-comunicacao">Hora da Comunicação</Label>
-                <Input id="hora-comunicacao" type="time" required />
+                <Label htmlFor="communicationTime">Hora da Comunicação</Label>
+                <Input id="communicationTime" type="time" value={formData.communicationTime || ''} onChange={handleChange} required />
             </div>
         </div>
       </div>
@@ -148,7 +150,7 @@ export function Step1GeneralData() {
        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <div className="space-y-3">
                 <Label>Origem da Solicitação</Label>
-                <RadioGroup defaultValue="deparou" className="flex flex-wrap gap-4">
+                <RadioGroup value={formData.requestOrigin} onValueChange={handleRadioChange('requestOrigin')} className="flex flex-wrap gap-4">
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="deparou" id="r-deparou" />
                         <Label htmlFor="r-deparou">A equipe deparou-se</Label>
@@ -169,7 +171,7 @@ export function Step1GeneralData() {
             </div>
             <div className="space-y-3">
                 <Label>Autoria</Label>
-                <RadioGroup defaultValue="desconhecida" className="flex flex-wrap gap-4">
+                <RadioGroup value={formData.authorship} onValueChange={handleRadioChange('authorship')} className="flex flex-wrap gap-4">
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="conhecida" id="r-conhecida" />
                         <Label htmlFor="r-conhecida">Conhecida</Label>
@@ -185,16 +187,16 @@ export function Step1GeneralData() {
         {/* Flags */}
         <div className="flex flex-wrap items-center gap-6">
             <div className="flex items-center space-x-2">
-                <Switch id="flagrante" />
-                <Label htmlFor="flagrante">Flagrante?</Label>
+                <Switch id="isFlagrant" checked={formData.isFlagrant} onCheckedChange={handleSwitchChange('isFlagrant')} />
+                <Label htmlFor="isFlagrant">Flagrante?</Label>
             </div>
             <div className="flex items-center space-x-2">
-                <Switch id="ato-infracional" />
-                <Label htmlFor="ato-infracional">Ato Infracional?</Label>
+                <Switch id="isInfraction" checked={formData.isInfraction} onCheckedChange={handleSwitchChange('isInfraction')} />
+                <Label htmlFor="isInfraction">Ato Infracional?</Label>
             </div>
             <div className="flex items-center space-x-2">
-                <Switch id="violencia-domestica" />
-                <Label htmlFor="violencia-domestica">Violência Doméstica?</Label>
+                <Switch id="isDomesticViolence" checked={formData.isDomesticViolence} onCheckedChange={handleSwitchChange('isDomesticViolence')} />
+                <Label htmlFor="isDomesticViolence">Violência Doméstica?</Label>
             </div>
         </div>
 
@@ -206,29 +208,29 @@ export function Step1GeneralData() {
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="space-y-2 sm:col-span-2 md:col-span-3">
-                <Label htmlFor="rua">Rua</Label>
-                <Input id="rua" placeholder="Nome da rua, avenida..." required />
+                <Label htmlFor="street">Rua</Label>
+                <Input id="street" placeholder="Nome da rua, avenida..." value={formData.street || ''} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="numero">Nº</Label>
-                <Input id="numero" placeholder="Ex: 123" />
+                <Label htmlFor="number">Nº</Label>
+                <Input id="number" placeholder="Ex: 123" value={formData.number || ''} onChange={handleChange} />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="bairro">Bairro</Label>
-                <Input id="bairro" placeholder="Nome do bairro" required />
+                <Label htmlFor="neighborhood">Bairro</Label>
+                <Input id="neighborhood" placeholder="Nome do bairro" value={formData.neighborhood || ''} onChange={handleChange} required />
             </div>
              <div className="space-y-2">
-                <Label htmlFor="complemento">Complemento</Label>
-                <Input id="complemento" placeholder="Apto, bloco, casa..." />
+                <Label htmlFor="complement">Complemento</Label>
+                <Input id="complement" placeholder="Apto, bloco, casa..." value={formData.complement || ''} onChange={handleChange} />
             </div>
              <div className="space-y-2">
-                <Label htmlFor="cidade">Cidade</Label>
-                <Input id="cidade" required />
+                <Label htmlFor="city">Cidade</Label>
+                <Input id="city" value={formData.city || ''} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="estado">Estado</Label>
-                 <Select>
-                    <SelectTrigger id="estado">
+                <Label htmlFor="state">Estado</Label>
+                 <Select value={formData.state} onValueChange={handleSelectChange('state')}>
+                    <SelectTrigger id="state">
                         <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -242,11 +244,11 @@ export function Step1GeneralData() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="space-y-2">
                 <Label htmlFor="latitude">Latitude</Label>
-                <Input id="latitude" placeholder="Ex: -23.55052" value={latitude} onChange={(e) => setLatitude(e.target.value)} />
+                <Input id="latitude" placeholder="Ex: -23.55052" value={formData.latitude || ''} onChange={handleChange} />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="longitude">Longitude</Label>
-                <Input id="longitude" placeholder="Ex: -46.633308" value={longitude} onChange={(e) => setLongitude(e.target.value)} />
+                <Input id="longitude" placeholder="Ex: -46.633308" value={formData.longitude || ''} onChange={handleChange} />
             </div>
             <div className="space-y-2 self-end">
                 <Button variant="outline" onClick={handleGetLocation} className="w-full">
@@ -272,7 +274,7 @@ export function Step1GeneralData() {
                     </SelectTrigger>
                     <SelectContent>
                         {allTeamMembers.map((member) => (
-                            <SelectItem key={member} value={member}>{member}</SelectItem>
+                            <SelectItem key={member} value={member} disabled={formData.team.some(m => m.name === member)}>{member}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -283,11 +285,11 @@ export function Step1GeneralData() {
             </div>
         </div>
 
-        {team.length > 0 && (
+        {formData.team.length > 0 && (
             <div className="rounded-md border p-4 space-y-3">
                 <h4 className="text-sm font-medium">Membros Selecionados:</h4>
                 <ul className="space-y-4">
-                    {team.map((member, index) => (
+                    {formData.team.map((member, index) => (
                         <li key={member.name} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-3 rounded-md bg-muted/50">
                             <div className="flex items-center gap-2 font-medium">
                                 <User className="h-4 w-4 text-muted-foreground" />
@@ -300,14 +302,14 @@ export function Step1GeneralData() {
                                     <Switch 
                                         id={`bodycam-${index}`} 
                                         checked={member.bodyCam} 
-                                        onCheckedChange={(checked) => handleTeamMemberChange(member.name, 'bodyCam', checked)}
+                                        onCheckedChange={(checked) => updateTeamMember(member.name, 'bodyCam', checked)}
                                     />
                                 </div>
                                  <div className="flex items-center gap-2">
                                     <Label htmlFor={`role-${index}`} className='text-xs'>Cargo</Label>
                                     <Select 
                                         value={member.role}
-                                        onValueChange={(value) => handleTeamMemberChange(member.name, 'role', value)}
+                                        onValueChange={(value) => updateTeamMember(member.name, 'role', value)}
                                     >
                                         <SelectTrigger id={`role-${index}`} className="h-8 w-[120px] text-xs">
                                             <SelectValue placeholder="Cargo..." />
@@ -319,7 +321,7 @@ export function Step1GeneralData() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <Button onClick={() => handleRemoveMember(member.name)} size="icon" variant="ghost" className="h-7 w-7">
+                                <Button onClick={() => removeTeamMember(member.name)} size="icon" variant="ghost" className="h-7 w-7">
                                     <Trash2 className="h-4 w-4 text-destructive" />
                                     <span className="sr-only">Remover</span>
                                 </Button>
@@ -338,9 +340,9 @@ export function Step1GeneralData() {
             Viatura
         </h3>
          <div className="w-full max-w-xs">
-            <Label htmlFor="viatura">Viatura</Label>
-            <Select>
-                <SelectTrigger id="viatura">
+            <Label htmlFor="vehicle">Viatura</Label>
+            <Select value={formData.vehicle} onValueChange={handleSelectChange('vehicle')}>
+                <SelectTrigger id="vehicle">
                     <SelectValue placeholder="Selecione a viatura..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -355,5 +357,3 @@ export function Step1GeneralData() {
     </div>
   );
 }
-
-    
