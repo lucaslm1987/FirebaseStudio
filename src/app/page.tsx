@@ -25,19 +25,19 @@ export default function LoginPage() {
               GCMobile
             </CardTitle>
             <CardDescription>
-              Acesso restrito. Insira seu identificador para receber um código de
+              Acesso restrito. Insira seu e-mail para receber um código de
               acesso.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form action="/dashboard" className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="identifier">Identificador (matrícula)</Label>
+                <Label htmlFor="identifier">E-mail do usuário</Label>
                 <Input
                   id="identifier"
-                  placeholder="Sua matrícula funcional"
+                  placeholder="Seu e-mail"
                   required
-                  type="text"
+                  type="email"
                 />
               </div>
               <Button className="w-full" type="button" variant="secondary">
