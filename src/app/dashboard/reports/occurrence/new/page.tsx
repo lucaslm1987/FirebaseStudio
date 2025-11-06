@@ -13,9 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import QRCode from 'react-qr-code';
-import { Printer, Share2 } from 'lucide-react';
+import { Printer } from 'lucide-react';
 
 export default function NewOccurrenceReportPage() {
   const [reportId, setReportId] = useState<string | null>(null);
@@ -36,8 +35,7 @@ export default function NewOccurrenceReportPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-4 border-b bg-card px-6 print:hidden">
-        <SidebarTrigger className="md:hidden" />
+      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Criar Boletim de Ocorrência
         </h1>

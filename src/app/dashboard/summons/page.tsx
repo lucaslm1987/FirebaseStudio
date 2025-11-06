@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Search, Printer } from 'lucide-react';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export default function ConsultSummonsPage() {
   const summonses = [
@@ -44,8 +43,7 @@ export default function ConsultSummonsPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-4 border-b bg-card px-6">
-        <SidebarTrigger className="md:hidden" />
+      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Consultar Talões
         </h1>

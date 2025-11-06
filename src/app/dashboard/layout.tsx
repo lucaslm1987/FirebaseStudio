@@ -3,151 +3,101 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-} from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  ClipboardList,
-  ClipboardPlus,
-  FilePlus2,
-  FileText,
-  LayoutDashboard,
-  LogOut,
-  Search,
-  Shield,
-  Ticket,
-} from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Menu } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const isActive = (path: string) => pathname === path;
+  const features = [
+    {
+      title: 'Criar BO GCM',
+      href: '/dashboard/reports/occurrence/new',
+    },
+    {
+      title: 'Consultar BO GCM',
+      href: '/dashboard/reports/occurrence',
+    },
+    {
+      title: 'Criar Relatório Diário',
+      href: '/dashboard/reports/service/new',
+    },
+    {
+      title: 'Consultar Relatório Diário',
+      href: '/dashboard/reports/service',
+    },
+    {
+      title: 'Criar Talão',
+      href: '/dashboard/summons/new',
+    },
+    {
+      title: 'Consultar Talão',
+      href: '/dashboard/summons',
+    },
+    {
+      title: 'Dashboard',
+      href: '/dashboard',
+    },
+    {
+      title: 'Sair',
+      href: '/',
+    }
+  ];
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              <Shield className="h-6 w-6" />
-            </div>
-            <span className="text-lg font-semibold text-sidebar-foreground">GCMobile</span>
-          </Link>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <Link href="/dashboard" passHref legacyBehavior>
-                <SidebarMenuButton tooltip="Dashboard" isActive={isActive('/dashboard')}>
-                  <LayoutDashboard />
-                  <span>Dashboard</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <Link href="/dashboard/reports/occurrence/new" passHref legacyBehavior>
-                <SidebarMenuButton
-                  tooltip="Criar BO"
-                  isActive={isActive('/dashboard/reports/occurrence/new')}
-                >
-                  <FilePlus2 />
-                  <span>Criar BO GCM</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/reports/occurrence" passHref legacyBehavior>
-                <SidebarMenuButton
-                  tooltip="Consultar BO"
-                  isActive={isActive('/dashboard/reports/occurrence')}
-                >
-                  <Search />
-                  <span>Consultar BO GCM</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <Link href="/dashboard/reports/service/new" passHref legacyBehavior>
-                <SidebarMenuButton
-                  tooltip="Criar Relatório"
-                  isActive={isActive('/dashboard/reports/service/new')}
-                >
-                  <ClipboardPlus />
-                  <span>Criar Rel. Diário</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/reports/service" passHref legacyBehavior>
-                <SidebarMenuButton
-                  tooltip="Consultar Relatório"
-                  isActive={isActive('/dashboard/reports/service')}
-                >
-                  <ClipboardList />
-                  <span>Consultar Rel. Diário</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <Link href="/dashboard/summons/new" passHref legacyBehavior>
-                <SidebarMenuButton
-                  tooltip="Criar Talão"
-                  isActive={isActive('/dashboard/summons/new')}
-                >
-                  <FileText />
-                  <span>Criar Talão</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/summons" passHref legacyBehavior>
-                <SidebarMenuButton
-                  tooltip="Consultar Talão"
-                  isActive={isActive('/dashboard/summons')}
-                >
-                  <Ticket />
-                  <span>Consultar Talão</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 truncate">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://picsum.photos/seed/user/40/40" data-ai-hint="user avatar" />
-                <AvatarFallback>OS</AvatarFallback>
-              </Avatar>
-              <span className="truncate text-sm font-medium">Oficial Silva</span>
-            </div>
-            <Link href="/" passHref legacyBehavior>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                aria-label="Sair"
-              >
-                <LogOut className="h-5 w-5" />
-              </Button>
-            </Link>
+    <div className="flex min-h-screen w-full flex-col">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Shield className="h-5 w-5" />
           </div>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
-    </SidebarProvider>
+          <span className="text-lg font-semibold">GCMobile</span>
+        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Menu />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {features.map((feature) => (
+              <DropdownMenuItem key={feature.title} asChild>
+                <Link href={feature.href}>{feature.title}</Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <nav className="hidden items-center gap-4 md:flex">
+          {features.slice(0, 6).map((feature) => (
+             <Link
+                key={feature.title}
+                href={feature.href}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {feature.title}
+              </Link>
+          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild><Link href="/dashboard">Dashboard</Link></DropdownMenuItem>
+              <DropdownMenuItem asChild><Link href="/">Sair</Link></DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </nav>
+      </header>
+      <main className="flex-1 overflow-auto bg-background">{children}</main>
+    </div>
   );
 }
