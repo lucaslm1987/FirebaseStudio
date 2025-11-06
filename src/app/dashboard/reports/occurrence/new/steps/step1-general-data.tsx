@@ -77,15 +77,16 @@ type TeamMember = {
 export function Step1GeneralData() {
   const [selectedMember, setSelectedMember] = useState('');
   const [team, setTeam] = useState<TeamMember[]>([]);
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
 
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude } = position.coords;
-          // In a real app, you would set state here
-          alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
+          setLatitude(String(position.coords.latitude));
+          setLongitude(String(position.coords.longitude));
         },
         (error) => {
           console.error("Error getting location: ", error);
@@ -237,10 +238,20 @@ export function Step1GeneralData() {
                     </SelectContent>
                 </Select>
             </div>
-            <div className="space-y-2 sm:col-span-2 md:col-span-3">
-                 <Button variant="outline" onClick={handleGetLocation} className="w-full md:w-auto">
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <div className="space-y-2">
+                <Label htmlFor="latitude">Latitude</Label>
+                <Input id="latitude" placeholder="Ex: -23.55052" value={latitude} onChange={(e) => setLatitude(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="longitude">Longitude</Label>
+                <Input id="longitude" placeholder="Ex: -46.633308" value={longitude} onChange={(e) => setLongitude(e.target.value)} />
+            </div>
+            <div className="space-y-2 self-end">
+                <Button variant="outline" onClick={handleGetLocation} className="w-full">
                     <MapPin className="mr-2 h-4 w-4" />
-                    Obter Latitude e Longitude
+                    Obter Coordenadas
                 </Button>
             </div>
         </div>
@@ -344,7 +355,5 @@ export function Step1GeneralData() {
     </div>
   );
 }
-
-    
 
     
