@@ -64,11 +64,24 @@ export type ItemEntry = {
     description: string;
 };
 
+export type Vehicle = {
+    id: string;
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    type: 'automóvel' | 'bicicleta' | 'bonde' | 'caminhão' | 'caminhão trator' | 'caminhonete' | 'charrete' | 'ciclomotor' | 'microônibus' | 'motocicleta' | 'motoneta' | 'ônibus' | 'quadriciclo' | 'reboque ou semi-reboque' | 'triciclo' | '';
+    plate?: string;
+    brand?: string;
+    model?: string;
+    yearManufacture?: string;
+    yearModel?: string;
+    color?: string;
+    chassis?: string;
+};
+
 export type ItemsData = {
-    vehicles?: ItemEntry;
-    objects?: ItemEntry;
-    narcotics?: ItemEntry;
-    weapons?: ItemEntry;
+    vehicles: Vehicle[];
+    objects: ItemEntry;
+    narcotics: ItemEntry;
+    weapons: ItemEntry;
 }
 
 
@@ -101,7 +114,10 @@ export interface OccurrenceFormData {
 interface OccurrenceFormContextType {
   formData: OccurrenceFormData;
   updateField: (newData: Partial<OccurrenceFormData>) => void;
-  updateItem: (field: keyof ItemsData, value: Partial<ItemEntry>) => void;
+  updateItemEntry: (field: 'objects' | 'narcotics' | 'weapons', value: Partial<ItemEntry>) => void;
+  addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void;
+  updateVehicle: (vehicleId: string, updatedData: Partial<Vehicle>) => void;
+  removeVehicle: (vehicleId: string) => void;
   addTeamMember: (name: string) => void;
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
@@ -117,7 +133,7 @@ const initialFormData: OccurrenceFormData = {
   team: [],
   involved: [],
   items: {
-    vehicles: { condition: '', description: '' },
+    vehicles: [],
     objects: { condition: '', description: '' },
     narcotics: { condition: '', description: '' },
     weapons: { condition: '', description: '' },
@@ -146,11 +162,13 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
         if (typeof parsedData.items !== 'object' || parsedData.items === null) {
           parsedData.items = initialFormData.items;
         } else {
-            // Ensure all item categories exist
             parsedData.items = {
                 ...initialFormData.items,
                 ...parsedData.items,
             };
+        }
+        if (!Array.isArray(parsedData.items.vehicles)) {
+            parsedData.items.vehicles = [];
         }
         setFormData(parsedData);
       }
@@ -174,7 +192,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     setFormData(prev => ({ ...prev, ...newData }));
   }, []);
   
-  const updateItem = useCallback((field: keyof ItemsData, value: Partial<ItemEntry>) => {
+  const updateItemEntry = useCallback((field: 'objects' | 'narcotics' | 'weapons', value: Partial<ItemEntry>) => {
     setFormData(prev => ({
       ...prev,
       items: {
@@ -187,6 +205,35 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     }));
   }, []);
 
+  const addVehicle = useCallback((vehicle: Omit<Vehicle, 'id'>) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        vehicles: [...prev.items.vehicles, { ...vehicle, id: new Date().toISOString() }],
+      }
+    }));
+  }, []);
+
+  const updateVehicle = useCallback((vehicleId: string, updatedData: Partial<Vehicle>) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        vehicles: prev.items.vehicles.map(v => v.id === vehicleId ? { ...v, ...updatedData } : v),
+      }
+    }));
+  }, []);
+
+  const removeVehicle = useCallback((vehicleId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        vehicles: prev.items.vehicles.filter(v => v.id !== vehicleId),
+      }
+    }));
+  }, []);
 
   const addTeamMember = useCallback((name: string) => {
     setFormData(prev => ({
@@ -245,7 +292,10 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const contextValue = {
     formData,
     updateField,
-    updateItem,
+    updateItemEntry,
+    addVehicle,
+    updateVehicle,
+    removeVehicle,
     addTeamMember,
     removeTeamMember,
     updateTeamMember,
