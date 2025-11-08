@@ -295,8 +295,9 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
 
         <footer className="print-footer">
              <div className="print-footer-content">
-                <span>Guarda Civil Municipal - 153</span>
+                <span>Guarda Civil Municipal - Disque 153</span>
             </div>
+            <hr className="print-footer-line" />
             <p>Rua José Bonifácio, 378, Centro, Cordeirópolis-SP, fone (19) 3546-5838</p>
         </footer>
     </div>
