@@ -2,25 +2,23 @@
 'use client';
 
 import { useOccurrenceForm } from '../form-context';
-import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
 
-const ReviewSection = ({ title, children, hasData }: { title: string, children: React.ReactNode, hasData: boolean }) => {
-    if (!hasData) {
-        return null;
-    }
+const ReviewSection = ({ title, children, hasData, className }: { title: string, children: React.ReactNode, hasData: boolean, className?: string }) => {
+    if (!hasData) return null;
     return (
-        <div className="border-t pt-4">
-            <h5 className="font-semibold mb-2">{title}</h5>
-            <div className="space-y-2 text-sm text-muted-foreground">
+        <div className={`print-section ${className}`}>
+            <h5 className="print-section-title">{title}</h5>
+            <div className="print-section-content">
                 {children}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export function Step6Review() {
   const { formData } = useOccurrenceForm();
-  const { involved, items } = formData;
+  const { involved, items, team } = formData;
 
   const getSolutionText = () => {
     if (formData.solutionType === 'police_station') {
@@ -28,104 +26,247 @@ export function Step6Review() {
     }
     return 'BO para registro';
   };
+  
+  const formatDate = (date?: string) => {
+    if (!date) return 'Não informado';
+    try {
+        return format(new Date(date), 'dd/MM/yyyy');
+    } catch {
+        return date;
+    }
+  }
+
+  const formatDateTime = (date?: string, time?: string) => {
+      if (!date) return 'Não informado';
+      const datePart = formatDate(date);
+      return `${datePart} às ${time || 'hh:mm'}`;
+  }
+
 
   return (
-    <div className="space-y-6">
-        <h3 className="text-lg font-medium">Revisão e Encerramento</h3>
-        <p className="text-muted-foreground">
-            Revise todas as informações inseridas nas etapas anteriores. Ao clicar em "Finalizar e Gerar BO",
-            a ocorrência será salva permanentemente no sistema e um número de protocolo, QR Code e versão em PDF serão gerados.
-        </p>
-        <div className="rounded-lg border bg-muted/30 p-4">
-            <h4 className="font-semibold mb-4">Resumo da Ocorrência</h4>
-            <div className="space-y-4 text-sm">
-                <div className="grid grid-cols-2 gap-2">
-                    <div><strong>Data do Fato:</strong> {formData.factDate || 'Não informado'}</div>
-                    <div><strong>Hora do Fato:</strong> {formData.factTime || 'Não informado'}</div>
-                    <div><strong>Origem:</strong> {formData.requestOrigin || 'Não informado'}</div>
-                    <div><strong>Autoria:</strong> {formData.authorship || 'Não informado'}</div>
-                </div>
-                 <div><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || ''}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</div>
-                 <div><strong>Viatura:</strong> {formData.vehicle || 'Não informado'}</div>
-                 <div><strong>Natureza:</strong> {formData.nature || 'Não informado'}</div>
-                 
-                 <ReviewSection title="Envolvidos" hasData={involved.length > 0}>
-                    {involved.map(inv => (
-                        <div key={inv.id} className="p-2 rounded-md bg-background/50">
-                            {inv.type === 'person' && (
-                                <>
-                                    <div className="flex items-center gap-2"><strong>{inv.name}</strong> <Badge variant="outline">{inv.condition}</Badge></div>
-                                    <div>RG: {inv.rg || 'N/A'} - CPF: {inv.cpf || 'N/A'}</div>
-                                    <div>Notificação Eletrônica: {inv.acceptsElectronicNotification || 'Não'}</div>
-                                </>
-                            )}
-                            {inv.type === 'company' && (
-                                <>
-                                    <div className="flex items-center gap-2"><strong>{inv.corporateName}</strong> <Badge variant="outline">{inv.condition}</Badge></div>
-                                    <div>CNPJ: {inv.cnpj || 'N/A'}</div>
-                                </>
-                            )}
-                        </div>
-                    ))}
-                 </ReviewSection>
-
-                 <ReviewSection title="Veículos" hasData={items.vehicles.length > 0}>
-                    {items.vehicles.map(v => (
-                        <div key={v.id} className="p-2 rounded-md bg-background/50">
-                            <div className="flex items-center gap-2"><strong>{v.brand} {v.model}</strong> - Placa: {v.plate || 'N/A'} <Badge variant="outline">{v.condition}</Badge></div>
-                        </div>
-                    ))}
-                 </ReviewSection>
-                 
-                 <ReviewSection title="Objetos" hasData={items.objects.length > 0}>
-                    {items.objects.map(o => (
-                        <div key={o.id} className="p-2 rounded-md bg-background/50">
-                            <div className="flex items-center gap-2"><strong>{o.brand || ''} {o.model || 'Objeto'}</strong> - Qtd: {o.quantity} {o.unit} <Badge variant="outline">{o.condition}</Badge></div>
-                        </div>
-                    ))}
-                 </ReviewSection>
-
-                 <ReviewSection title="Entorpecentes" hasData={items.narcotics.length > 0}>
-                    {items.narcotics.map(n => (
-                        <div key={n.id} className="p-2 rounded-md bg-background/50">
-                            <div className="flex items-center gap-2"><strong>{n.type}</strong> - Qtd: {n.quantity} {n.unit} ({n.packaging}) <Badge variant="outline">{n.condition}</Badge></div>
-                        </div>
-                    ))}
-                 </ReviewSection>
-
-                 <ReviewSection title="Armas" hasData={items.weapons.length > 0}>
-                    {items.weapons.map(w => (
-                        <div key={w.id} className="p-2 rounded-md bg-background/50">
-                            <div className="flex items-center gap-2"><strong>{w.type} {w.brand} {w.model}</strong> - Cal: {w.calibre || 'N/A'} <Badge variant="outline">{w.condition}</Badge></div>
-                        </div>
-                    ))}
-                 </ReviewSection>
-
-                 <div>
-                    <div className="font-semibold">Narrativa:</div>
-                    <div className="whitespace-pre-wrap p-2 bg-background/50 rounded-md">{formData.narrative || 'Não informada'}</div>
-                 </div>
-                 
-                 <div>
-                    <strong>Solução:</strong> {getSolutionText()}
-                 </div>
-                 
-                 <div className="border-t pt-4">
-                    <p className="font-semibold mb-4">Equipe:</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {formData.team.map(m => (
-                            <div key={m.name} className="flex flex-col items-center">
-                                <div className="w-full border-b border-foreground/50 text-center pb-1">
-                                    <p className="font-semibold">{m.name}</p>
-                                    <p className="text-xs text-muted-foreground">{m.role}</p>
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1">Assinatura</p>
-                            </div>
-                        ))}
-                    </div>
-                 </div>
+    <div className="print-container">
+        <header className="print-header">
+            <div>
+                 <h2 className="text-2xl font-bold">Boletim de Ocorrência</h2>
+                 <p className="text-sm text-muted-foreground">Guarda Civil Municipal</p>
             </div>
-        </div>
+            <div className="text-right">
+                <p><strong>Nº Ocorrência:</strong> {formData.id || 'Não gerado'}</p>
+                <p><strong>Data Comunicação:</strong> {formatDateTime(formData.communicationDate, formData.communicationTime)}</p>
+            </div>
+        </header>
+
+        <main className="print-main-content">
+            <ReviewSection title="1. Dados Gerais" hasData={true} className="grid-cols-3">
+                <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
+                <p><strong>Origem da Solicitação:</strong> {formData.requestOrigin}</p>
+                <p><strong>Autoria:</strong> {formData.authorship}</p>
+                <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
+                <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
+                <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
+                <p className="col-span-3"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+            </ReviewSection>
+
+            <ReviewSection title="2. Natureza da Ocorrência" hasData={!!formData.nature}>
+                <p>{formData.nature}</p>
+            </ReviewSection>
+
+            <ReviewSection title="3. Equipe de Atendimento" hasData={team.length > 0}>
+                <table className="print-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Função</th>
+                            <th>Bodycam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {team.map(member => (
+                            <tr key={member.name}>
+                                <td>{member.name}</td>
+                                <td>{member.role}</td>
+                                <td>{member.bodyCam ? 'Sim' : 'Não'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                 <p><strong>Viatura:</strong> {formData.vehicle || 'Não informada'}</p>
+            </ReviewSection>
+
+            <ReviewSection title="4. Envolvidos" hasData={involved.length > 0}>
+                {involved.map(inv => (
+                    <div key={inv.id} className="print-involved-card">
+                        {inv.type === 'person' && (
+                            <>
+                                <div className="grid grid-cols-3 gap-x-4">
+                                    <p><strong>Nome:</strong> {inv.name}</p>
+                                    <p><strong>Nome Social:</strong> {inv.socialName || '--'}</p>
+                                    <p><strong>Condição:</strong> {inv.condition}</p>
+                                    
+                                    <p><strong>Data Nasc.:</strong> {inv.birthDate || '--'}</p>
+                                    <p><strong>Sexo:</strong> {inv.gender || '--'}</p>
+                                    <p><strong>Cor:</strong> {inv.color || '--'}</p>
+
+                                    <p><strong>RG:</strong> {inv.rg || '--'}</p>
+                                    <p><strong>CPF:</strong> {inv.cpf || '--'}</p>
+                                    <p><strong>Escolaridade:</strong> {inv.education || '--'}</p>
+
+                                    <p><strong>Pai:</strong> {inv.fatherName || '--'}</p>
+                                    <p><strong>Mãe:</strong> {inv.motherName || '--'}</p>
+                                    <p><strong>Profissão:</strong> {inv.profession || '--'}</p>
+
+                                    <p className="col-span-3"><strong>Endereço:</strong> {`${inv.street || ''}, ${inv.number || 'S/N'}, ${inv.neighborhood || ''}, ${inv.city || ''}-${inv.state || ''}`}</p>
+                                    <p><strong>Telefone:</strong> {inv.phone || '--'}</p>
+                                    <p><strong>Email:</strong> {inv.email || '--'}</p>
+                                    <p><strong>Notificação Eletrônica:</strong> {inv.acceptsElectronicNotification || 'Não'}</p>
+
+                                    <p><strong>Conduzido:</strong> {inv.isConducted ? 'Sim' : 'Não'}</p>
+                                    <p><strong>Preso:</strong> {inv.isArrested ? 'Sim' : 'Não'}</p>
+                                    <p><strong>Uso de Algemas:</strong> {inv.useHandcuffs ? `Sim (${inv.handcuffReason || ''})` : 'Não'}</p>
+                                </div>
+                                {inv.version && <div className="mt-2"><strong>Versão:</strong> <span className="font-normal">{inv.version}</span></div>}
+                            </>
+                        )}
+                        {inv.type === 'company' && (
+                             <div className="grid grid-cols-3 gap-x-4">
+                                <p><strong>Razão Social:</strong> {inv.corporateName}</p>
+                                <p><strong>Nome Fantasia:</strong> {inv.tradeName || '--'}</p>
+                                <p><strong>Condição:</strong> {inv.condition}</p>
+                                <p><strong>CNPJ:</strong> {inv.cnpj || '--'}</p>
+                                <p className="col-span-2"><strong>Representante:</strong> {inv.representative || '--'}</p>
+                                <p className="col-span-3"><strong>Endereço:</strong> {`${inv.street || ''}, ${inv.number || 'S/N'}, ${inv.neighborhood || ''}, ${inv.city || ''}-${inv.state || ''}`}</p>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </ReviewSection>
+
+            <ReviewSection title="5. Veículos" hasData={items.vehicles.length > 0}>
+                <table className="print-table">
+                    <thead>
+                        <tr>
+                            <th>Condição</th>
+                            <th>Tipo</th>
+                            <th>Placa</th>
+                            <th>Marca/Modelo</th>
+                            <th>Cor</th>
+                            <th>Ano</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.vehicles.map(v => (
+                            <tr key={v.id}>
+                                <td>{v.condition}</td>
+                                <td>{v.type}</td>
+                                <td>{v.plate}</td>
+                                <td>{v.brand} {v.model}</td>
+                                <td>{v.color}</td>
+                                <td>{v.yearManufacture}/{v.yearModel}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </ReviewSection>
+            
+            <ReviewSection title="6. Objetos" hasData={items.objects.length > 0}>
+                <table className="print-table">
+                     <thead>
+                        <tr>
+                            <th>Condição</th>
+                            <th>Descrição</th>
+                            <th>Qtd.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.objects.map(o => (
+                            <tr key={o.id}>
+                                <td>{o.condition}</td>
+                                <td>{o.brand || ''} {o.model || ''} {o.notes ? `- ${o.notes}` : ''}</td>
+                                <td>{o.quantity} {o.unit}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </ReviewSection>
+
+            <ReviewSection title="7. Entorpecentes" hasData={items.narcotics.length > 0}>
+                 <table className="print-table">
+                    <thead>
+                        <tr>
+                            <th>Condição</th>
+                            <th>Tipo</th>
+                            <th>Qtd.</th>
+                            <th>Embalagem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.narcotics.map(n => (
+                            <tr key={n.id}>
+                                <td>{n.condition}</td>
+                                <td>{n.type}</td>
+                                <td>{n.quantity} {n.unit}</td>
+                                <td>{n.packaging}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </ReviewSection>
+
+            <ReviewSection title="8. Armas" hasData={items.weapons.length > 0}>
+                 <table className="print-table">
+                    <thead>
+                        <tr>
+                            <th>Condição</th>
+                            <th>Tipo</th>
+                            <th>Marca/Modelo</th>
+                            <th>Nº Série</th>
+                            <th>Calibre</th>
+                            <th>Munições</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.weapons.map(w => (
+                            <tr key={w.id}>
+                                <td>{w.condition}</td>
+                                <td>{w.type}</td>
+                                <td>{w.brand} {w.model}</td>
+                                <td>{w.serialNumber}</td>
+                                <td>{w.calibre}</td>
+                                <td>{w.ammoIntact} intactas, {w.ammoSpent} deflag.</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </ReviewSection>
+
+             <ReviewSection title="9. Narrativa" hasData={!!formData.narrative}>
+                <p className="whitespace-pre-wrap">{formData.narrative}</p>
+            </ReviewSection>
+            
+            <ReviewSection title="10. Solução" hasData={true}>
+                <p>{getSolutionText()}</p>
+            </ReviewSection>
+            
+            <div className="print-signatures-section">
+                <p className="print-section-title">11. Assinaturas</p>
+                <div className="print-signatures-grid">
+                    {team.map(m => (
+                        <div key={m.name} className="print-signature-box">
+                            <p className="font-semibold">{m.name}</p>
+                            <p className="text-xs">{m.role}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </main>
+
+        <footer className="print-footer">
+            <div className="print-footer-content">
+                <span>Guarda Civil Municipal - 153</span>
+            </div>
+            <div className="print-footer-line"></div>
+            <p>Rua José Bonifácio, 378, Centro, Cordeirópolis-SP, fone (19) 3546-5838</p>
+        </footer>
     </div>
   );
 }

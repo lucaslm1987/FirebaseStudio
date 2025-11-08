@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import QRCode from 'react-qr-code';
 import {
   Printer,
   Check,
@@ -42,13 +41,12 @@ function NewOccurrenceReportContent() {
   const [reportId, setReportId] = useState<string | null>(null);
   const router = useRouter();
   const { formData, resetForm } = useOccurrenceForm();
+  const [isPrinting, setIsPrinting] = useState(false);
+
 
   const handleNext = () => {
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
-    } else {
-      // Final step logic
-      generateReport();
     }
   };
 
@@ -59,7 +57,7 @@ function NewOccurrenceReportContent() {
       router.push('/dashboard');
     }
   };
-
+  
   const generateReport = () => {
     try {
       // Generate ID
@@ -87,9 +85,14 @@ function NewOccurrenceReportContent() {
       alert("Ocorreu um erro ao salvar o relatório.");
     }
   };
+  
 
   const handlePrint = () => {
-    window.print();
+     setIsPrinting(true);
+      setTimeout(() => {
+        window.print();
+        setIsPrinting(false);
+      }, 100); 
   };
 
   const handleNewReport = () => {
@@ -107,9 +110,10 @@ function NewOccurrenceReportContent() {
     }
   }
 
-  const consultationUrl = reportId
-    ? `${window.location.origin}/dashboard/reports/occurrence/consult?id=${reportId}`
-    : '';
+
+ if (isPrinting) {
+    return <Step6Review />;
+  }
 
   return (
     <div className="flex h-full flex-col">
@@ -183,24 +187,18 @@ function NewOccurrenceReportContent() {
                     Ocorrência Registrada com Sucesso
                   </h2>
                   <p className="mb-6 text-muted-foreground">
-                    Utilize o QR Code abaixo para consultar ou compartilhar os
-                    detalhes.
+                    ID do Relatório: {reportId}
                   </p>
                   <div className="flex flex-col items-center gap-6">
-                    <div className="inline-block rounded-lg border bg-white p-4 shadow-sm">
-                      <QRCode value={consultationUrl} size={200} />
-                    </div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      ID do Relatório: {reportId}
-                    </p>
                     <div className="flex w-full max-w-sm flex-col gap-2 print:hidden sm:flex-row">
                       <Button
                         onClick={handlePrint}
                         className="w-full"
                         variant="outline"
+                        type="button"
                       >
                         <Printer className="mr-2" />
-                        Imprimir
+                        Visualizar Impressão
                       </Button>
                       <Button onClick={handleNewReport} className="w-full">
                         Criar Novo BO
@@ -210,15 +208,23 @@ function NewOccurrenceReportContent() {
                 </div>
               )}
 
-              {currentStep <= 6 && (
+              {currentStep < 6 && (
                 <div className="mt-8 flex justify-between print:hidden">
                   <Button variant="outline" onClick={handleBack}>
                     {currentStep === 1 ? 'Cancelar' : 'Voltar'}
                   </Button>
                   <Button onClick={handleNext}>
-                    {currentStep === 6
-                      ? 'Finalizar e Gerar BO'
-                      : 'Avançar'}
+                    {'Avançar'}
+                  </Button>
+                </div>
+              )}
+               {currentStep === 6 && (
+                 <div className="mt-8 flex justify-between print:hidden">
+                  <Button variant="outline" onClick={handleBack}>
+                    Voltar
+                  </Button>
+                  <Button onClick={generateReport}>
+                    Finalizar e Salvar BO
                   </Button>
                 </div>
               )}
