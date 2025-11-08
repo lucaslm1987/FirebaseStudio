@@ -26,30 +26,36 @@ import {
 const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 const weaponTypes = ['Carabina', 'Espingarda', 'Fuzil', 'Garrucha', 'Metralhadora', 'Pistola', 'Revólver', 'Rifle', 'Submetralhadora'].sort();
 const weaponBrands = [
-    "Armalite",
-    "Benelli",
-    "Beretta",
-    "Bersa",
-    "CBC",
-    "Colt",
-    "CZ",
-    "Daniel Defense",
-    "Glock",
-    "Heckler & Koch",
-    "Imbel",
-    "Kimber Manufacturing",
-    "Mossberg",
-    "Remington Arms",
-    "Rossi",
-    "Ruger",
-    "Sig Sauer",
-    "Smith & Wesson",
-    "Springfield Armory",
-    "Steyr",
-    "Tanfoglio",
-    "Taurus",
-    "Winchester",
-    "Outra"
+    'Armalite',
+    'Benelli',
+    'Beretta',
+    'Bersa',
+    'CBC',
+    'Colt',
+    'CZ',
+    'Daniel Defense',
+    'Glock',
+    'Heckler & Koch',
+    'Imbel',
+    'Kimber Manufacturing',
+    'Mossberg',
+    'Remington Arms',
+    'Rossi',
+    'Ruger',
+    'SIG Sauer',
+    'Smith & Wesson',
+    'Springfield Armory',
+    'Steyr',
+    'Tanfoglio',
+    'Taurus',
+    'Winchester',
+    'Outra'
+].sort();
+
+const calibres = [
+    '.17 HMR', '.22 LR', '.22 WMR', '.223 Remington', '.243 Winchester', '.270 Winchester', '.30-06 Springfield', '.300 AAC Blackout', '.308 Winchester',
+    '.357 Magnum', '.38 Special', '.38 Super', '.380 ACP', '.40 S&W', '.44 Magnum', '.45 ACP', '.50 BMG', '5.56x45mm NATO', '6.5mm Creedmoor', '7.62x39mm',
+    '7.62x51mm NATO', '9mm Luger', '10mm Auto', 'Calibre 12', 'Calibre 16', 'Calibre 20', 'Calibre 28', 'Calibre 32', 'Calibre 36 (.410)', 'Outro'
 ].sort();
 
 
@@ -59,6 +65,7 @@ const initialWeaponState: Omit<WeaponItem, 'id'> = {
     brand: '',
     model: '',
     serialNumber: '',
+    calibre: '',
     ammoIntact: 0,
     ammoSpent: 0,
 };
@@ -158,7 +165,16 @@ export function WeaponForm({ isOpen, setIsOpen, weaponData }: WeaponFormProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div className="space-y-2">
+                    <Label htmlFor="calibre">Calibre</Label>
+                    <Select value={weaponItem.calibre} onValueChange={handleSelectChange('calibre')}>
+                        <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                        <SelectContent>
+                           {calibres.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="ammoIntact">Munições Intactas</Label>
                     <Input id="ammoIntact" type="number" min="0" value={weaponItem.ammoIntact || 0} onChange={handleChange} />

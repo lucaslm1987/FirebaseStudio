@@ -99,6 +99,7 @@ export type WeaponItem = {
     brand?: string;
     model?: string;
     serialNumber?: string;
+    calibre?: string;
     ammoIntact?: number;
     ammoSpent?: number;
 }

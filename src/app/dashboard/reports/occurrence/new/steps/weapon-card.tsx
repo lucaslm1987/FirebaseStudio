@@ -31,6 +31,7 @@ export function WeaponCard({ weapon, onEdit, onRemove }: WeaponCardProps) {
                 <div className="flex flex-wrap gap-2">
                     <Badge variant="secondary">{weapon.condition}</Badge>
                     <Badge variant="outline">{description}</Badge>
+                    {weapon.calibre && <Badge variant="outline">Calibre: {weapon.calibre}</Badge>}
                     {weapon.ammoIntact !== undefined && <Badge variant="outline">Munições Intactas: {weapon.ammoIntact}</Badge>}
                 </div>
                 <div className="flex items-center gap-2 self-end sm:self-center">
