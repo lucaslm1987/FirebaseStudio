@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -46,12 +45,20 @@ interface NarcoticFormProps {
 export function NarcoticForm({ isOpen, setIsOpen, narcoticData }: NarcoticFormProps) {
   const { addNarcotic, updateNarcotic } = useOccurrenceForm();
   const [narcoticItem, setNarcoticItem] = useState<Omit<NarcoticItem, 'id'>>(initialNarcoticState);
+  const [customType, setCustomType] = useState('');
 
   useEffect(() => {
     if (narcoticData) {
-      setNarcoticItem(narcoticData);
+        if (substanceTypes.includes(narcoticData.type)) {
+            setNarcoticItem(narcoticData);
+            setCustomType('');
+        } else {
+            setNarcoticItem({ ...narcoticData, type: 'Outro' });
+            setCustomType(narcoticData.type);
+        }
     } else {
       setNarcoticItem(initialNarcoticState);
+      setCustomType('');
     }
   }, [narcoticData, isOpen]);
 
@@ -72,10 +79,15 @@ export function NarcoticForm({ isOpen, setIsOpen, narcoticData }: NarcoticFormPr
   };
 
   const handleSubmit = () => {
+    const finalItem = { ...narcoticItem };
+    if (narcoticItem.type === 'Outro' && customType) {
+        finalItem.type = customType;
+    }
+
     if (narcoticData) {
-      updateNarcotic(narcoticData.id, narcoticItem);
+      updateNarcotic(narcoticData.id, finalItem);
     } else {
-      addNarcotic(narcoticItem);
+      addNarcotic(finalItem);
     }
     setIsOpen(false);
   };
@@ -111,6 +123,13 @@ export function NarcoticForm({ isOpen, setIsOpen, narcoticData }: NarcoticFormPr
                     </Select>
                 </div>
             </div>
+            
+            {narcoticItem.type === 'Outro' && (
+                 <div className="space-y-2">
+                    <Label htmlFor="custom_type">Especifique o tipo</Label>
+                    <Input id="custom_type" value={customType} onChange={(e) => setCustomType(e.target.value)} placeholder="Digite o nome da substância" />
+                 </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                  <div className="space-y-2">
@@ -136,13 +155,6 @@ export function NarcoticForm({ isOpen, setIsOpen, narcoticData }: NarcoticFormPr
                     </Select>
                 </div>
             </div>
-            
-            {narcoticItem.type === 'Outro' && (
-                 <div className="space-y-2">
-                    <Label htmlFor="type-other">Especifique o tipo</Label>
-                    <Input id="type" value={narcoticItem.type} onChange={handleChange} placeholder="Digite o nome da substância" />
-                 </div>
-            )}
 
           </div>
         </ScrollArea>
@@ -154,5 +166,3 @@ export function NarcoticForm({ isOpen, setIsOpen, narcoticData }: NarcoticFormPr
     </Dialog>
   );
 }
-
-    

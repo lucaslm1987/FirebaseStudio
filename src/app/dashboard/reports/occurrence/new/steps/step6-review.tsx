@@ -1,23 +1,22 @@
-
 'use client';
 
-import { useOccurrenceForm } from '../form-context';
+import { useOccurrenceForm, OccurrenceFormData } from '../form-context';
 import { format } from 'date-fns';
 
 const ReviewSection = ({ title, children, hasData, className }: { title: string, children: React.ReactNode, hasData: boolean, className?: string }) => {
     if (!hasData) return null;
     return (
-        <div className={`print-section ${className}`}>
+        <section className={`print-section ${className}`}>
             <h5 className="print-section-title">{title}</h5>
             <div className="print-section-content">
                 {children}
             </div>
-        </div>
+        </section>
     );
 };
 
-export function Step6Review() {
-  const { formData } = useOccurrenceForm();
+
+export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
   const { involved, items, team } = formData;
 
   const getSolutionText = () => {
@@ -30,9 +29,7 @@ export function Step6Review() {
   const formatDate = (date?: string) => {
     if (!date) return 'Não informado';
     try {
-        // Handle yyyy-mm-dd format
         const dateObj = new Date(date);
-        // add timezone offset
         const dateWithOffset = new Date(dateObj.valueOf() + dateObj.getTimezoneOffset() * 60 * 1000);
         return format(dateWithOffset, 'dd/MM/yyyy');
     } catch {
@@ -274,5 +271,3 @@ export function Step6Review() {
     </div>
   );
 }
-
-    

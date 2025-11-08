@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -105,8 +104,11 @@ function NewOccurrenceReportContent() {
     )
   }
 
+  const RenderedReview = <Step6Review formData={formData} />;
+
   return (
     <div className="flex h-full flex-col">
+       <div className="printable-content-only">{RenderedReview}</div>
       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Criar Boletim de Ocorrência
@@ -119,11 +121,11 @@ function NewOccurrenceReportContent() {
             Limpar Formulário
         </Button>
       </header>
-      <main className="flex-1 overflow-auto p-4 md:p-6">
+      <main className="flex-1 overflow-auto p-4 md:p-6 print:hidden">
         <div className="mx-auto max-w-5xl">
           {/* Stepper */}
           {currentStep <= 6 && (
-            <div className="mb-8 flex items-center justify-between print:hidden">
+            <div className="mb-8 flex items-center justify-between">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
                   <div className="flex flex-col items-center">
@@ -167,8 +169,8 @@ function NewOccurrenceReportContent() {
           )}
 
           <Card>
-            <CardContent className="p-0 print:p-0">
-                <div className='p-6 print:hidden'>
+            <CardContent className="p-0">
+                <div className='p-6'>
                     {currentStep === 1 && <Step1GeneralData />}
                     {currentStep === 2 && <Step2Nature />}
                     {currentStep === 3 && <Step3Involved />}
@@ -178,7 +180,7 @@ function NewOccurrenceReportContent() {
 
                 {currentStep === 6 && (
                     <div className="p-6">
-                        <Step6Review />
+                        {RenderedReview}
                     </div>
                 )}
               
@@ -204,7 +206,7 @@ function NewOccurrenceReportContent() {
               )}
 
               {currentStep < 6 && (
-                <div className="mt-8 flex justify-between print:hidden p-6 border-t">
+                <div className="mt-8 flex justify-between p-6 border-t">
                   <Button variant="outline" onClick={handleBack}>
                     {currentStep === 1 ? 'Cancelar' : 'Voltar'}
                   </Button>
@@ -214,7 +216,7 @@ function NewOccurrenceReportContent() {
                 </div>
               )}
                {currentStep === 6 && (
-                 <div className="mt-8 flex justify-between print:hidden p-6 border-t">
+                 <div className="mt-8 flex justify-between p-6 border-t">
                   <Button variant="outline" onClick={handleBack}>
                     Voltar
                   </Button>
@@ -246,7 +248,3 @@ export default function NewOccurrenceReportPage() {
         </OccurrenceFormProvider>
     )
 }
-
-    
-
-    
