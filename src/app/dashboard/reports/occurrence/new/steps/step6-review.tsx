@@ -3,12 +3,28 @@
 
 import type { OccurrenceFormData } from '../form-context';
 import { format } from 'date-fns';
+import { 
+    FileText, 
+    Scale, 
+    Users, 
+    User, 
+    Car, 
+    Box, 
+    Pill, 
+    Target, 
+    BookText, 
+    Lightbulb, 
+    Pen 
+} from 'lucide-react';
 
-const ReviewSection = ({ title, children, hasData, className }: { title: string, children: React.ReactNode, hasData: boolean, className?: string }) => {
+const ReviewSection = ({ title, children, hasData, className, icon: Icon }: { title: string, children: React.ReactNode, hasData: boolean, className?: string, icon?: React.ElementType }) => {
     if (!hasData) return null;
     return (
         <section className={`print-section ${className}`}>
-            <h5 className="print-section-title">{title}</h5>
+            <h5 className="print-section-title">
+                {Icon && <Icon className="h-5 w-5 text-primary" />}
+                <span>{title}</span>
+            </h5>
             <div className="print-section-content">
                 {children}
             </div>
@@ -65,23 +81,23 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
         </header>
 
         <main className="print-main-content">
-            <ReviewSection title="1. Dados Gerais" hasData={true}>
-                 <div className="grid grid-cols-3 gap-x-4">
+            <ReviewSection title="Dados Gerais" hasData={true} icon={FileText}>
+                 <div className="grid grid-cols-2 gap-x-4">
                     <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
                     <p><strong>Origem da Solicitação:</strong> {capitalize(formData.requestOrigin)}</p>
                     <p><strong>Autoria:</strong> {capitalize(formData.authorship)}</p>
                     <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
                     <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
                     <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
-                    <p className="col-span-3"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+                    <p className="col-span-2"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
                 </div>
             </ReviewSection>
 
-            <ReviewSection title="2. Natureza da Ocorrência" hasData={!!formData.nature}>
+            <ReviewSection title="Natureza da Ocorrência" hasData={!!formData.nature} icon={Scale}>
                 <p>{formData.nature}</p>
             </ReviewSection>
 
-            <ReviewSection title="3. Equipe de Atendimento" hasData={team && team.length > 0}>
+            <ReviewSection title="Equipe de Atendimento" hasData={team && team.length > 0} icon={Users}>
                 <table className="print-table">
                     <thead>
                         <tr>
@@ -103,7 +119,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                  <p><strong>Viatura:</strong> {formData.vehicle || 'Não informada'}</p>
             </ReviewSection>
 
-            <ReviewSection title="4. Envolvidos" hasData={involved && involved.length > 0}>
+            <ReviewSection title="Envolvidos" hasData={involved && involved.length > 0} icon={User}>
                 {involved.map(inv => (
                     <div key={inv.id} className="print-involved-card">
                         {inv.type === 'person' && (
@@ -152,7 +168,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             </ReviewSection>
 
             {items.vehicles.length > 0 && 
-                <ReviewSection title="5. Veículos" hasData={true}>
+                <ReviewSection title="Veículos" hasData={true} icon={Car}>
                     <table className="print-table">
                         <thead>
                             <tr>
@@ -181,7 +197,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             }
             
             {items.objects.length > 0 &&
-                <ReviewSection title="6. Objetos" hasData={true}>
+                <ReviewSection title="Objetos" hasData={true} icon={Box}>
                     <table className="print-table">
                         <thead>
                             <tr>
@@ -204,7 +220,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             }
 
             {items.narcotics.length > 0 &&
-                <ReviewSection title="7. Entorpecentes" hasData={true}>
+                <ReviewSection title="Entorpecentes" hasData={true} icon={Pill}>
                     <table className="print-table">
                         <thead>
                             <tr>
@@ -229,7 +245,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             }
             
             {items.weapons.length > 0 &&
-                <ReviewSection title="8. Armas" hasData={true}>
+                <ReviewSection title="Armas" hasData={true} icon={Target}>
                     <table className="print-table">
                         <thead>
                             <tr>
@@ -257,16 +273,15 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                 </ReviewSection>
             }
             
-             <ReviewSection title="9. Narrativa" hasData={!!formData.narrative}>
+             <ReviewSection title="Narrativa" hasData={!!formData.narrative} icon={BookText}>
                 <p className="whitespace-pre-wrap">{formData.narrative}</p>
             </ReviewSection>
             
-            <ReviewSection title="10. Solução" hasData={true}>
+            <ReviewSection title="Solução" hasData={true} icon={Lightbulb}>
                 <p>{getSolutionText()}</p>
             </ReviewSection>
             
-            <div className="print-signatures-section">
-                <p className="print-section-title">11. Assinaturas</p>
+            <ReviewSection title="Assinaturas" hasData={true} icon={Pen}>
                 <div className="print-signatures-grid">
                     {team.map(m => (
                         <div key={m.name} className="print-signature-box">
@@ -275,7 +290,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                         </div>
                     ))}
                 </div>
-            </div>
+            </ReviewSection>
         </main>
 
         <footer className="print-footer">
