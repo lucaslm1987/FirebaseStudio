@@ -58,6 +58,7 @@ function NewOccurrenceReportContent() {
   };
   
   const handleSaveReport = () => {
+    if (!formData) return;
     try {
       // Save to localStorage
       const savedReportsString = localStorage.getItem('occurrenceReports');
@@ -99,6 +100,13 @@ function NewOccurrenceReportContent() {
     }
   }
 
+  if (!formData) {
+    return (
+        <div className="flex h-full items-center justify-center">
+            <p>Carregando formulário...</p>
+        </div>
+    )
+  }
 
   return (
     <div className="flex h-full flex-col">
