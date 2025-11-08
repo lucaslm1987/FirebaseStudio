@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros'] as const;
+const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 const weaponTypes = ['Carabina', 'Espingarda', 'Fuzil', 'Garrucha', 'Metralhadora', 'Pistola', 'Revólver', 'Rifle', 'Submetralhadora'].sort();
 const weaponBrands = ['Taurus', 'CBC', 'Glock', 'Imbel', 'Beretta', 'Colt', 'Smith & Wesson', 'Ruger', 'Sig Sauer', 'Heckler & Koch', 'Outra'].sort();
 

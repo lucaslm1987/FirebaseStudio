@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
-const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros'] as const;
+const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 const units = ['unidade', 'metro', 'litro', 'KG', 'grama'] as const;
 const colors = ["Amarelo", "Azul", "Bege", "Branco", "Cinza", "Dourado", "Laranja", "Marrom", "Prata", "Preto", "Rosa", "Roxo", "Verde", "Vermelho", "Vinho"];
 

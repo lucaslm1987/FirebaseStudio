@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros'] as const;
+const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 
 const vehicleTypes = [
   'automóvel', 'bicicleta', 'bonde', 'caminhão', 'caminhão trator', 'caminhonete',

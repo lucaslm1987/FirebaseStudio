@@ -61,7 +61,7 @@ export type InvolvedCompany = {
 
 export type Vehicle = {
     id: string;
-    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | 'Extraviado' | 'Subtraído' | '';
     type: 'automóvel' | 'bicicleta' | 'bonde' | 'caminhão' | 'caminhão trator' | 'caminhonete' | 'charrete' | 'ciclomotor' | 'microônibus' | 'motocicleta' | 'motoneta' | 'ônibus' | 'quadriciclo' | 'reboque ou semi-reboque' | 'triciclo' | '';
     plate?: string;
     brand?: string;
@@ -74,7 +74,7 @@ export type Vehicle = {
 
 export type ObjectItem = {
     id: string;
-    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | 'Extraviado' | 'Subtraído' | '';
     brand?: string;
     model?: string;
     color?: string;
@@ -94,7 +94,7 @@ export type NarcoticItem = {
 
 export type WeaponItem = {
     id: string;
-    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | 'Extraviado' | 'Subtraído' | '';
     type: 'Pistola' | 'Revólver' | 'Fuzil' | 'Carabina' | 'Garrucha' | 'Espingarda' | 'Rifle' | 'Metralhadora' | 'Submetralhadora' | '';
     brand?: string;
     model?: string;
