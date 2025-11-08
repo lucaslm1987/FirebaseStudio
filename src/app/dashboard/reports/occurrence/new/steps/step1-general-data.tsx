@@ -112,11 +112,13 @@ export function Step1GeneralData() {
   };
 
   const handleAddMember = () => {
-    if (selectedMember && !formData.team.find(m => m.name === selectedMember)) {
+    if (selectedMember && !formData?.team?.find(m => m.name === selectedMember)) {
       addTeamMember(selectedMember);
       setSelectedMember('');
     }
   };
+
+  if (!formData) return null;
 
   return (
     <div className="space-y-8">
@@ -274,7 +276,7 @@ export function Step1GeneralData() {
                     </SelectTrigger>
                     <SelectContent>
                         {allTeamMembers.map((member) => (
-                            <SelectItem key={member} value={member} disabled={formData.team.some(m => m.name === member)}>{member}</SelectItem>
+                            <SelectItem key={member} value={member} disabled={formData.team?.some(m => m.name === member)}>{member}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -285,7 +287,7 @@ export function Step1GeneralData() {
             </div>
         </div>
 
-        {formData.team.length > 0 && (
+        {formData.team?.length > 0 && (
             <div className="rounded-md border p-4 space-y-3">
                 <h4 className="text-sm font-medium">Membros Selecionados:</h4>
                 <ul className="space-y-4">
@@ -357,5 +359,7 @@ export function Step1GeneralData() {
     </div>
   );
 }
+
+    
 
     

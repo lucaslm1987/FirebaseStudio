@@ -100,7 +100,7 @@ function NewOccurrenceReportContent() {
     }
   }
 
-  if (!formData) {
+  if (!formData || formData.id === 'Loading...') {
     return (
         <div className="flex h-full items-center justify-center">
             <p>Carregando formulário...</p>
@@ -249,5 +249,7 @@ export default function NewOccurrenceReportPage() {
         </OccurrenceFormProvider>
     )
 }
+
+    
 
     
