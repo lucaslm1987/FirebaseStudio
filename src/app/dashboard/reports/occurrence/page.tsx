@@ -11,8 +11,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -256,7 +254,7 @@ export default function ConsultOccurrenceReportPage() {
                     filteredReports.map((report) => (
                       <TableRow key={report.id}>
                         <TableCell className="font-medium">{report.id}</TableCell>
-                        <TableCell>{report.factDate ? `${format(new Date(report.factDate), 'dd/MM/yyyy')} ${report.factTime || ''}`: 'N/A'}</TableCell>
+                        <TableCell>{report.factDate ? `${format(new Date(`${report.factDate}T00:00:00`), 'dd/MM/yyyy')} ${report.factTime || ''}`: 'N/A'}</TableCell>
                         <TableCell className="max-w-[250px] truncate">{report.nature || 'N/A'}</TableCell>
                         <TableCell className="max-w-[250px] truncate">{`${report.street || ''}, ${report.number || ''}`}</TableCell>
                         <TableCell className="text-right">

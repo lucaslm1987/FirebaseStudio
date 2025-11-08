@@ -1,6 +1,6 @@
 'use client';
 
-import { useOccurrenceForm, OccurrenceFormData } from '../form-context';
+import type { OccurrenceFormData } from '../form-context';
 import { format } from 'date-fns';
 
 const ReviewSection = ({ title, children, hasData, className }: { title: string, children: React.ReactNode, hasData: boolean, className?: string }) => {
@@ -17,6 +17,11 @@ const ReviewSection = ({ title, children, hasData, className }: { title: string,
 
 
 export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
+
+  if (!formData) {
+    return <div>Carregando revisão...</div>;
+  }
+
   const { involved, items, team } = formData;
 
   const getSolutionText = () => {
@@ -142,104 +147,112 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                 ))}
             </ReviewSection>
 
-            <ReviewSection title="5. Veículos" hasData={items.vehicles.length > 0}>
-                <table className="print-table">
-                    <thead>
-                        <tr>
-                            <th>Condição</th>
-                            <th>Tipo</th>
-                            <th>Placa</th>
-                            <th>Marca/Modelo</th>
-                            <th>Cor</th>
-                            <th>Ano</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.vehicles.map(v => (
-                            <tr key={v.id}>
-                                <td>{v.condition}</td>
-                                <td>{v.type}</td>
-                                <td>{v.plate}</td>
-                                <td>{v.brand} {v.model}</td>
-                                <td>{v.color}</td>
-                                <td>{v.yearManufacture}/{v.yearModel}</td>
+            {items.vehicles.length > 0 && 
+                <ReviewSection title="5. Veículos" hasData={true}>
+                    <table className="print-table">
+                        <thead>
+                            <tr>
+                                <th>Condição</th>
+                                <th>Tipo</th>
+                                <th>Placa</th>
+                                <th>Marca/Modelo</th>
+                                <th>Cor</th>
+                                <th>Ano</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </ReviewSection>
+                        </thead>
+                        <tbody>
+                            {items.vehicles.map(v => (
+                                <tr key={v.id}>
+                                    <td>{v.condition}</td>
+                                    <td>{v.type}</td>
+                                    <td>{v.plate}</td>
+                                    <td>{v.brand} {v.model}</td>
+                                    <td>{v.color}</td>
+                                    <td>{v.yearManufacture}/{v.yearModel}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </ReviewSection>
+            }
             
-            <ReviewSection title="6. Objetos" hasData={items.objects.length > 0}>
-                <table className="print-table">
-                     <thead>
-                        <tr>
-                            <th>Condição</th>
-                            <th>Descrição</th>
-                            <th>Qtd.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.objects.map(o => (
-                            <tr key={o.id}>
-                                <td>{o.condition}</td>
-                                <td>{o.brand || ''} {o.model || ''} {o.notes ? `- ${o.notes}` : ''}</td>
-                                <td>{o.quantity} {o.unit}</td>
+            {items.objects.length > 0 &&
+                <ReviewSection title="6. Objetos" hasData={true}>
+                    <table className="print-table">
+                        <thead>
+                            <tr>
+                                <th>Condição</th>
+                                <th>Descrição</th>
+                                <th>Qtd.</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </ReviewSection>
+                        </thead>
+                        <tbody>
+                            {items.objects.map(o => (
+                                <tr key={o.id}>
+                                    <td>{o.condition}</td>
+                                    <td>{o.brand || ''} {o.model || ''} {o.notes ? `- ${o.notes}` : ''}</td>
+                                    <td>{o.quantity} {o.unit}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </ReviewSection>
+            }
 
-            <ReviewSection title="7. Entorpecentes" hasData={items.narcotics.length > 0}>
-                 <table className="print-table">
-                    <thead>
-                        <tr>
-                            <th>Condição</th>
-                            <th>Tipo</th>
-                            <th>Qtd.</th>
-                            <th>Embalagem</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.narcotics.map(n => (
-                            <tr key={n.id}>
-                                <td>{n.condition}</td>
-                                <td>{n.type}</td>
-                                <td>{n.quantity} {n.unit}</td>
-                                <td>{n.packaging}</td>
+            {items.narcotics.length > 0 &&
+                <ReviewSection title="7. Entorpecentes" hasData={true}>
+                    <table className="print-table">
+                        <thead>
+                            <tr>
+                                <th>Condição</th>
+                                <th>Tipo</th>
+                                <th>Qtd.</th>
+                                <th>Embalagem</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </ReviewSection>
-
-            <ReviewSection title="8. Armas" hasData={items.weapons.length > 0}>
-                 <table className="print-table">
-                    <thead>
-                        <tr>
-                            <th>Condição</th>
-                            <th>Tipo</th>
-                            <th>Marca/Modelo</th>
-                            <th>Nº Série</th>
-                            <th>Calibre</th>
-                            <th>Munições</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.weapons.map(w => (
-                            <tr key={w.id}>
-                                <td>{w.condition}</td>
-                                <td>{w.type}</td>
-                                <td>{w.brand} {w.model}</td>
-                                <td>{w.serialNumber}</td>
-                                <td>{w.calibre}</td>
-                                <td>{w.ammoIntact} intactas, {w.ammoSpent} deflag.</td>
+                        </thead>
+                        <tbody>
+                            {items.narcotics.map(n => (
+                                <tr key={n.id}>
+                                    <td>{n.condition}</td>
+                                    <td>{n.type}</td>
+                                    <td>{n.quantity} {n.unit}</td>
+                                    <td>{n.packaging}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </ReviewSection>
+            }
+            
+            {items.weapons.length > 0 &&
+                <ReviewSection title="8. Armas" hasData={true}>
+                    <table className="print-table">
+                        <thead>
+                            <tr>
+                                <th>Condição</th>
+                                <th>Tipo</th>
+                                <th>Marca/Modelo</th>
+                                <th>Nº Série</th>
+                                <th>Calibre</th>
+                                <th>Munições</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </ReviewSection>
-
+                        </thead>
+                        <tbody>
+                            {items.weapons.map(w => (
+                                <tr key={w.id}>
+                                    <td>{w.condition}</td>
+                                    <td>{w.type}</td>
+                                    <td>{w.brand} {w.model}</td>
+                                    <td>{w.serialNumber}</td>
+                                    <td>{w.calibre}</td>
+                                    <td>{w.ammoIntact} intactas, {w.ammoSpent} deflag.</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </ReviewSection>
+            }
+            
              <ReviewSection title="9. Narrativa" hasData={!!formData.narrative}>
                 <p className="whitespace-pre-wrap">{formData.narrative}</p>
             </ReviewSection>
@@ -261,8 +274,8 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             </div>
         </main>
 
-        <footer className="print-footer print-only">
-            <div className="print-footer-content">
+        <footer className="print-footer">
+             <div className="print-footer-content">
                 <span>Guarda Civil Municipal - 153</span>
             </div>
             <div className="print-footer-line"></div>
