@@ -21,7 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Calendar as CalendarIcon, Search, Printer, AlertTriangle } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, Printer, AlertTriangle, Trash2 } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -120,12 +120,23 @@ export default function ConsultOccurrenceReportPage() {
     window.print();
   }
 
+  const handleClearStorage = () => {
+    if (window.confirm("Tem certeza que deseja apagar todos os BOs de teste? Esta ação não pode ser desfeita.")) {
+      localStorage.removeItem('occurrenceReports');
+      window.location.reload();
+    }
+  }
+
   return (
     <div className="flex h-full flex-col">
       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Consultar Boletins de Ocorrência
         </h1>
+        <Button variant="destructive" size="sm" onClick={handleClearStorage}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            Limpar Registros de Teste
+        </Button>
       </header>
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <Card>
