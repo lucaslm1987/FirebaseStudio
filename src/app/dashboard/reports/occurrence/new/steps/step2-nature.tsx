@@ -146,6 +146,30 @@ export function Step2Nature() {
             />
         </div>
 
+        <div>
+            <Label>Naturezas Selecionadas</Label>
+            <div className="mt-2 flex flex-wrap gap-2 min-h-[40px] p-2 rounded-md border border-input">
+                {selectedNatures.length > 0 ? (
+                    selectedNatures.map(nature => (
+                        <Badge key={nature} variant="secondary" className="text-sm font-medium">
+                           {nature}
+                           <Button 
+                             variant="ghost" 
+                             size="icon" 
+                             className="ml-1 h-4 w-4 rounded-full"
+                             onClick={() => handleRemoveNature(nature)}
+                           >
+                               <X className="h-3 w-3" />
+                               <span className="sr-only">Remover {nature}</span>
+                           </Button>
+                        </Badge>
+                    ))
+                ) : (
+                    <p className="text-sm text-muted-foreground p-1">Nenhuma natureza selecionada.</p>
+                )}
+            </div>
+        </div>
+
         <Accordion type="multiple" className="w-full">
             {Object.keys(filteredCrimes).map(lei => (
                 <AccordionItem key={lei} value={lei}>
@@ -174,30 +198,6 @@ export function Step2Nature() {
                 </AccordionItem>
             ))}
         </Accordion>
-        
-        <div>
-            <Label>Naturezas Selecionadas</Label>
-            <div className="mt-2 flex flex-wrap gap-2 min-h-[40px] p-2 rounded-md border border-input">
-                {selectedNatures.length > 0 ? (
-                    selectedNatures.map(nature => (
-                        <Badge key={nature} variant="secondary" className="text-sm font-medium">
-                           {nature}
-                           <Button 
-                             variant="ghost" 
-                             size="icon" 
-                             className="ml-1 h-4 w-4 rounded-full"
-                             onClick={() => handleRemoveNature(nature)}
-                           >
-                               <X className="h-3 w-3" />
-                               <span className="sr-only">Remover {nature}</span>
-                           </Button>
-                        </Badge>
-                    ))
-                ) : (
-                    <p className="text-sm text-muted-foreground p-1">Nenhuma natureza selecionada.</p>
-                )}
-            </div>
-        </div>
     </div>
   );
 }
