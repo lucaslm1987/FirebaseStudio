@@ -11,6 +11,9 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -137,6 +140,12 @@ export default function ConsultOccurrenceReportPage() {
     <>
     <Dialog open={isPrintModalOpen} onOpenChange={setPrintModalOpen}>
         <DialogContent className="max-w-4xl printable-content-only p-0 border-0">
+             <DialogHeader className="sr-only">
+                <DialogTitle>Visualização de Impressão do Boletim</DialogTitle>
+                <DialogDescription>
+                    Este é o layout do boletim de ocorrência para impressão.
+                </DialogDescription>
+            </DialogHeader>
             {selectedReport && <Step6Review formData={selectedReport} />}
         </DialogContent>
     </Dialog>
