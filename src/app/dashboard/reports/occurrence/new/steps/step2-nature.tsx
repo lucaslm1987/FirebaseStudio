@@ -80,7 +80,7 @@ const crimesPorLei = {
         { "article": "Art. 38", "name": "Destruição de floresta de preservação permanente" },
         { "article": "Art. 39", "name": "Cortar árvores em floresta de preservação permanente sem permissão" },
         { "article": "Art. 42", "name": "Fabricar, vender, transportar ou soltar balões" },
-        { article: "Art. 50", name: "Desmatamento ilegal" }
+        { "article": "Art. 50", "name": "Desmatamento ilegal" }
     ],
     "OUTROS - NÃO CRIMINAL": [
         { article: "", name: "Acidente de trânsito sem vítima - Sinistro de Trânsito" },
@@ -90,6 +90,7 @@ const crimesPorLei = {
         { article: "", name: "Localização/Apreensão de Objeto" },
         { article: "", name: "Localização/Apreensão de Veículo" },
         { article: "", name: "Não Criminal - Mediação Social" },
+        { article: "", name: "Perda/Extravio" },
         { article: "", name: "Outros - Não Criminal" }
     ]
 };
