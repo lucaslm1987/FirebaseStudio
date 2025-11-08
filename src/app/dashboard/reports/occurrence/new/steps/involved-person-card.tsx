@@ -4,7 +4,7 @@
 import type { InvolvedPerson } from '../form-context';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Trash2, Edit, LucideIcon, ShieldQuestion, UserCheck, UserX, UserCircle, UserSquare, UserVoice, Users, HelpCircle } from 'lucide-react';
+import { User, Trash2, Edit, LucideIcon, ShieldQuestion, UserCheck, UserX, UserCircle, UserSquare, MessageSquareText, Users, HelpCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 
@@ -19,7 +19,7 @@ const conditionIcons: Record<InvolvedPerson['condition'], LucideIcon> = {
     'Autor': UserX,
     'Capturado': UserCheck,
     'Condutor': UserCircle,
-    'Declarante': UserVoice,
+    'Declarante': MessageSquareText,
     'Investigado': ShieldQuestion,
     'Parte': Users,
     'Representante': UserSquare,
