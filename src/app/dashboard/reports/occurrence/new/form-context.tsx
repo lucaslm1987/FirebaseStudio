@@ -9,6 +9,47 @@ export type TeamMember = {
     role: string;
 };
 
+export type InvolvedPerson = {
+  id: string;
+  type: 'person' | 'company';
+  condition: 'Adolescente' | 'Autor' | 'Capturado' | 'Condutor' | 'Declarante' | 'Investigado' | 'Parte' | 'Representante' | 'Testemunha' | 'Vítima' | '';
+  name: string;
+  socialName?: string;
+  rg?: string;
+  cpf?: string;
+  fatherName?: string;
+  motherName?: string;
+  birthDate?: string;
+  color?: 'Branca' | 'Preta' | 'Parda' | 'Amarela' | 'Indígena';
+  gender?: 'Masculino' | 'Feminino';
+  profession?: string;
+  education?: 'Analfabeto' | 'Fundamental Incompleto' | 'Fundamental Completo' | 'Médio Incompleto' | 'Médio Completo' | 'Superior Incompleto' | 'Superior Completo' | 'Pós-graduação';
+  hasChildren?: 'Sim' | 'Não';
+  childrenCount?: number;
+  street?: string;
+  number?: string;
+  neighborhood?: string;
+  complement?: string;
+  city?: string;
+  state?: string;
+  phone?: string;
+  email?: string;
+  isConducted?: boolean;
+  isArrested?: boolean;
+  useHandcuffs?: boolean;
+  handcuffReason?: 'Receio de fuga' | 'Perigo à integridade física de terceiros' | 'Resistência';
+  version?: string;
+};
+
+// Placeholder for company data
+export type InvolvedCompany = {
+    id: string;
+    type: 'company';
+    name: string;
+    // ... other company fields
+};
+
+
 export interface OccurrenceFormData {
   factDate?: string;
   factTime?: string;
@@ -30,7 +71,7 @@ export interface OccurrenceFormData {
   team: TeamMember[];
   vehicle?: string;
   nature?: string;
-  involved?: string;
+  involved: Array<InvolvedPerson | InvolvedCompany>;
   items?: string;
   narrative?: string;
 }
@@ -41,6 +82,9 @@ interface OccurrenceFormContextType {
   addTeamMember: (name: string) => void;
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
+  addInvolved: (involved: InvolvedPerson | InvolvedCompany) => void;
+  updateInvolved: (involvedId: string, updatedData: Partial<InvolvedPerson | InvolvedCompany>) => void;
+  removeInvolved: (involvedId: string) => void;
   resetForm: () => void;
 }
 
@@ -48,6 +92,7 @@ const OccurrenceFormContext = createContext<OccurrenceFormContextType | undefine
 
 const initialFormData: OccurrenceFormData = {
   team: [],
+  involved: [],
   requestOrigin: 'deparou',
   authorship: 'desconhecida',
   isFlagrant: false,
@@ -104,12 +149,33 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const updateTeamMember = useCallback((name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => {
     setFormData(prev => ({
         ...prev,
-        team: prev.team.map(member => 
+        team: prev.team.map(member =>
             member.name === name ? { ...member, [field]: value } : member
         )
     }));
   }, []);
-  
+
+  const addInvolved = useCallback((involved: InvolvedPerson | InvolvedCompany) => {
+    setFormData(prev => ({
+      ...prev,
+      involved: [...prev.involved, involved]
+    }));
+  }, []);
+
+  const updateInvolved = useCallback((involvedId: string, updatedData: Partial<InvolvedPerson | InvolvedCompany>) => {
+    setFormData(prev => ({
+      ...prev,
+      involved: prev.involved.map(i => i.id === involvedId ? { ...i, ...updatedData } : i)
+    }));
+  }, []);
+
+  const removeInvolved = useCallback((involvedId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      involved: prev.involved.filter(i => i.id !== involvedId)
+    }));
+  }, []);
+
   const resetForm = useCallback(() => {
     setFormData(initialFormData);
      try {
@@ -126,6 +192,9 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     addTeamMember,
     removeTeamMember,
     updateTeamMember,
+    addInvolved,
+    updateInvolved,
+    removeInvolved,
     resetForm,
   };
 

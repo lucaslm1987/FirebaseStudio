@@ -1,25 +1,48 @@
 
 'use client';
 
+import { useState } from 'react';
 import { useOccurrenceForm } from '../form-context';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { UserPlus, Building2 } from 'lucide-react';
+import { UserPlus, Building2, User, Trash2, Edit } from 'lucide-react';
+import { PersonForm } from './person-form';
+import type { InvolvedPerson, InvolvedCompany } from '../form-context';
+import { InvolvedPersonCard } from './involved-person-card';
 
 export function Step3Involved() {
-  const { formData, updateField } = useOccurrenceForm();
-  
-  // Placeholder para a lógica futura
+  const { formData, removeInvolved } = useOccurrenceForm();
+  const [isPersonFormOpen, setIsPersonFormOpen] = useState(false);
+  const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState<InvolvedPerson | undefined>(undefined);
+
   const handleAddPerson = () => {
-    console.log("Adicionar Pessoa Física");
+    setSelectedPerson(undefined);
+    setIsPersonFormOpen(true);
   };
+  
+  const handleEditPerson = (person: InvolvedPerson) => {
+    setSelectedPerson(person);
+    setIsPersonFormOpen(true);
+  }
 
   const handleAddEntity = () => {
-    console.log("Adicionar Pessoa Jurídica");
+    // Placeholder for company logic
+    alert("Funcionalidade para Pessoa Jurídica ainda não implementada.");
+    // setIsCompanyFormOpen(true);
   };
 
   return (
     <div className="space-y-6">
+        <PersonForm 
+            isOpen={isPersonFormOpen} 
+            setIsOpen={setIsPersonFormOpen}
+            personData={selectedPerson}
+        />
+        {/* Placeholder for CompanyForm
+        <CompanyForm isOpen={isCompanyFormOpen} setIsOpen={setIsCompanyFormOpen} />
+        */}
+
         <div className="text-center">
             <h3 className="text-lg font-medium">Pessoas Envolvidas</h3>
             <p className="text-muted-foreground text-sm">Adicione as pessoas físicas ou jurídicas relacionadas à ocorrência.</p>
@@ -59,10 +82,28 @@ export function Step3Involved() {
 
         <div className="mt-8">
             <h4 className="font-medium mb-4">Envolvidos Adicionados:</h4>
-            <div className="rounded-md border min-h-[100px] p-4 bg-muted/30">
-                <p className="text-sm text-muted-foreground">Nenhum envolvido adicionado ainda.</p>
-                {/* Futuramente, a lista de envolvidos será exibida aqui */}
-            </div>
+            {formData.involved.length > 0 ? (
+                <div className="space-y-4">
+                    {formData.involved.map(involved => {
+                        if (involved.type === 'person') {
+                            return (
+                                <InvolvedPersonCard 
+                                    key={involved.id}
+                                    person={involved as InvolvedPerson}
+                                    onEdit={() => handleEditPerson(involved as InvolvedPerson)}
+                                    onRemove={() => removeInvolved(involved.id)}
+                                />
+                            )
+                        }
+                        // Render company card here in the future
+                        return null;
+                    })}
+                </div>
+            ) : (
+                <div className="rounded-md border min-h-[100px] p-4 bg-muted/30 flex items-center justify-center">
+                    <p className="text-sm text-muted-foreground">Nenhum envolvido adicionado ainda.</p>
+                </div>
+            )}
         </div>
     </div>
   );
