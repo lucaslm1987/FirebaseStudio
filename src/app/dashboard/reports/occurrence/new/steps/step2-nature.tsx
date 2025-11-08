@@ -48,6 +48,7 @@ const crimesPorLei = {
     ],
     "Código do Consumidor": [
         { article: "Art. 18", name: "Produto com defeito" },
+        { article: "Art. 66", name: "Afirmação falsa ou enganosa" },
         { article: "Art. 67", name: "Publicidade enganosa" }
     ],
     "Lei de Drogas": [
