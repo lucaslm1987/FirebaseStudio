@@ -39,9 +39,10 @@ const crimesPorLei = {
     ],
     "CTB": [
         { article: "Art. 306", name: "Dirigir sob efeito de álcool" },
-        { article: "Art. 311", name: "Excesso de velocidade próximo a escolas/hospitais" },
-        { article: "Art. 208", name: "Avançar sinal vermelho" },
-        { article: "Art. 175", name: "Manobra perigosa" }
+        { article: "Art. 302", name: "Homicídio culposo na direção de veículo" },
+        { article: "Art. 303", name: "Lesão corporal culposa na direção de veículo" },
+        { article: "Art. 305", name: "Fuga do local do acidente" },
+        { article: "Art. 309", name: "Dirigir sem habilitação gerando perigo" },
     ],
     "Código do Consumidor": [
         { article: "Art. 18", name: "Produto com defeito" },
