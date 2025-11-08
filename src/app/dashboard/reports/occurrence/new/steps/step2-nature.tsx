@@ -82,6 +82,16 @@ const crimesPorLei = {
         { "article": "Art. 42", "name": "Fabricar, vender, transportar ou soltar balões" },
         { article: "Art. 50", name: "Desmatamento ilegal" }
     ],
+    "OUTROS - NÃO CRIMINAL": [
+        { article: "", name: "Acidente de trânsito sem vítima - Sinistro de Trânsito" },
+        { article: "", name: "Averiguação" },
+        { article: "", name: "Captura de procurado" },
+        { article: "", name: "Cumprimento de mandado de busca domiciliar - Auxílio PC/PM" },
+        { article: "", name: "Localização/Apreensão de Objeto" },
+        { article: "", name: "Localização/Apreensão de Veículo" },
+        { article: "", name: "Não Criminal - Mediação Social" },
+        { article: "", name: "Outros - Não Criminal" }
+    ]
 };
 
 type CrimeKey = keyof typeof crimesPorLei;
@@ -94,7 +104,7 @@ export function Step2Nature() {
   const selectedNatures = formData.nature ? formData.nature.split(',').filter(n => n).map(s => s.trim()) : [];
 
   const handleNatureChange = (crime: Crime, isSelected: boolean) => {
-    const natureString = `${crime.name} (${crime.article})`;
+    const natureString = crime.article ? `${crime.name} (${crime.article})` : crime.name;
     let newNatures = [...selectedNatures];
     if (isSelected) {
       if (!newNatures.includes(natureString)) {
@@ -142,7 +152,7 @@ export function Step2Nature() {
                     <AccordionContent>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                             {(filteredCrimes[lei as CrimeKey]).map(crime => {
-                                const natureString = `${crime.name} (${crime.article})`;
+                                const natureString = crime.article ? `${crime.name} (${crime.article})` : crime.name;
                                 const crimeId = `${lei}-${crime.name}-${crime.article}`.replace(/\s/g, '-');
                                 return (
                                 <div key={crimeId} className="flex items-center space-x-2">
@@ -152,7 +162,8 @@ export function Step2Nature() {
                                         onCheckedChange={(checked) => handleNatureChange(crime, !!checked)}
                                     />
                                     <Label htmlFor={crimeId} className="font-normal cursor-pointer">
-                                        {crime.name} <span className="text-muted-foreground text-xs">({crime.article})</span>
+                                        {crime.name} 
+                                        {crime.article && <span className="text-muted-foreground text-xs"> ({crime.article})</span>}
                                     </Label>
                                 </div>
                             )}
