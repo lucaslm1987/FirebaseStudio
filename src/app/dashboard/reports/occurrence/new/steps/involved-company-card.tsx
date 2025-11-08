@@ -28,7 +28,7 @@ export function InvolvedCompanyCard({ company, onEdit, onRemove }: InvolvedCompa
         <Card className="flex flex-col sm:flex-row">
             <CardHeader className="flex flex-row items-start sm:items-center justify-between sm:justify-start gap-4 p-4 sm:w-2/5">
                 <div className="flex items-center gap-4">
-                    <Building className="h-8 w-8 text-primary" />
+                    <Icon className="h-8 w-8 text-primary" />
                     <div>
                         <CardTitle className="text-base font-semibold">{company.corporateName}</CardTitle>
                         <CardDescription>{company.tradeName || ' '}</CardDescription>
