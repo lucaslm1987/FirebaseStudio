@@ -59,11 +59,16 @@ export type InvolvedCompany = {
     representative?: string;
 };
 
+export type ItemEntry = {
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    description: string;
+};
+
 export type ItemsData = {
-    vehicles?: string;
-    objects?: string;
-    narcotics?: string;
-    weapons?: string;
+    vehicles?: ItemEntry;
+    objects?: ItemEntry;
+    narcotics?: ItemEntry;
+    weapons?: ItemEntry;
 }
 
 
@@ -96,7 +101,7 @@ export interface OccurrenceFormData {
 interface OccurrenceFormContextType {
   formData: OccurrenceFormData;
   updateField: (newData: Partial<OccurrenceFormData>) => void;
-  updateItemsField: (field: keyof ItemsData, value: string) => void;
+  updateItem: (field: keyof ItemsData, value: Partial<ItemEntry>) => void;
   addTeamMember: (name: string) => void;
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
@@ -111,7 +116,12 @@ const OccurrenceFormContext = createContext<OccurrenceFormContextType | undefine
 const initialFormData: OccurrenceFormData = {
   team: [],
   involved: [],
-  items: {},
+  items: {
+    vehicles: { condition: '', description: '' },
+    objects: { condition: '', description: '' },
+    narcotics: { condition: '', description: '' },
+    weapons: { condition: '', description: '' },
+  },
   requestOrigin: 'deparou',
   authorship: 'desconhecida',
   isFlagrant: false,
@@ -130,12 +140,17 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        // Ensure 'involved' is always an array to prevent crashes from old localStorage data
         if (!Array.isArray(parsedData.involved)) {
           parsedData.involved = [];
         }
         if (typeof parsedData.items !== 'object' || parsedData.items === null) {
-          parsedData.items = {};
+          parsedData.items = initialFormData.items;
+        } else {
+            // Ensure all item categories exist
+            parsedData.items = {
+                ...initialFormData.items,
+                ...parsedData.items,
+            };
         }
         setFormData(parsedData);
       }
@@ -159,12 +174,15 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     setFormData(prev => ({ ...prev, ...newData }));
   }, []);
   
-  const updateItemsField = useCallback((field: keyof ItemsData, value: string) => {
+  const updateItem = useCallback((field: keyof ItemsData, value: Partial<ItemEntry>) => {
     setFormData(prev => ({
       ...prev,
       items: {
         ...prev.items,
-        [field]: value
+        [field]: {
+          ...prev.items[field],
+          ...value,
+        }
       }
     }));
   }, []);
@@ -227,7 +245,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const contextValue = {
     formData,
     updateField,
-    updateItemsField,
+    updateItem,
     addTeamMember,
     removeTeamMember,
     updateTeamMember,
