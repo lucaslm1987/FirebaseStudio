@@ -1,127 +1,152 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-@media print {
-    @page {
-        size: A4;
-        margin: 1.5cm;
-    }
+@page {
+    size: A4;
+    margin: 1.5cm;
+}
 
-    body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        font-family: 'Inter', sans-serif;
-    }
+body {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    font-family: 'Inter', sans-serif;
+}
 
-    .print-container {
-        width: 100%;
-        margin: 0 auto;
-        font-size: 10px;
-    }
+.print-container {
+    font-family: 'Inter', sans-serif;
+    font-size: 10pt;
+}
 
-    .print-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #ccc;
-        margin-bottom: 1rem;
-    }
-    
-    .print-header h2 {
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-    
-    .print-main-content {
-        padding-bottom: 5rem; /* Increased padding to push content up from footer */
-    }
+.print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
 
-    .print-section {
-        margin-bottom: 1.5rem;
-        break-inside: avoid; /* Prevents breaking section inside a page */
-    }
+.print-header h2 {
+    font-size: 16pt;
+    font-weight: 700;
+    margin: 0;
+}
 
-    .print-section-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.25rem;
-        border-bottom: 1px solid #ddd;
-    }
-    
-    .print-section-title svg {
-        width: 1rem;
-        height: 1rem;
-    }
+.print-header p {
+    font-size: 10pt;
+    margin: 0;
+}
 
-    .print-section-content {
-        display: grid;
-        gap: 0.5rem;
-    }
+.print-main-content {
+    padding-bottom: 5rem; /* Prevents content from overlapping with footer */
+}
 
-    .print-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 0.5rem;
-    }
+.print-section {
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
 
-    .print-table th,
-    .print-table td {
-        border: 1px solid #ddd;
-        padding: 6px;
-        text-align: left;
-    }
+.print-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12pt;
+    font-weight: 600;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+}
 
-    .print-table th {
-        background-color: #f2f2f2;
-        font-weight: 600;
-    }
+.print-section-title svg {
+    width: 18px;
+    height: 18px;
+}
 
-    .print-involved-card {
-        border: 1px solid #ddd;
-        padding: 0.75rem;
-        margin-bottom: 1rem;
-        border-radius: 4px;
-        break-inside: avoid;
-    }
-    
-    .print-involved-card p {
-        margin-bottom: 0.25rem;
-    }
 
-    .print-footer {
-        position: fixed;
-        bottom: 1cm;
-        left: 1.5cm;
-        right: 1.5cm;
-        text-align: left;
-        font-size: 9px;
-        color: #555;
-    }
-    
-    .print-footer-content {
-        border-top: 1px solid #ccc;
-        padding-top: 0.5rem;
-    }
+.print-section-content p {
+    margin: 0 0 5px 0;
+}
 
-    .whitespace-pre-wrap {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
+.print-section-content .grid {
+    display: grid;
+    gap: 0 16px;
+}
 
-    .print-signatures-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        margin-top: 2rem;
-    }
+.print-section-content .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
-    .print-signature-box {
-        border-top: 1px solid #000;
-        padding-top: 0.5rem;
-        text-align: center;
-    }
+.print-section-content .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.print-section-content .col-span-2 {
+    grid-column: span 2 / span 2;
+}
+
+.print-section-content .col-span-3 {
+    grid-column: span 3 / span 3;
+}
+
+
+.print-involved-card {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+}
+
+.print-involved-card strong {
+    font-weight: 600;
+}
+
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.print-table th, .print-table td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: left;
+}
+
+.print-table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+.whitespace-pre-wrap {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.print-signatures-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.print-signature-box {
+    border-top: 1px solid #000;
+    padding-top: 5px;
+    text-align: center;
+}
+
+.print-footer {
+    position: fixed;
+    bottom: 0;
+    left: 1.5cm;
+    right: 1.5cm;
+    text-align: left;
+    font-size: 9pt;
+    color: #555;
+    padding-top: 10px;
+}
+
+.print-footer p {
+    margin: 0;
 }
