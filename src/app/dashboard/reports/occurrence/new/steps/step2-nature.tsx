@@ -82,6 +82,9 @@ const crimesPorLei = {
         { "article": "Art. 42", "name": "Fabricar, vender, transportar ou soltar balões" },
         { "article": "Art. 50", "name": "Desmatamento ilegal" }
     ],
+    "Lei Maria da Penha": [
+        { article: "Art. 24-A", name: "Descumprimento de medida protetiva de urgência" },
+    ],
     "OUTROS - NÃO CRIMINAL": [
         { article: "", name: "Acidente de trânsito sem vítima - Sinistro de Trânsito" },
         { article: "", name: "Averiguação" },
