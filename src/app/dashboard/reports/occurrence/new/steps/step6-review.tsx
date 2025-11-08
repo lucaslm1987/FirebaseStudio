@@ -3,7 +3,6 @@
 
 import { useOccurrenceForm } from '../form-context';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 
 const ReviewSection = ({ title, children, hasData }: { title: string, children: React.ReactNode, hasData: boolean }) => {
     if (!hasData) {
@@ -41,14 +40,14 @@ export function Step6Review() {
             <h4 className="font-semibold mb-4">Resumo da Ocorrência</h4>
             <div className="space-y-4 text-sm">
                 <div className="grid grid-cols-2 gap-2">
-                    <p><strong>Data do Fato:</strong> {formData.factDate || 'Não informado'}</p>
-                    <p><strong>Hora do Fato:</strong> {formData.factTime || 'Não informado'}</p>
-                    <p><strong>Origem:</strong> {formData.requestOrigin || 'Não informado'}</p>
-                    <p><strong>Autoria:</strong> {formData.authorship || 'Não informado'}</p>
+                    <div><strong>Data do Fato:</strong> {formData.factDate || 'Não informado'}</div>
+                    <div><strong>Hora do Fato:</strong> {formData.factTime || 'Não informado'}</div>
+                    <div><strong>Origem:</strong> {formData.requestOrigin || 'Não informado'}</div>
+                    <div><strong>Autoria:</strong> {formData.authorship || 'Não informado'}</div>
                 </div>
-                 <p><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || ''}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
-                 <p><strong>Viatura:</strong> {formData.vehicle || 'Não informado'}</p>
-                 <p><strong>Natureza:</strong> {formData.nature || 'Não informado'}</p>
+                 <div><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || ''}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</div>
+                 <div><strong>Viatura:</strong> {formData.vehicle || 'Não informado'}</div>
+                 <div><strong>Natureza:</strong> {formData.nature || 'Não informado'}</div>
                  
                  <ReviewSection title="Envolvidos" hasData={involved.length > 0}>
                     {involved.map(inv => (
@@ -56,13 +55,14 @@ export function Step6Review() {
                             {inv.type === 'person' && (
                                 <>
                                     <div className="flex items-center gap-2"><strong>{inv.name}</strong> <Badge variant="outline">{inv.condition}</Badge></div>
-                                    <p>RG: {inv.rg || 'N/A'} - CPF: {inv.cpf || 'N/A'}</p>
+                                    <div>RG: {inv.rg || 'N/A'} - CPF: {inv.cpf || 'N/A'}</div>
+                                    <div>Notificação Eletrônica: {inv.acceptsElectronicNotification || 'Não'}</div>
                                 </>
                             )}
                             {inv.type === 'company' && (
                                 <>
                                     <div className="flex items-center gap-2"><strong>{inv.corporateName}</strong> <Badge variant="outline">{inv.condition}</Badge></div>
-                                    <p>CNPJ: {inv.cnpj || 'N/A'}</p>
+                                    <div>CNPJ: {inv.cnpj || 'N/A'}</div>
                                 </>
                             )}
                         </div>
@@ -103,11 +103,11 @@ export function Step6Review() {
 
                  <div>
                     <p className="font-semibold">Narrativa:</p>
-                    <p className="whitespace-pre-wrap p-2 bg-background/50 rounded-md">{formData.narrative || 'Não informada'}</p>
+                    <div className="whitespace-pre-wrap p-2 bg-background/50 rounded-md">{formData.narrative || 'Não informada'}</div>
                  </div>
                  
                  <div>
-                    <p><strong>Solução:</strong> {getSolutionText()}</p>
+                    <strong>Solução:</strong> {getSolutionText()}
                  </div>
                  
                  <div className="border-t pt-4">

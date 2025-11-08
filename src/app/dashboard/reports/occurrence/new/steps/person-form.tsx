@@ -56,6 +56,7 @@ const initialPersonState: Omit<InvolvedPerson, 'id' | 'type'> = {
     state: '',
     phone: '',
     email: '',
+    acceptsElectronicNotification: 'Não',
     isConducted: false,
     isArrested: false,
     useHandcuffs: false,
@@ -336,6 +337,14 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
                 </div>
             </div>
 
+            <div className="space-y-2">
+                <Label>Aceita ser notificado por meio eletrônico?</Label>
+                 <RadioGroup value={person.acceptsElectronicNotification} onValueChange={handleRadioChange('acceptsElectronicNotification')} className="flex gap-4">
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Sim" id="notif-sim" /><Label htmlFor="notif-sim">Sim</Label></div>
+                    <div className="flex items-center space-x-2"><RadioGroupItem value="Não" id="notif-nao" /><Label htmlFor="notif-nao">Não</Label></div>
+                </RadioGroup>
+            </div>
+
             {/* Legal Status */}
             <h3 className="text-md font-medium border-t pt-4">Situação Legal</h3>
             <div className="flex flex-wrap items-center gap-6">
@@ -369,5 +378,3 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
     </Dialog>
   );
 }
-
-    

@@ -34,6 +34,7 @@ export type InvolvedPerson = {
   state?: string;
   phone?: string;
   email?: string;
+  acceptsElectronicNotification?: 'Sim' | 'Não';
   isConducted?: boolean;
   isArrested?: boolean;
   useHandcuffs?: boolean;
