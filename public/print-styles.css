@@ -1,102 +1,108 @@
+/*
+  Regras de estilo para impressão do Boletim de Ocorrência.
+  Este arquivo garante que o HTML seja formatado corretamente em um layout A4.
+*/
 
 @media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    background-color: #fff !important;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #fff;
   }
 
-  .print-hidden,
-  .print-hidden * {
-    display: none !important;
-  }
-
-  .print-only {
-    display: block !important;
-  }
-  
   .print-container {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #fff !important;
+    padding-top: 1.5cm;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    background-color: #fff;
+    color: #000;
   }
 
-  .print-container * {
-    background-color: transparent !important;
-    color: #000 !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
+  .print-header,
+  .print-footer {
+    position: static;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #000;
   }
 
   .print-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 1.5rem;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .print-header h2 {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: bold;
     margin: 0;
   }
 
   .print-header p {
+    font-size: 0.9rem;
     margin: 0;
-    font-size: 0.875rem;
+  }
+
+  .print-header .text-right {
+    text-align: right;
+  }
+
+  .print-header .text-right p {
+    margin-bottom: 2px;
   }
 
   .print-main-content {
-    padding: 1.5rem;
+    margin: 0;
+    padding: 0;
   }
 
   .print-section {
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
+    padding: 10px;
     page-break-inside: avoid;
   }
-  
+
+  .print-section h5,
   .print-section-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    text-transform: uppercase;
-    border-bottom: 1px solid #666;
-    padding-bottom: 0.25rem;
-    margin-bottom: 1rem;
-  }
-
-  .print-section-content p {
-    margin: 0 0 0.5rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: #000;
   }
   
-  .print-section-content .grid {
-    display: grid;
-    gap: 0.25rem 1rem;
+  .print-section-content {
+    font-size: 0.9rem;
+    line-height: 1.4;
   }
-
-  .print-section-content .grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .print-section-content .col-span-3 {
-    grid-column: span 3 / span 3;
+  
+  .print-section-content p {
+    margin-bottom: 5px;
   }
 
   .print-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
+    margin-top: 10px;
     page-break-inside: avoid;
   }
 
-  .print-table th, .print-table td {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
+  .print-table th,
+  .print-table td {
+    border: 1px solid #ddd;
+    padding: 6px;
     text-align: left;
-    font-size: 0.8rem;
-    vertical-align: top;
+    font-size: 0.85rem;
   }
 
   .print-table th {
@@ -109,57 +115,52 @@
   }
 
   .print-involved-card {
-    border: 1px solid #aaa;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-bottom: 10px;
     page-break-inside: avoid;
+    background-color: #fff;
+  }
+
+  .print-involved-card .grid {
+    display: grid;
+    gap: 0 1rem;
+  }
+
+  .print-involved-card .grid p {
+    margin: 2px 0;
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .col-span-3 {
+    grid-column: span 3 / span 3;
+  }
+  
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
   }
 
   .print-footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 1.5cm;
+    right: 1.5cm;
+    width: auto;
     text-align: center;
-    font-size: 0.75rem;
-    padding-top: 1rem;
-    margin-top: 2rem;
-    width: 100%;
-    page-break-before: auto;
-  }
-  
-  .print-footer-content {
-    font-weight: bold;
+    font-size: 0.8rem;
+    color: #555;
   }
 
   .print-footer-line {
+    border-top: 1px solid #ccc;
+    margin: 5px auto;
     width: 100%;
-    height: 1px;
-    background-color: #000;
-    margin: 0.5rem 0;
   }
 
-  .print-signatures-section {
-    margin-top: 3rem;
-    page-break-inside: avoid;
-  }
-
-  .print-signatures-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3rem;
-    margin-top: 2rem;
-  }
-
-  .print-signature-box {
-    border-top: 1px solid #000;
-    padding-top: 0.5rem;
-    text-align: center;
-  }
-
-  .whitespace-pre-wrap {
-    white-space: pre-wrap;
-    font-family: inherit;
-    font-size: inherit;
+  .sr-only, .print-hidden {
+    display: none !important;
   }
 }
