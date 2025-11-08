@@ -137,6 +137,8 @@ export interface OccurrenceFormData {
   involved: Array<InvolvedPerson | InvolvedCompany>;
   items: ItemsData;
   narrative?: string;
+  solutionType?: 'register' | 'police_station';
+  solutionPoliceReport?: string;
 }
 
 interface OccurrenceFormContextType {
@@ -179,6 +181,7 @@ const initialFormData: OccurrenceFormData = {
   isFlagrant: false,
   isInfraction: false,
   isDomesticViolence: false,
+  solutionType: 'register',
 };
 
 const LOCAL_STORAGE_KEY = 'occurrenceFormData';

@@ -6,6 +6,13 @@ import { useOccurrenceForm } from '../form-context';
 export function Step6Review() {
   const { formData } = useOccurrenceForm();
 
+  const getSolutionText = () => {
+    if (formData.solutionType === 'police_station') {
+      return `Delegacia de Polícia (BO PC: ${formData.solutionPoliceReport || 'Não informado'})`;
+    }
+    return 'BO para registro';
+  };
+
   return (
     <div className="space-y-6">
         <h3 className="text-lg font-medium">Revisão e Encerramento</h3>
@@ -34,6 +41,9 @@ export function Step6Review() {
                  <div>
                     <p className="font-semibold">Narrativa:</p>
                     <p className="whitespace-pre-wrap">{formData.narrative}</p>
+                 </div>
+                 <div>
+                    <p><strong>Solução:</strong> {getSolutionText()}</p>
                  </div>
             </div>
         </div>
