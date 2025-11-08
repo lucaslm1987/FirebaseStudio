@@ -24,6 +24,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Copy } from 'lucide-react';
 
 const conditions = ['Adolescente', 'Autor', 'Capturado', 'Condutor', 'Declarante', 'Investigado', 'Parte', 'Representante', 'Testemunha', 'Vítima'] as const;
 const colors = ['Branca', 'Preta', 'Parda', 'Amarela', 'Indígena'] as const;
@@ -99,7 +100,7 @@ const maskPhone = (value: string) => {
 
 
 export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
-  const { addInvolved, updateInvolved } = useOccurrenceForm();
+  const { formData, addInvolved, updateInvolved } = useOccurrenceForm();
   const [person, setPerson] = useState<Omit<InvolvedPerson, 'id' | 'type'>>(initialPersonState);
   
   useEffect(() => {
@@ -142,6 +143,18 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
      }
     setPerson(prev => ({ ...prev, ...update }));
   };
+
+  const handleCopyAddress = () => {
+    setPerson(prev => ({
+        ...prev,
+        street: formData.street || '',
+        number: formData.number || '',
+        neighborhood: formData.neighborhood || '',
+        complement: formData.complement || '',
+        city: formData.city || '',
+        state: formData.state || '',
+    }));
+  }
 
   const handleSubmit = () => {
     if (personData) {
@@ -271,7 +284,13 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
             </div>
 
             {/* Contact Info */}
-            <h3 className="text-md font-medium border-t pt-4">Dados de Contato</h3>
+            <div className="flex justify-between items-center border-t pt-4">
+                <h3 className="text-md font-medium">Dados de Contato</h3>
+                 <Button variant="outline" size="sm" onClick={handleCopyAddress}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    É o mesmo da ocorrência?
+                 </Button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="street">Rua</Label>
