@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useOccurrenceForm, type ItemEntry, type Vehicle } from '../form-context';
+import { useOccurrenceForm, type ItemEntry, type Vehicle, type ObjectItem } from '../form-context';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -17,19 +17,17 @@ import { Button } from '@/components/ui/button';
 import { Car, Box, Pill, Target, PlusCircle } from 'lucide-react';
 import { VehicleForm } from './vehicle-form';
 import { VehicleCard } from './vehicle-card';
+import { ObjectForm } from './object-form';
+import { ObjectCard } from './object-card';
 
 
 const itemConditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros'] as const;
 
 const ItemEntrySection = ({ 
-    title, 
-    icon, 
     field, 
     placeholder 
 }: { 
-    title: string, 
-    icon: React.ReactNode, 
-    field: 'objects' | 'narcotics' | 'weapons', 
+    field: 'narcotics' | 'weapons', 
     placeholder: string 
 }) => {
     const { formData, updateItemEntry } = useOccurrenceForm();
@@ -58,7 +56,7 @@ const ItemEntrySection = ({
                 </Select>
             </div>
             <div className="space-y-2">
-                <Label htmlFor={field} className="sr-only">{title}</Label>
+                <Label htmlFor={field} className="sr-only">{field}</Label>
                 <Textarea
                     id={field}
                     placeholder={placeholder}
@@ -119,6 +117,54 @@ const VehicleSection = () => {
     )
 }
 
+const ObjectSection = () => {
+    const { formData, removeObject } = useOccurrenceForm();
+    const [isFormOpen, setFormOpen] = useState(false);
+    const [selectedObject, setSelectedObject] = useState<ObjectItem | undefined>(undefined);
+
+    const handleAdd = () => {
+        setSelectedObject(undefined);
+        setFormOpen(true);
+    }
+
+    const handleEdit = (object: ObjectItem) => {
+        setSelectedObject(object);
+        setFormOpen(true);
+    }
+
+    return (
+        <>
+            <ObjectForm 
+                isOpen={isFormOpen}
+                setIsOpen={setFormOpen}
+                objectData={selectedObject}
+            />
+            <div className="space-y-4 p-1">
+                <Button onClick={handleAdd}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Adicionar Objeto
+                </Button>
+
+                <div className="mt-4 space-y-4">
+                    {formData.items.objects.map(object => (
+                        <ObjectCard 
+                            key={object.id}
+                            object={object}
+                            onEdit={() => handleEdit(object)}
+                            onRemove={() => removeObject(object.id)}
+                        />
+                    ))}
+                </div>
+                 {formData.items.objects.length === 0 && (
+                    <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Nenhum objeto adicionado.</p>
+                    </div>
+                )}
+            </div>
+        </>
+    )
+}
+
 
 export function Step4Items() {
   return (
@@ -149,12 +195,7 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <ItemEntrySection
-                        title="Objetos"
-                        icon={<Box className="h-5 w-5 text-primary" />}
-                        field="objects"
-                        placeholder="Ex: Celular Samsung A51, nº de série XXXXX, com a tela trincada..."
-                    />
+                    <ObjectSection />
                 </AccordionContent>
             </AccordionItem>
 
@@ -167,8 +208,6 @@ export function Step4Items() {
                 </AccordionTrigger>
                 <AccordionContent>
                     <ItemEntrySection
-                        title="Entorpecentes"
-                        icon={<Pill className="h-5 w-5 text-primary" />}
                         field="narcotics"
                         placeholder="Ex: 10 porções de substância análoga à maconha, pesando aproximadamente 50g..."
                     />
@@ -184,8 +223,6 @@ export function Step4Items() {
                 </AccordionTrigger>
                 <AccordionContent>
                     <ItemEntrySection
-                        title="Armas"
-                        icon={<Target className="h-5 w-5 text-primary" />}
                         field="weapons"
                         placeholder="Ex: Revólver Calibre .38, marca Taurus, nº de série YYYYY, com 5 munições intactas..."
                     />

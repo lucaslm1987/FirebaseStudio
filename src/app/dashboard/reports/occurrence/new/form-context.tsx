@@ -77,9 +77,20 @@ export type Vehicle = {
     chassis?: string;
 };
 
+export type ObjectItem = {
+    id: string;
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    brand?: string;
+    model?: string;
+    color?: string;
+    quantity?: number;
+    unit?: 'unidade' | 'metro' | 'litro' | 'KG' | 'grama' | '';
+    notes?: string;
+};
+
 export type ItemsData = {
     vehicles: Vehicle[];
-    objects: ItemEntry;
+    objects: ObjectItem[];
     narcotics: ItemEntry;
     weapons: ItemEntry;
 }
@@ -114,10 +125,13 @@ export interface OccurrenceFormData {
 interface OccurrenceFormContextType {
   formData: OccurrenceFormData;
   updateField: (newData: Partial<OccurrenceFormData>) => void;
-  updateItemEntry: (field: 'objects' | 'narcotics' | 'weapons', value: Partial<ItemEntry>) => void;
+  updateItemEntry: (field: 'narcotics' | 'weapons', value: Partial<ItemEntry>) => void;
   addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void;
   updateVehicle: (vehicleId: string, updatedData: Partial<Vehicle>) => void;
   removeVehicle: (vehicleId: string) => void;
+  addObject: (object: Omit<ObjectItem, 'id'>) => void;
+  updateObject: (objectId: string, updatedData: Partial<ObjectItem>) => void;
+  removeObject: (objectId: string) => void;
   addTeamMember: (name: string) => void;
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
@@ -134,7 +148,7 @@ const initialFormData: OccurrenceFormData = {
   involved: [],
   items: {
     vehicles: [],
-    objects: { condition: '', description: '' },
+    objects: [],
     narcotics: { condition: '', description: '' },
     weapons: { condition: '', description: '' },
   },
@@ -170,6 +184,9 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
         if (!Array.isArray(parsedData.items.vehicles)) {
             parsedData.items.vehicles = [];
         }
+        if (!Array.isArray(parsedData.items.objects)) {
+            parsedData.items.objects = [];
+        }
         setFormData(parsedData);
       }
     } catch (error) {
@@ -192,7 +209,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     setFormData(prev => ({ ...prev, ...newData }));
   }, []);
   
-  const updateItemEntry = useCallback((field: 'objects' | 'narcotics' | 'weapons', value: Partial<ItemEntry>) => {
+  const updateItemEntry = useCallback((field: 'narcotics' | 'weapons', value: Partial<ItemEntry>) => {
     setFormData(prev => ({
       ...prev,
       items: {
@@ -231,6 +248,36 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
       items: {
         ...prev.items,
         vehicles: prev.items.vehicles.filter(v => v.id !== vehicleId),
+      }
+    }));
+  }, []);
+  
+  const addObject = useCallback((object: Omit<ObjectItem, 'id'>) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        objects: [...prev.items.objects, { ...object, id: new Date().toISOString() }],
+      }
+    }));
+  }, []);
+
+  const updateObject = useCallback((objectId: string, updatedData: Partial<ObjectItem>) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        objects: prev.items.objects.map(o => o.id === objectId ? { ...o, ...updatedData } : o),
+      }
+    }));
+  }, []);
+
+  const removeObject = useCallback((objectId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        objects: prev.items.objects.filter(o => o.id !== objectId),
       }
     }));
   }, []);
@@ -296,6 +343,9 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     addVehicle,
     updateVehicle,
     removeVehicle,
+    addObject,
+    updateObject,
+    removeObject,
     addTeamMember,
     removeTeamMember,
     updateTeamMember,
