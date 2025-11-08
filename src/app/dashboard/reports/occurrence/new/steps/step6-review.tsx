@@ -102,7 +102,7 @@ export function Step6Review() {
                  </ReviewSection>
 
                  <div>
-                    <p className="font-semibold">Narrativa:</p>
+                    <div className="font-semibold">Narrativa:</div>
                     <div className="whitespace-pre-wrap p-2 bg-background/50 rounded-md">{formData.narrative || 'Não informada'}</div>
                  </div>
                  
@@ -112,10 +112,10 @@ export function Step6Review() {
                  
                  <div className="border-t pt-4">
                     <p className="font-semibold mb-4">Equipe:</p>
-                    <div className="space-y-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {formData.team.map(m => (
                             <div key={m.name} className="flex flex-col items-center">
-                                <div className="w-full max-w-xs border-b border-foreground/50 text-center pb-1">
+                                <div className="w-full border-b border-foreground/50 text-center pb-1">
                                     <p className="font-semibold">{m.name}</p>
                                     <p className="text-xs text-muted-foreground">{m.role}</p>
                                 </div>

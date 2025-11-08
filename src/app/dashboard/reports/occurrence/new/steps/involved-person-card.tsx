@@ -32,7 +32,7 @@ export function InvolvedPersonCard({ person, onEdit, onRemove }: InvolvedPersonC
     const Icon = conditionIcons[person.condition] || HelpCircle;
 
     return (
-        <Card className="flex flex-col sm:flex-row">
+        <Card className="flex flex-col sm:flex-row transition-shadow hover:shadow-md">
             <CardHeader className="flex flex-row items-start sm:items-center justify-between sm:justify-start gap-4 p-4 sm:w-2/5">
                 <div className="flex items-center gap-4">
                     <Icon className="h-8 w-8 text-primary" />

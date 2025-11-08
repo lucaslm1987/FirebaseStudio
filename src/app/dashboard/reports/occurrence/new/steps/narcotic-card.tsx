@@ -18,7 +18,7 @@ export function NarcoticCard({ narcotic, onEdit, onRemove }: NarcoticCardProps) 
     const description = `${narcotic.quantity} ${narcotic.unit || ''} - ${narcotic.packaging || 'acondicionamento não especificado'}`;
 
     return (
-        <Card className="flex flex-col sm:flex-row">
+        <Card className="flex flex-col sm:flex-row transition-shadow hover:shadow-md">
             <CardHeader className="flex flex-row items-start sm:items-center justify-between sm:justify-start gap-4 p-4 sm:w-2/5">
                 <div className="flex items-center gap-4">
                     <Pill className="h-8 w-8 text-primary" />

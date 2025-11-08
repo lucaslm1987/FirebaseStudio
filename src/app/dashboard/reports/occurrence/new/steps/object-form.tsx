@@ -83,7 +83,7 @@ export function ObjectForm({ isOpen, setIsOpen, objectData }: ObjectFormProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-3xl border-primary">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>{objectData ? 'Editar' : 'Adicionar'} Objeto</DialogTitle>
           <DialogDescription>
@@ -139,7 +139,7 @@ export function ObjectForm({ isOpen, setIsOpen, objectData }: ObjectFormProps) {
             </div>
 
              <div className="space-y-2">
-                <Label htmlFor="notes">Observação</Label>
+                <Label htmlFor="notes">Observações</Label>
                 <Textarea 
                     id="notes" 
                     placeholder="Descrição detalhada do objeto, número de série, etc..."

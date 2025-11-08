@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -88,7 +89,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight border-b-2 border-primary pb-2",
+      "text-lg font-semibold leading-none tracking-tight",
       className
     )}
     {...props}

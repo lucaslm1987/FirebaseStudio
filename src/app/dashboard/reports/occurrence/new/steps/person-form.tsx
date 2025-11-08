@@ -173,7 +173,7 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-3xl border-primary">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>{personData ? 'Editar' : 'Adicionar'} Pessoa Física</DialogTitle>
           <DialogDescription>

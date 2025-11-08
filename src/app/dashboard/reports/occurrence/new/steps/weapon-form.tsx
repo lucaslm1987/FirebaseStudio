@@ -115,7 +115,7 @@ export function WeaponForm({ isOpen, setIsOpen, weaponData }: WeaponFormProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-3xl border-primary">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>{weaponData ? 'Editar' : 'Adicionar'} Arma</DialogTitle>
           <DialogDescription>

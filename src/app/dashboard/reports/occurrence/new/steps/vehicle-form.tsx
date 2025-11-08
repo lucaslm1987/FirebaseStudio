@@ -115,7 +115,7 @@ export function VehicleForm({ isOpen, setIsOpen, vehicleData }: VehicleFormProps
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-3xl border-primary">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>{vehicleData ? 'Editar' : 'Adicionar'} Veículo</DialogTitle>
           <DialogDescription>
