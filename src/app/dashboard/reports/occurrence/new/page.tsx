@@ -89,14 +89,11 @@ function NewOccurrenceReportContent() {
 
   const handleNewReport = () => {
     resetForm();
-    setCurrentStep(1);
   };
   
   const handleClearForm = () => {
     if (confirm("Tem certeza que deseja limpar todos os dados do formulário? O progresso salvo será perdido.")) {
       resetForm();
-      setCurrentStep(1); 
-      router.refresh();
     }
   }
 

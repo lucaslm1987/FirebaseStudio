@@ -477,13 +477,12 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   }, []);
 
   const resetForm = useCallback(() => {
-    const newInitialData = getInitialFormData();
-    setFormData(newInitialData);
-     try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newInitialData));
-      } catch (error) {
-        console.error("Failed to save new form data to localStorage", error);
-      }
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to clear form data from localStorage", error);
+    }
   }, []);
 
 
