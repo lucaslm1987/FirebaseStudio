@@ -53,7 +53,8 @@ const crimesPorLei = {
     "Lei de Drogas": [
         { article: "Art. 28", name: "Posse para consumo/Porte de entorpecente" },
         { article: "Art. 33", name: "Tráfico de drogas" },
-        { article: "Art. 35", name: "Associação para o tráfico" }
+        { article: "Art. 35", name: "Associação para o tráfico" },
+        { article: "Tema 506 STF", name: "Ilícito extra penal" },
     ],
     "Lei de Armas": [
         { article: "Art. 14", name: "Porte ilegal de arma de fogo" },
