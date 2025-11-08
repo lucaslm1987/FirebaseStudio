@@ -11,7 +11,7 @@ export type TeamMember = {
 
 export type InvolvedPerson = {
   id: string;
-  type: 'person' | 'company';
+  type: 'person';
   condition: 'Adolescente' | 'Autor' | 'Capturado' | 'Condutor' | 'Declarante' | 'Investigado' | 'Parte' | 'Representante' | 'Testemunha' | 'Vítima' | '';
   name: string;
   socialName?: string;
@@ -41,12 +41,22 @@ export type InvolvedPerson = {
   version?: string;
 };
 
-// Placeholder for company data
 export type InvolvedCompany = {
     id: string;
     type: 'company';
-    name: string;
-    // ... other company fields
+    condition: 'Autor' | 'Investigado' | 'Vítima' | '';
+    corporateName: string;
+    tradeName?: string;
+    cnpj?: string;
+    street?: string;
+    number?: string;
+    neighborhood?: string;
+    complement?: string;
+    city?: string;
+    state?: string;
+    phone?: string;
+    email?: string;
+    representative?: string;
 };
 
 

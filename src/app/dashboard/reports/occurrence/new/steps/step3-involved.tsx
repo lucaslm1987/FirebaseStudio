@@ -5,16 +5,19 @@ import { useState } from 'react';
 import { useOccurrenceForm } from '../form-context';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { UserPlus, Building2, User, Trash2, Edit } from 'lucide-react';
+import { UserPlus, Building2 } from 'lucide-react';
 import { PersonForm } from './person-form';
+import { CompanyForm } from './company-form';
 import type { InvolvedPerson, InvolvedCompany } from '../form-context';
 import { InvolvedPersonCard } from './involved-person-card';
+import { InvolvedCompanyCard } from './involved-company-card';
 
 export function Step3Involved() {
   const { formData, removeInvolved } = useOccurrenceForm();
   const [isPersonFormOpen, setIsPersonFormOpen] = useState(false);
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<InvolvedPerson | undefined>(undefined);
+  const [selectedCompany, setSelectedCompany] = useState<InvolvedCompany | undefined>(undefined);
 
   const handleAddPerson = () => {
     setSelectedPerson(undefined);
@@ -26,10 +29,14 @@ export function Step3Involved() {
     setIsPersonFormOpen(true);
   }
 
-  const handleAddEntity = () => {
-    // Placeholder for company logic
-    alert("Funcionalidade para Pessoa Jurídica ainda não implementada.");
-    // setIsCompanyFormOpen(true);
+  const handleAddCompany = () => {
+    setSelectedCompany(undefined);
+    setIsCompanyFormOpen(true);
+  };
+
+  const handleEditCompany = (company: InvolvedCompany) => {
+    setSelectedCompany(company);
+    setIsCompanyFormOpen(true);
   };
 
   return (
@@ -39,9 +46,11 @@ export function Step3Involved() {
             setIsOpen={setIsPersonFormOpen}
             personData={selectedPerson}
         />
-        {/* Placeholder for CompanyForm
-        <CompanyForm isOpen={isCompanyFormOpen} setIsOpen={setIsCompanyFormOpen} />
-        */}
+        <CompanyForm 
+            isOpen={isCompanyFormOpen}
+            setIsOpen={setIsCompanyFormOpen}
+            companyData={selectedCompany}
+        />
 
         <div className="text-center">
             <h3 className="text-lg font-medium">Pessoas Envolvidas</h3>
@@ -73,7 +82,7 @@ export function Step3Involved() {
                     <CardDescription>Para empresas, organizações ou outras entidades.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button className="w-full" onClick={handleAddEntity}>
+                    <Button className="w-full" onClick={handleAddCompany}>
                         Adicionar Pessoa Jurídica
                     </Button>
                 </CardContent>
@@ -94,8 +103,16 @@ export function Step3Involved() {
                                     onRemove={() => removeInvolved(involved.id)}
                                 />
                             )
+                        } else if (involved.type === 'company') {
+                            return (
+                                <InvolvedCompanyCard
+                                    key={involved.id}
+                                    company={involved as InvolvedCompany}
+                                    onEdit={() => handleEditCompany(involved as InvolvedCompany)}
+                                    onRemove={() => removeInvolved(involved.id)}
+                                />
+                            )
                         }
-                        // Render company card here in the future
                         return null;
                     })}
                 </div>
