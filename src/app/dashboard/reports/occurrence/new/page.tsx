@@ -112,7 +112,7 @@ function NewOccurrenceReportContent() {
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
                         currentStep > step.id
-                          ? 'border-primary bg-primary text-primary-foreground'
+                          ? 'border-green-500 bg-green-500 text-white'
                           : currentStep === step.id
                           ? 'border-primary'
                           : 'border-border'
@@ -138,7 +138,7 @@ function NewOccurrenceReportContent() {
                     <div
                       className={`mx-4 flex-auto border-t-2 ${
                         currentStep > index + 1
-                          ? 'border-primary'
+                          ? 'border-green-500'
                           : 'border-border'
                       }`}
                     />
