@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { OccurrenceFormData } from '../form-context';
@@ -63,21 +64,23 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
         </header>
 
         <main className="print-main-content">
-            <ReviewSection title="1. Dados Gerais" hasData={true} className="grid-cols-3">
-                <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
-                <p><strong>Origem da Solicitação:</strong> {formData.requestOrigin}</p>
-                <p><strong>Autoria:</strong> {formData.authorship}</p>
-                <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
-                <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
-                <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
-                <p className="col-span-3"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+            <ReviewSection title="1. Dados Gerais" hasData={true}>
+                 <div className="grid grid-cols-3 gap-x-4">
+                    <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
+                    <p><strong>Origem da Solicitação:</strong> {formData.requestOrigin}</p>
+                    <p><strong>Autoria:</strong> {formData.authorship}</p>
+                    <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
+                    <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
+                    <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
+                    <p className="col-span-3"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+                </div>
             </ReviewSection>
 
             <ReviewSection title="2. Natureza da Ocorrência" hasData={!!formData.nature}>
                 <p>{formData.nature}</p>
             </ReviewSection>
 
-            <ReviewSection title="3. Equipe de Atendimento" hasData={team.length > 0}>
+            <ReviewSection title="3. Equipe de Atendimento" hasData={team && team.length > 0}>
                 <table className="print-table">
                     <thead>
                         <tr>
@@ -99,7 +102,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                  <p><strong>Viatura:</strong> {formData.vehicle || 'Não informada'}</p>
             </ReviewSection>
 
-            <ReviewSection title="4. Envolvidos" hasData={involved.length > 0}>
+            <ReviewSection title="4. Envolvidos" hasData={involved && involved.length > 0}>
                 {involved.map(inv => (
                     <div key={inv.id} className="print-involved-card">
                         {inv.type === 'person' && (
@@ -284,3 +287,5 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
     </div>
   );
 }
+
+    
