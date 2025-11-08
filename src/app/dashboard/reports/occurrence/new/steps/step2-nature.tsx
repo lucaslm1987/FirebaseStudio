@@ -37,6 +37,7 @@ const crimesPorLei = {
         { article: "Art. 299", name: "Falsidade Ideológica" },
         { article: "Art. 304", name: "Uso de Documento Falso" },
         { article: "Art. 311", name: "Adulteração de sinal identificador de veículo" },
+        { article: "Art. 345", name: "Exercício arbitrário das próprias razões" },
     ],
     "CTB": [
         { article: "Art. 302", name: "Homicídio culposo na direção de veículo" },
@@ -66,7 +67,9 @@ const crimesPorLei = {
     ],
     "Lei de Contravenções Penais": [
         { article: "Art. 21", name: "Vias de fato" },
-        { article: "Art. 42", name: "Perturbação do sossego" }
+        { article: "Art. 42", name: "Perturbação do sossego" },
+        { article: "Art. 50", name: "Jogos de azar" },
+        { article: "Art. 68", name: "Omissão de cautela na guarda ou condução de animais" }
     ],
     "Lei Ambiental": [
         { article: "Art. 32", name: "Maus-tratos a animais" },
