@@ -2,9 +2,26 @@
 'use client';
 
 import { useOccurrenceForm } from '../form-context';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+
+const ReviewSection = ({ title, children, hasData }: { title: string, children: React.ReactNode, hasData: boolean }) => {
+    if (!hasData) {
+        return null;
+    }
+    return (
+        <div className="border-t pt-4">
+            <h5 className="font-semibold mb-2">{title}</h5>
+            <div className="space-y-2 text-sm text-muted-foreground">
+                {children}
+            </div>
+        </div>
+    )
+}
 
 export function Step6Review() {
   const { formData } = useOccurrenceForm();
+  const { involved, items } = formData;
 
   const getSolutionText = () => {
     if (formData.solutionType === 'police_station') {
@@ -24,24 +41,78 @@ export function Step6Review() {
             <h4 className="font-semibold mb-4">Resumo da Ocorrência</h4>
             <div className="space-y-4 text-sm">
                 <div className="grid grid-cols-2 gap-2">
-                    <p><strong>Data do Fato:</strong> {formData.factDate}</p>
-                    <p><strong>Hora do Fato:</strong> {formData.factTime}</p>
-                    <p><strong>Origem:</strong> {formData.requestOrigin}</p>
-                    <p><strong>Autoria:</strong> {formData.authorship}</p>
+                    <p><strong>Data do Fato:</strong> {formData.factDate || 'Não informado'}</p>
+                    <p><strong>Hora do Fato:</strong> {formData.factTime || 'Não informado'}</p>
+                    <p><strong>Origem:</strong> {formData.requestOrigin || 'Não informado'}</p>
+                    <p><strong>Autoria:</strong> {formData.authorship || 'Não informado'}</p>
                 </div>
-                 <p><strong>Local:</strong> {`${formData.street}, ${formData.number}, ${formData.neighborhood}, ${formData.city}-${formData.state}`}</p>
-                 <p><strong>Viatura:</strong> {formData.vehicle}</p>
-                 <p><strong>Natureza:</strong> {formData.nature}</p>
+                 <p><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || ''}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+                 <p><strong>Viatura:</strong> {formData.vehicle || 'Não informado'}</p>
+                 <p><strong>Natureza:</strong> {formData.nature || 'Não informado'}</p>
+                 
+                 <ReviewSection title="Envolvidos" hasData={involved.length > 0}>
+                    {involved.map(inv => (
+                        <div key={inv.id} className="p-2 rounded-md bg-background/50">
+                            {inv.type === 'person' && (
+                                <>
+                                    <p><strong>{inv.name}</strong> <Badge variant="outline">{inv.condition}</Badge></p>
+                                    <p>RG: {inv.rg || 'N/A'} - CPF: {inv.cpf || 'N/A'}</p>
+                                </>
+                            )}
+                            {inv.type === 'company' && (
+                                <>
+                                    <p><strong>{inv.corporateName}</strong> <Badge variant="outline">{inv.condition}</Badge></p>
+                                    <p>CNPJ: {inv.cnpj || 'N/A'}</p>
+                                </>
+                            )}
+                        </div>
+                    ))}
+                 </ReviewSection>
+
+                 <ReviewSection title="Veículos" hasData={items.vehicles.length > 0}>
+                    {items.vehicles.map(v => (
+                        <div key={v.id} className="p-2 rounded-md bg-background/50">
+                            <p><strong>{v.brand} {v.model}</strong> - Placa: {v.plate || 'N/A'} <Badge variant="outline">{v.condition}</Badge></p>
+                        </div>
+                    ))}
+                 </ReviewSection>
+                 
+                 <ReviewSection title="Objetos" hasData={items.objects.length > 0}>
+                    {items.objects.map(o => (
+                        <div key={o.id} className="p-2 rounded-md bg-background/50">
+                            <p><strong>{o.brand || ''} {o.model || 'Objeto'}</strong> - Qtd: {o.quantity} {o.unit} <Badge variant="outline">{o.condition}</Badge></p>
+                        </div>
+                    ))}
+                 </ReviewSection>
+
+                 <ReviewSection title="Entorpecentes" hasData={items.narcotics.length > 0}>
+                    {items.narcotics.map(n => (
+                        <div key={n.id} className="p-2 rounded-md bg-background/50">
+                            <p><strong>{n.type}</strong> - Qtd: {n.quantity} {n.unit} ({n.packaging}) <Badge variant="outline">{n.condition}</Badge></p>
+                        </div>
+                    ))}
+                 </ReviewSection>
+
+                 <ReviewSection title="Armas" hasData={items.weapons.length > 0}>
+                    {items.weapons.map(w => (
+                        <div key={w.id} className="p-2 rounded-md bg-background/50">
+                            <p><strong>{w.type} {w.brand} {w.model}</strong> - Cal: {w.calibre || 'N/A'} <Badge variant="outline">{w.condition}</Badge></p>
+                        </div>
+                    ))}
+                 </ReviewSection>
+
                  <div>
                     <p className="font-semibold">Narrativa:</p>
-                    <p className="whitespace-pre-wrap">{formData.narrative}</p>
+                    <p className="whitespace-pre-wrap p-2 bg-background/50 rounded-md">{formData.narrative || 'Não informada'}</p>
                  </div>
+                 
                  <div>
                     <p><strong>Solução:</strong> {getSolutionText()}</p>
                  </div>
+                 
                  <div className="border-t pt-4">
-                    <p className="font-semibold">Equipe:</p>
-                    <div className="space-y-6 mt-4">
+                    <p className="font-semibold mb-4">Equipe:</p>
+                    <div className="space-y-8">
                         {formData.team.map(m => (
                             <div key={m.name} className="flex flex-col items-center">
                                 <div className="w-full max-w-xs border-b border-foreground/50 text-center pb-1">
