@@ -59,6 +59,13 @@ export type InvolvedCompany = {
     representative?: string;
 };
 
+export type ItemsData = {
+    vehicles?: string;
+    objects?: string;
+    narcotics?: string;
+    weapons?: string;
+}
+
 
 export interface OccurrenceFormData {
   factDate?: string;
@@ -82,13 +89,14 @@ export interface OccurrenceFormData {
   vehicle?: string;
   nature?: string;
   involved: Array<InvolvedPerson | InvolvedCompany>;
-  items?: string;
+  items: ItemsData;
   narrative?: string;
 }
 
 interface OccurrenceFormContextType {
   formData: OccurrenceFormData;
   updateField: (newData: Partial<OccurrenceFormData>) => void;
+  updateItemsField: (field: keyof ItemsData, value: string) => void;
   addTeamMember: (name: string) => void;
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
@@ -103,6 +111,7 @@ const OccurrenceFormContext = createContext<OccurrenceFormContextType | undefine
 const initialFormData: OccurrenceFormData = {
   team: [],
   involved: [],
+  items: {},
   requestOrigin: 'deparou',
   authorship: 'desconhecida',
   isFlagrant: false,
@@ -125,6 +134,9 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
         if (!Array.isArray(parsedData.involved)) {
           parsedData.involved = [];
         }
+        if (typeof parsedData.items !== 'object' || parsedData.items === null) {
+          parsedData.items = {};
+        }
         setFormData(parsedData);
       }
     } catch (error) {
@@ -146,6 +158,17 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const updateField = useCallback((newData: Partial<OccurrenceFormData>) => {
     setFormData(prev => ({ ...prev, ...newData }));
   }, []);
+  
+  const updateItemsField = useCallback((field: keyof ItemsData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      items: {
+        ...prev.items,
+        [field]: value
+      }
+    }));
+  }, []);
+
 
   const addTeamMember = useCallback((name: string) => {
     setFormData(prev => ({
@@ -204,6 +227,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const contextValue = {
     formData,
     updateField,
+    updateItemsField,
     addTeamMember,
     removeTeamMember,
     updateTeamMember,
