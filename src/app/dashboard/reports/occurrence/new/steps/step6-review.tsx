@@ -55,13 +55,13 @@ export function Step6Review() {
                         <div key={inv.id} className="p-2 rounded-md bg-background/50">
                             {inv.type === 'person' && (
                                 <>
-                                    <p><strong>{inv.name}</strong> <Badge variant="outline">{inv.condition}</Badge></p>
+                                    <div className="flex items-center gap-2"><strong>{inv.name}</strong> <Badge variant="outline">{inv.condition}</Badge></div>
                                     <p>RG: {inv.rg || 'N/A'} - CPF: {inv.cpf || 'N/A'}</p>
                                 </>
                             )}
                             {inv.type === 'company' && (
                                 <>
-                                    <p><strong>{inv.corporateName}</strong> <Badge variant="outline">{inv.condition}</Badge></p>
+                                    <div className="flex items-center gap-2"><strong>{inv.corporateName}</strong> <Badge variant="outline">{inv.condition}</Badge></div>
                                     <p>CNPJ: {inv.cnpj || 'N/A'}</p>
                                 </>
                             )}
@@ -72,7 +72,7 @@ export function Step6Review() {
                  <ReviewSection title="Veículos" hasData={items.vehicles.length > 0}>
                     {items.vehicles.map(v => (
                         <div key={v.id} className="p-2 rounded-md bg-background/50">
-                            <p><strong>{v.brand} {v.model}</strong> - Placa: {v.plate || 'N/A'} <Badge variant="outline">{v.condition}</Badge></p>
+                            <div className="flex items-center gap-2"><strong>{v.brand} {v.model}</strong> - Placa: {v.plate || 'N/A'} <Badge variant="outline">{v.condition}</Badge></div>
                         </div>
                     ))}
                  </ReviewSection>
@@ -80,7 +80,7 @@ export function Step6Review() {
                  <ReviewSection title="Objetos" hasData={items.objects.length > 0}>
                     {items.objects.map(o => (
                         <div key={o.id} className="p-2 rounded-md bg-background/50">
-                            <p><strong>{o.brand || ''} {o.model || 'Objeto'}</strong> - Qtd: {o.quantity} {o.unit} <Badge variant="outline">{o.condition}</Badge></p>
+                            <div className="flex items-center gap-2"><strong>{o.brand || ''} {o.model || 'Objeto'}</strong> - Qtd: {o.quantity} {o.unit} <Badge variant="outline">{o.condition}</Badge></div>
                         </div>
                     ))}
                  </ReviewSection>
@@ -88,7 +88,7 @@ export function Step6Review() {
                  <ReviewSection title="Entorpecentes" hasData={items.narcotics.length > 0}>
                     {items.narcotics.map(n => (
                         <div key={n.id} className="p-2 rounded-md bg-background/50">
-                            <p><strong>{n.type}</strong> - Qtd: {n.quantity} {n.unit} ({n.packaging}) <Badge variant="outline">{n.condition}</Badge></p>
+                            <div className="flex items-center gap-2"><strong>{n.type}</strong> - Qtd: {n.quantity} {n.unit} ({n.packaging}) <Badge variant="outline">{n.condition}</Badge></div>
                         </div>
                     ))}
                  </ReviewSection>
@@ -96,7 +96,7 @@ export function Step6Review() {
                  <ReviewSection title="Armas" hasData={items.weapons.length > 0}>
                     {items.weapons.map(w => (
                         <div key={w.id} className="p-2 rounded-md bg-background/50">
-                            <p><strong>{w.type} {w.brand} {w.model}</strong> - Cal: {w.calibre || 'N/A'} <Badge variant="outline">{w.condition}</Badge></p>
+                            <div className="flex items-center gap-2"><strong>{w.type} {w.brand} {w.model}</strong> - Cal: {w.calibre || 'N/A'} <Badge variant="outline">{w.condition}</Badge></div>
                         </div>
                     ))}
                  </ReviewSection>
