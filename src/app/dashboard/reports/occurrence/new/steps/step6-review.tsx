@@ -30,12 +30,6 @@ export function Step6Review() {
                     <p><strong>Autoria:</strong> {formData.authorship}</p>
                 </div>
                  <p><strong>Local:</strong> {`${formData.street}, ${formData.number}, ${formData.neighborhood}, ${formData.city}-${formData.state}`}</p>
-                 <div>
-                    <p><strong>Equipe:</strong></p>
-                    <ul className="list-disc pl-5">
-                        {formData.team.map(m => <li key={m.name}>{m.name} ({m.role})</li>)}
-                    </ul>
-                 </div>
                  <p><strong>Viatura:</strong> {formData.vehicle}</p>
                  <p><strong>Natureza:</strong> {formData.nature}</p>
                  <div>
@@ -44,6 +38,20 @@ export function Step6Review() {
                  </div>
                  <div>
                     <p><strong>Solução:</strong> {getSolutionText()}</p>
+                 </div>
+                 <div className="border-t pt-4">
+                    <p className="font-semibold">Equipe:</p>
+                    <div className="space-y-6 mt-4">
+                        {formData.team.map(m => (
+                            <div key={m.name} className="flex flex-col items-center">
+                                <div className="w-full max-w-xs border-b border-foreground/50 text-center pb-1">
+                                    <p className="font-semibold">{m.name}</p>
+                                    <p className="text-xs text-muted-foreground">{m.role}</p>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">Assinatura</p>
+                            </div>
+                        ))}
+                    </div>
                  </div>
             </div>
         </div>

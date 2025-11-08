@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
+import { Users } from 'lucide-react';
 
 const maskPoliceReport = (value: string) => {
     return value
@@ -78,6 +79,24 @@ export function Step5Narrative() {
                     />
                 </div>
             )}
+        </div>
+         <div className="space-y-4 border-t pt-6">
+            <h3 className="text-lg font-medium flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                Equipe Responsável
+            </h3>
+            <div className="space-y-2 rounded-md border p-4 bg-muted/30">
+                {formData.team.length > 0 ? (
+                    formData.team.map((member) => (
+                        <div key={member.name} className="flex justify-between items-center">
+                            <span className="font-medium">{member.name}</span>
+                            <span className="text-sm text-muted-foreground">{member.role}</span>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-sm text-muted-foreground">Nenhum membro da equipe selecionado.</p>
+                )}
+            </div>
         </div>
     </div>
   );
