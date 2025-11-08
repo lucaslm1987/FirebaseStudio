@@ -13,35 +13,36 @@ import { X } from 'lucide-react';
 
 const crimesPorLei = {
     "Código Penal": [
-        { article: "Art. 155", name: "Furto" },
-        { article: "Art. 157", name: "Roubo" },
-        { article: "Art. 171", name: "Estelionato" },
-        { article: "Art. 168", name: "Apropriação Indébita" },
-        { article: "Art. 163", name: "Dano" },
-        { article: "Art. 129", name: "Lesão Corporal" },
         { article: "Art. 121", name: "Homicídio" },
-        { article: "Art. 138", name: "Calúnia" },
-        { article: "Art. 140", name: "Injúria" },
-        { article: "Art. 139", name: "Difamação" },
         { article: "Art. 121, § 2º, VI", name: "Feminicídio" },
-        { article: "Art. 289", name: "Moeda Falsa" },
-        { article: "Art. 304", name: "Uso de Documento Falso" },
-        { article: "Art. 299", name: "Falsidade Ideológica" },
         { article: "Art. 122", name: "Instigação ou auxílio a suicídio" },
         { article: "Art. 124", name: "Aborto" },
+        { article: "Art. 129", name: "Lesão Corporal" },
+        { article: "Art. 138", name: "Calúnia" },
+        { article: "Art. 139", name: "Difamação" },
+        { article: "Art. 140", name: "Injúria" },
         { article: "Art. 147", name: "Ameaça" },
         { article: "Art. 147-A", name: "Perseguição (Stalking)" },
+        { article: "Art. 155", name: "Furto" },
+        { article: "Art. 157", name: "Roubo" },
         { article: "Art. 158", name: "Extorsão" },
+        { article: "Art. 163", name: "Dano" },
+        { article: "Art. 168", name: "Apropriação Indébita" },
+        { article: "Art. 171", name: "Estelionato" },
         { article: "Art. 180", name: "Receptação" },
         { article: "Art. 213", name: "Estupro" },
         { article: "Art. 215-A", name: "Importunação Sexual" },
-        { article: "Art. 216-A", name: "Assédio Sexual" }
+        { article: "Art. 216-A", name: "Assédio Sexual" },
+        { article: "Art. 289", name: "Moeda Falsa" },
+        { article: "Art. 299", name: "Falsidade Ideológica" },
+        { article: "Art. 304", name: "Uso de Documento Falso" },
     ],
     "CTB": [
-        { article: "Art. 306", name: "Dirigir sob efeito de álcool" },
         { article: "Art. 302", name: "Homicídio culposo na direção de veículo" },
         { article: "Art. 303", name: "Lesão corporal culposa na direção de veículo" },
+        { article: "Art. 304", name: "Omissão de socorro" },
         { article: "Art. 305", name: "Fuga do local do acidente" },
+        { article: "Art. 306", name: "Dirigir sob efeito de álcool" },
         { article: "Art. 309", name: "Dirigir sem habilitação gerando perigo" },
     ],
     "Código do Consumidor": [
@@ -49,20 +50,20 @@ const crimesPorLei = {
         { article: "Art. 67", name: "Publicidade enganosa" }
     ],
     "Lei de Drogas": [
-        { article: "Art. 33", name: "Tráfico de drogas" },
-        { article: "Art. 28", name: "Posse para consumo/Porte de entorpecente" }
+        { article: "Art. 28", name: "Posse para consumo/Porte de entorpecente" },
+        { article: "Art. 33", name: "Tráfico de drogas" }
     ],
     "Lei de Armas": [
         { article: "Art. 14", name: "Porte ilegal de arma de fogo" },
         { article: "Art. 15", name: "Disparo de arma de fogo" }
     ],
     "Lei de Contravenções Penais": [
-        { article: "Art. 42", name: "Perturbação do sossego" },
-        { article: "Art. 21", name: "Vias de fato" }
+        { article: "Art. 21", name: "Vias de fato" },
+        { article: "Art. 42", name: "Perturbação do sossego" }
     ],
     "Lei Ambiental": [
-        { article: "Art. 50", name: "Desmatamento ilegal" },
-        { article: "Art. 32", name: "Maus-tratos a animais" }
+        { article: "Art. 32", name: "Maus-tratos a animais" },
+        { article: "Art. 50", name: "Desmatamento ilegal" }
     ],
 };
 
