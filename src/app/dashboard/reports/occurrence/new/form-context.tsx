@@ -115,6 +115,7 @@ export type ItemsData = {
 
 
 export interface OccurrenceFormData {
+  id: string;
   factDate?: string;
   factTime?: string;
   communicationDate?: string;
@@ -168,7 +169,14 @@ interface OccurrenceFormContextType {
 
 const OccurrenceFormContext = createContext<OccurrenceFormContextType | undefined>(undefined);
 
-const initialFormData: OccurrenceFormData = {
+const generateNewId = () => {
+    const year = new Date().getFullYear();
+    const sequential = Date.now().toString().slice(-5);
+    return `BO${year}${sequential}`;
+}
+
+const getInitialFormData = (): OccurrenceFormData => ({
+  id: generateNewId(),
   team: [],
   involved: [],
   items: {
@@ -183,12 +191,12 @@ const initialFormData: OccurrenceFormData = {
   isInfraction: false,
   isDomesticViolence: false,
   solutionType: 'register',
-};
+});
 
 const LOCAL_STORAGE_KEY = 'occurrenceFormData';
 
 export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) => {
-  const [formData, setFormData] = useState<OccurrenceFormData>(initialFormData);
+  const [formData, setFormData] = useState<OccurrenceFormData>(getInitialFormData());
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -196,15 +204,19 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        // Data migration and validation
+        
+        if (!parsedData.id) {
+            parsedData.id = generateNewId();
+        }
+
         if (!Array.isArray(parsedData.involved)) {
           parsedData.involved = [];
         }
         if (typeof parsedData.items !== 'object' || parsedData.items === null) {
-          parsedData.items = initialFormData.items;
+          parsedData.items = getInitialFormData().items;
         } else {
             parsedData.items = {
-                ...initialFormData.items,
+                ...getInitialFormData().items,
                 ...parsedData.items,
             };
         }
@@ -224,6 +236,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
       }
     } catch (error) {
       console.error("Failed to load form data from localStorage", error);
+      setFormData(getInitialFormData());
     }
     setIsLoaded(true);
   }, []);
@@ -408,11 +421,12 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   }, []);
 
   const resetForm = useCallback(() => {
-    setFormData(initialFormData);
+    const newInitialData = getInitialFormData();
+    setFormData(newInitialData);
      try {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newInitialData));
       } catch (error) {
-        console.error("Failed to clear form data from localStorage", error);
+        console.error("Failed to save new form data to localStorage", error);
       }
   }, []);
 
@@ -455,3 +469,5 @@ export const useOccurrenceForm = () => {
   }
   return context;
 };
+
+    

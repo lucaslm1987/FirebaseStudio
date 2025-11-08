@@ -14,6 +14,7 @@ import {
   BookText,
   Package,
   XCircle,
+  Save,
 } from 'lucide-react';
 import {
   OccurrenceFormProvider,
@@ -38,10 +39,8 @@ const steps = [
 
 function NewOccurrenceReportContent() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [reportId, setReportId] = useState<string | null>(null);
   const router = useRouter();
   const { formData, resetForm } = useOccurrenceForm();
-  const [isPrinting, setIsPrinting] = useState(false);
 
 
   const handleNext = () => {
@@ -58,28 +57,24 @@ function NewOccurrenceReportContent() {
     }
   };
   
-  const generateReport = () => {
+  const handleSaveReport = () => {
     try {
-      // Generate ID
-      const year = new Date().getFullYear();
-      const sequential = Date.now().toString().slice(-5);
-      const newReportId = `BO${year}${sequential}`;
-      
-      const newReport: OccurrenceFormData & { id: string } = {
-        ...formData,
-        id: newReportId,
-      };
-
       // Save to localStorage
       const savedReportsString = localStorage.getItem('occurrenceReports');
-      const savedReports: Array<OccurrenceFormData & { id: string }> = savedReportsString ? JSON.parse(savedReportsString) : [];
-      savedReports.push(newReport);
+      const savedReports: Array<OccurrenceFormData> = savedReportsString ? JSON.parse(savedReportsString) : [];
+      
+      // Prevent duplicates
+      const existingReportIndex = savedReports.findIndex(report => report.id === formData.id);
+      if (existingReportIndex !== -1) {
+          savedReports[existingReportIndex] = formData;
+      } else {
+          savedReports.push(formData);
+      }
+
       localStorage.setItem('occurrenceReports', JSON.stringify(savedReports));
 
-      // Update state and UI
-      setReportId(newReportId);
-      setCurrentStep(7); // Go to the final screen
-      resetForm(); // Clear the current form data
+      // Go to the final screen
+      setCurrentStep(7); 
     } catch (error) {
       console.error("Failed to save report:", error);
       alert("Ocorreu um erro ao salvar o relatório.");
@@ -88,32 +83,22 @@ function NewOccurrenceReportContent() {
   
 
   const handlePrint = () => {
-     setIsPrinting(true);
-      setTimeout(() => {
-        window.print();
-        setIsPrinting(false);
-      }, 100); 
+    window.print();
   };
 
   const handleNewReport = () => {
+    resetForm();
     setCurrentStep(1);
-    setReportId(null);
-    // The form is already reset, so just navigate state
   };
   
   const handleClearForm = () => {
     if (confirm("Tem certeza que deseja limpar todos os dados do formulário? O progresso salvo será perdido.")) {
       resetForm();
-      // Force a re-render to show the cleared state by resetting a volatile piece of state
       setCurrentStep(1); 
       router.refresh();
     }
   }
 
-
- if (isPrinting) {
-    return <Step6Review />;
-  }
 
   return (
     <div className="flex h-full flex-col">
@@ -121,6 +106,9 @@ function NewOccurrenceReportContent() {
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Criar Boletim de Ocorrência
         </h1>
+        <p className="text-sm text-muted-foreground font-mono">
+            Nº: {formData.id}
+        </p>
          <Button variant="outline" size="sm" onClick={handleClearForm}>
             <XCircle className="mr-2 h-4 w-4" />
             Limpar Formulário
@@ -174,42 +162,44 @@ function NewOccurrenceReportContent() {
           )}
 
           <Card>
-            <CardContent className="p-6">
-              {currentStep === 1 && <Step1GeneralData />}
-              {currentStep === 2 && <Step2Nature />}
-              {currentStep === 3 && <Step3Involved />}
-              {currentStep === 4 && <Step4Items />}
-              {currentStep === 5 && <Step5Narrative />}
-              {currentStep === 6 && <Step6Review />}
-              {currentStep === 7 && reportId && (
-                <div className="text-center">
-                  <h2 className="mb-2 text-2xl font-bold">
-                    Ocorrência Registrada com Sucesso
-                  </h2>
-                  <p className="mb-6 text-muted-foreground">
-                    ID do Relatório: {reportId}
-                  </p>
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="flex w-full max-w-sm flex-col gap-2 print:hidden sm:flex-row">
-                      <Button
-                        onClick={handlePrint}
-                        className="w-full"
-                        variant="outline"
-                        type="button"
-                      >
-                        <Printer className="mr-2" />
-                        Visualizar Impressão
-                      </Button>
-                      <Button onClick={handleNewReport} className="w-full">
-                        Criar Novo BO
-                      </Button>
-                    </div>
-                  </div>
+            <CardContent className="p-0 print:p-0">
+                <div className='p-6 print:hidden'>
+                    {currentStep === 1 && <Step1GeneralData />}
+                    {currentStep === 2 && <Step2Nature />}
+                    {currentStep === 3 && <Step3Involved />}
+                    {currentStep === 4 && <Step4Items />}
+                    {currentStep === 5 && <Step5Narrative />}
                 </div>
+
+                {currentStep === 6 && (
+                    <div className="p-6">
+                        <Step6Review />
+                    </div>
+                )}
+              
+                {currentStep === 7 && (
+                    <div className="text-center p-6">
+                    <h2 className="mb-2 text-2xl font-bold">
+                        Ocorrência Salva com Sucesso
+                    </h2>
+                    <p className="mb-6 text-muted-foreground">
+                        ID do Relatório: {formData.id}
+                    </p>
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="flex w-full max-w-sm flex-col gap-2 sm:flex-row">
+                        <Button onClick={() => router.push('/dashboard/reports/occurrence')} className="w-full" variant="outline">
+                            Consultar BOs
+                        </Button>
+                        <Button onClick={handleNewReport} className="w-full">
+                            Criar Novo BO
+                        </Button>
+                        </div>
+                    </div>
+                    </div>
               )}
 
               {currentStep < 6 && (
-                <div className="mt-8 flex justify-between print:hidden">
+                <div className="mt-8 flex justify-between print:hidden p-6 border-t">
                   <Button variant="outline" onClick={handleBack}>
                     {currentStep === 1 ? 'Cancelar' : 'Voltar'}
                   </Button>
@@ -219,13 +209,20 @@ function NewOccurrenceReportContent() {
                 </div>
               )}
                {currentStep === 6 && (
-                 <div className="mt-8 flex justify-between print:hidden">
+                 <div className="mt-8 flex justify-between print:hidden p-6 border-t">
                   <Button variant="outline" onClick={handleBack}>
                     Voltar
                   </Button>
-                  <Button onClick={generateReport}>
-                    Finalizar e Salvar BO
-                  </Button>
+                  <div className='flex gap-2'>
+                    <Button variant="secondary" onClick={handlePrint}>
+                        <Printer className="mr-2 h-4 w-4" />
+                        Gerar PDF
+                    </Button>
+                    <Button onClick={handleSaveReport}>
+                        <Save className="mr-2 h-4 w-4" />
+                        Salvar
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -244,3 +241,5 @@ export default function NewOccurrenceReportPage() {
         </OccurrenceFormProvider>
     )
 }
+
+    

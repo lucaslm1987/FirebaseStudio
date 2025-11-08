@@ -30,7 +30,11 @@ export function Step6Review() {
   const formatDate = (date?: string) => {
     if (!date) return 'Não informado';
     try {
-        return format(new Date(date), 'dd/MM/yyyy');
+        // Handle yyyy-mm-dd format
+        const dateObj = new Date(date);
+        // add timezone offset
+        const dateWithOffset = new Date(dateObj.valueOf() + dateObj.getTimezoneOffset() * 60 * 1000);
+        return format(dateWithOffset, 'dd/MM/yyyy');
     } catch {
         return date;
     }
@@ -260,7 +264,7 @@ export function Step6Review() {
             </div>
         </main>
 
-        <footer className="print-footer">
+        <footer className="print-footer print-only">
             <div className="print-footer-content">
                 <span>Guarda Civil Municipal - 153</span>
             </div>
@@ -270,3 +274,5 @@ export function Step6Review() {
     </div>
   );
 }
+
+    

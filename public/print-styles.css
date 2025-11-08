@@ -1,0 +1,137 @@
+
+/* This file is intentionally blank. It will be populated with print-specific styles. */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background-color: #ffffff;
+        font-size: 10pt;
+    }
+
+    .print-container {
+        display: block !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: white;
+    }
+
+    .print-hidden {
+        display: none !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+
+    .print-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #333;
+    }
+    
+    .print-header h2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    
+    .print-header p {
+        margin: 0;
+    }
+
+    .print-main-content {
+        margin-top: 1rem;
+    }
+
+    .print-section {
+        margin-bottom: 1.25rem;
+        break-inside: avoid-page;
+    }
+    
+    .print-section-title {
+        font-size: 1rem;
+        font-weight: bold;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 0.5rem;
+    }
+
+    .print-section-content {
+        display: grid;
+        gap: 0.25rem 1rem;
+    }
+    
+    .print-section-content.grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    
+    .print-section-content p {
+        margin: 0;
+    }
+    .print-section-content p strong {
+        font-weight: bold;
+    }
+
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.5rem;
+    }
+
+    .print-table th, .print-table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+        text-align: left;
+        font-size: 9pt;
+    }
+
+    .print-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+    
+    .print-involved-card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        break-inside: avoid;
+    }
+    
+    .print-involved-card .grid {
+         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .print-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 8pt;
+        background-color: white;
+        border-top: 1px solid #ccc;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .print-footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .print-footer-line {
+        height: 1px;
+        background-color: #333;
+        width: 100%;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+    
