@@ -25,7 +25,32 @@ import {
 
 const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 const weaponTypes = ['Carabina', 'Espingarda', 'Fuzil', 'Garrucha', 'Metralhadora', 'Pistola', 'Revólver', 'Rifle', 'Submetralhadora'].sort();
-const weaponBrands = ['Taurus', 'CBC', 'Glock', 'Imbel', 'Beretta', 'Colt', 'Smith & Wesson', 'Ruger', 'Sig Sauer', 'Heckler & Koch', 'Outra'].sort();
+const weaponBrands = [
+    "Armalite",
+    "Benelli",
+    "Beretta",
+    "Bersa",
+    "CBC",
+    "Colt",
+    "CZ",
+    "Daniel Defense",
+    "Glock",
+    "Heckler & Koch",
+    "Imbel",
+    "Kimber Manufacturing",
+    "Mossberg",
+    "Remington Arms",
+    "Rossi",
+    "Ruger",
+    "Sig Sauer",
+    "Smith & Wesson",
+    "Springfield Armory",
+    "Steyr",
+    "Tanfoglio",
+    "Taurus",
+    "Winchester",
+    "Outra"
+].sort();
 
 
 const initialWeaponState: Omit<WeaponItem, 'id'> = {
