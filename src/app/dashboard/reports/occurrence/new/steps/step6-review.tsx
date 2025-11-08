@@ -16,12 +16,13 @@ const ReviewSection = ({ title, children, hasData, className }: { title: string,
     );
 };
 
+const capitalize = (s?: string) => {
+    if (!s) return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 
 export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
-
-  if (!formData) {
-    return <div>Carregando revisão...</div>;
-  }
 
   const { involved, items, team } = formData;
 
@@ -67,8 +68,8 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             <ReviewSection title="1. Dados Gerais" hasData={true}>
                  <div className="grid grid-cols-3 gap-x-4">
                     <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
-                    <p><strong>Origem da Solicitação:</strong> {formData.requestOrigin}</p>
-                    <p><strong>Autoria:</strong> {formData.authorship}</p>
+                    <p><strong>Origem da Solicitação:</strong> {capitalize(formData.requestOrigin)}</p>
+                    <p><strong>Autoria:</strong> {capitalize(formData.authorship)}</p>
                     <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
                     <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
                     <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
