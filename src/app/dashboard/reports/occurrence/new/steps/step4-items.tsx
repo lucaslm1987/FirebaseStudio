@@ -2,17 +2,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useOccurrenceForm, type ItemEntry, type Vehicle, type ObjectItem, type NarcoticItem } from '../form-context';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { useOccurrenceForm, type WeaponItem, type Vehicle, type ObjectItem, type NarcoticItem } from '../form-context';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Car, Box, Pill, Target, PlusCircle } from 'lucide-react';
 import { VehicleForm } from './vehicle-form';
@@ -21,55 +12,9 @@ import { ObjectForm } from './object-form';
 import { ObjectCard } from './object-card';
 import { NarcoticForm } from './narcotic-form';
 import { NarcoticCard } from './narcotic-card';
+import { WeaponForm } from './weapon-form';
+import { WeaponCard } from './weapon-card';
 
-
-const itemConditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros'] as const;
-
-const ItemEntrySection = ({ 
-    field, 
-    placeholder 
-}: { 
-    field: 'weapons', 
-    placeholder: string 
-}) => {
-    const { formData, updateItemEntry } = useOccurrenceForm();
-
-    const itemData = formData.items?.[field] ?? { condition: '', description: '' };
-
-    const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateItemEntry(field, { description: e.target.value });
-    };
-
-    const handleConditionChange = (value: ItemEntry['condition']) => {
-        updateItemEntry(field, { condition: value });
-    };
-
-    return (
-        <div className="space-y-4 p-1">
-            <div className="space-y-2">
-                <Label htmlFor={`${field}-condition`}>Condição</Label>
-                <Select value={itemData.condition} onValueChange={handleConditionChange}>
-                    <SelectTrigger id={`${field}-condition`} className="w-full md:w-1/3">
-                        <SelectValue placeholder="Selecione a condição..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {itemConditions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor={field} className="sr-only">{field}</Label>
-                <Textarea
-                    id={field}
-                    placeholder={placeholder}
-                    rows={5}
-                    value={itemData.description}
-                    onChange={handleDescriptionChange}
-                />
-            </div>
-        </div>
-    )
-}
 
 const VehicleSection = () => {
     const { formData, removeVehicle } = useOccurrenceForm();
@@ -215,6 +160,54 @@ const NarcoticSection = () => {
     )
 }
 
+const WeaponSection = () => {
+    const { formData, removeWeapon } = useOccurrenceForm();
+    const [isFormOpen, setFormOpen] = useState(false);
+    const [selectedWeapon, setSelectedWeapon] = useState<WeaponItem | undefined>(undefined);
+
+    const handleAdd = () => {
+        setSelectedWeapon(undefined);
+        setFormOpen(true);
+    }
+
+    const handleEdit = (weapon: WeaponItem) => {
+        setSelectedWeapon(weapon);
+        setFormOpen(true);
+    }
+
+    return (
+        <>
+            <WeaponForm 
+                isOpen={isFormOpen}
+                setIsOpen={setFormOpen}
+                weaponData={selectedWeapon}
+            />
+            <div className="space-y-4 p-1">
+                <Button onClick={handleAdd}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Adicionar Arma
+                </Button>
+
+                <div className="mt-4 space-y-4">
+                    {formData.items.weapons.map(weapon => (
+                        <WeaponCard 
+                            key={weapon.id}
+                            weapon={weapon}
+                            onEdit={() => handleEdit(weapon)}
+                            onRemove={() => removeWeapon(weapon.id)}
+                        />
+                    ))}
+                </div>
+                 {formData.items.weapons.length === 0 && (
+                    <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Nenhuma arma adicionada.</p>
+                    </div>
+                )}
+            </div>
+        </>
+    )
+}
+
 
 export function Step4Items() {
   return (
@@ -269,15 +262,10 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <ItemEntrySection
-                        field="weapons"
-                        placeholder="Ex: Revólver Calibre .38, marca Taurus, nº de série YYYYY, com 5 munições intactas..."
-                    />
+                    <WeaponSection />
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
     </div>
   );
 }
-
-    

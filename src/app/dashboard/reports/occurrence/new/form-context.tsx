@@ -59,11 +59,6 @@ export type InvolvedCompany = {
     representative?: string;
 };
 
-export type ItemEntry = {
-    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
-    description: string;
-};
-
 export type Vehicle = {
     id: string;
     condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
@@ -97,12 +92,23 @@ export type NarcoticItem = {
     packaging: 'Pedra' | 'Porção' | 'Tijolo' | 'Eppendorf' | '';
 };
 
+export type WeaponItem = {
+    id: string;
+    condition: 'Apreendido' | 'Envolvido' | 'Localizado' | 'Outros' | '';
+    type: 'Pistola' | 'Revólver' | 'Fuzil' | 'Carabina' | 'Garrucha' | 'Espingarda' | 'Rifle' | 'Metralhadora' | 'Submetralhadora' | '';
+    brand?: string;
+    model?: string;
+    serialNumber?: string;
+    ammoIntact?: number;
+    ammoSpent?: number;
+}
+
 
 export type ItemsData = {
     vehicles: Vehicle[];
     objects: ObjectItem[];
     narcotics: NarcoticItem[];
-    weapons: ItemEntry;
+    weapons: WeaponItem[];
 }
 
 
@@ -135,7 +141,6 @@ export interface OccurrenceFormData {
 interface OccurrenceFormContextType {
   formData: OccurrenceFormData;
   updateField: (newData: Partial<OccurrenceFormData>) => void;
-  updateItemEntry: (field: 'weapons', value: Partial<ItemEntry>) => void;
   addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void;
   updateVehicle: (vehicleId: string, updatedData: Partial<Vehicle>) => void;
   removeVehicle: (vehicleId: string) => void;
@@ -145,6 +150,9 @@ interface OccurrenceFormContextType {
   addNarcotic: (narcotic: Omit<NarcoticItem, 'id'>) => void;
   updateNarcotic: (narcoticId: string, updatedData: Partial<NarcoticItem>) => void;
   removeNarcotic: (narcoticId: string) => void;
+  addWeapon: (weapon: Omit<WeaponItem, 'id'>) => void;
+  updateWeapon: (weaponId: string, updatedData: Partial<WeaponItem>) => void;
+  removeWeapon: (weaponId: string) => void;
   addTeamMember: (name: string) => void;
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
@@ -163,7 +171,7 @@ const initialFormData: OccurrenceFormData = {
     vehicles: [],
     objects: [],
     narcotics: [],
-    weapons: { condition: '', description: '' },
+    weapons: [],
   },
   requestOrigin: 'deparou',
   authorship: 'desconhecida',
@@ -204,8 +212,8 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
         if (!Array.isArray(parsedData.items.narcotics)) {
             parsedData.items.narcotics = [];
         }
-        if (typeof parsedData.items.weapons !== 'object' || parsedData.items.weapons === null) {
-            parsedData.items.weapons = initialFormData.items.weapons;
+        if (!Array.isArray(parsedData.items.weapons)) {
+            parsedData.items.weapons = [];
         }
         setFormData(parsedData);
       }
@@ -229,19 +237,6 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     setFormData(prev => ({ ...prev, ...newData }));
   }, []);
   
-  const updateItemEntry = useCallback((field: 'weapons', value: Partial<ItemEntry>) => {
-    setFormData(prev => ({
-      ...prev,
-      items: {
-        ...prev.items,
-        [field]: {
-          ...(prev.items[field] || { condition: '', description: '' }),
-          ...value,
-        }
-      }
-    }));
-  }, []);
-
   const addVehicle = useCallback((vehicle: Omit<Vehicle, 'id'>) => {
     setFormData(prev => ({
       ...prev,
@@ -331,6 +326,36 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
           }
       }));
   }, []);
+  
+  const addWeapon = useCallback((weapon: Omit<WeaponItem, 'id'>) => {
+    setFormData(prev => ({
+        ...prev,
+        items: {
+            ...prev.items,
+            weapons: [...prev.items.weapons, { ...weapon, id: new Date().toISOString() }],
+        }
+    }));
+  }, []);
+
+  const updateWeapon = useCallback((weaponId: string, updatedData: Partial<WeaponItem>) => {
+      setFormData(prev => ({
+          ...prev,
+          items: {
+              ...prev.items,
+              weapons: prev.items.weapons.map(w => w.id === weaponId ? { ...w, ...updatedData } : w),
+          }
+      }));
+  }, []);
+
+  const removeWeapon = useCallback((weaponId: string) => {
+      setFormData(prev => ({
+          ...prev,
+          items: {
+              ...prev.items,
+              weapons: prev.items.weapons.filter(w => w.id !== weaponId),
+          }
+      }));
+  }, []);
 
 
   const addTeamMember = useCallback((name: string) => {
@@ -390,7 +415,6 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const contextValue = {
     formData,
     updateField,
-    updateItemEntry,
     addVehicle,
     updateVehicle,
     removeVehicle,
@@ -400,6 +424,9 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     addNarcotic,
     updateNarcotic,
     removeNarcotic,
+    addWeapon,
+    updateWeapon,
+    removeWeapon,
     addTeamMember,
     removeTeamMember,
     updateTeamMember,
@@ -423,5 +450,3 @@ export const useOccurrenceForm = () => {
   }
   return context;
 };
-
-    
