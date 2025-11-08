@@ -57,8 +57,12 @@ const crimesPorLei = {
         { article: "Tema 506 STF", name: "Ilícito extra penal" },
     ],
     "Lei de Armas": [
-        { article: "Art. 14", name: "Porte ilegal de arma de fogo" },
-        { article: "Art. 15", name: "Disparo de arma de fogo" }
+        { "article": "Art. 12", "name": "Posse irregular de arma de fogo de uso permitido" },
+        { "article": "Art. 13", "name": "Omissão de cautela" },
+        { article: "Art. 14", name: "Porte ilegal de arma de fogo de uso permitido" },
+        { article: "Art. 15", name: "Disparo de arma de fogo" },
+        { "article": "Art. 16", "name": "Posse ou porte ilegal de arma de fogo de uso restrito" },
+        { "article": "Art. 17", "name": "Comércio ilegal de arma de fogo" }
     ],
     "Lei de Contravenções Penais": [
         { article: "Art. 21", name: "Vias de fato" },
