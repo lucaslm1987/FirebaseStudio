@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useOccurrenceForm, type ItemEntry, type Vehicle, type ObjectItem } from '../form-context';
+import { useOccurrenceForm, type ItemEntry, type Vehicle, type ObjectItem, type NarcoticItem } from '../form-context';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -19,6 +19,8 @@ import { VehicleForm } from './vehicle-form';
 import { VehicleCard } from './vehicle-card';
 import { ObjectForm } from './object-form';
 import { ObjectCard } from './object-card';
+import { NarcoticForm } from './narcotic-form';
+import { NarcoticCard } from './narcotic-card';
 
 
 const itemConditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros'] as const;
@@ -27,7 +29,7 @@ const ItemEntrySection = ({
     field, 
     placeholder 
 }: { 
-    field: 'narcotics' | 'weapons', 
+    field: 'weapons', 
     placeholder: string 
 }) => {
     const { formData, updateItemEntry } = useOccurrenceForm();
@@ -165,6 +167,54 @@ const ObjectSection = () => {
     )
 }
 
+const NarcoticSection = () => {
+    const { formData, removeNarcotic } = useOccurrenceForm();
+    const [isFormOpen, setFormOpen] = useState(false);
+    const [selectedNarcotic, setSelectedNarcotic] = useState<NarcoticItem | undefined>(undefined);
+
+    const handleAdd = () => {
+        setSelectedNarcotic(undefined);
+        setFormOpen(true);
+    }
+
+    const handleEdit = (narcotic: NarcoticItem) => {
+        setSelectedNarcotic(narcotic);
+        setFormOpen(true);
+    }
+
+    return (
+        <>
+            <NarcoticForm 
+                isOpen={isFormOpen}
+                setIsOpen={setFormOpen}
+                narcoticData={selectedNarcotic}
+            />
+            <div className="space-y-4 p-1">
+                <Button onClick={handleAdd}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Adicionar Entorpecente
+                </Button>
+
+                <div className="mt-4 space-y-4">
+                    {formData.items.narcotics.map(narcotic => (
+                        <NarcoticCard 
+                            key={narcotic.id}
+                            narcotic={narcotic}
+                            onEdit={() => handleEdit(narcotic)}
+                            onRemove={() => removeNarcotic(narcotic.id)}
+                        />
+                    ))}
+                </div>
+                 {formData.items.narcotics.length === 0 && (
+                    <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Nenhum entorpecente adicionado.</p>
+                    </div>
+                )}
+            </div>
+        </>
+    )
+}
+
 
 export function Step4Items() {
   return (
@@ -207,10 +257,7 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <ItemEntrySection
-                        field="narcotics"
-                        placeholder="Ex: 10 porções de substância análoga à maconha, pesando aproximadamente 50g..."
-                    />
+                   <NarcoticSection />
                 </AccordionContent>
             </AccordionItem>
             
@@ -232,3 +279,5 @@ export function Step4Items() {
     </div>
   );
 }
+
+    
