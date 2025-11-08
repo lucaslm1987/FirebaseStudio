@@ -36,6 +36,7 @@ const crimesPorLei = {
         { article: "Art. 289", name: "Moeda Falsa" },
         { article: "Art. 299", name: "Falsidade Ideológica" },
         { article: "Art. 304", name: "Uso de Documento Falso" },
+        { article: "Art. 311", name: "Adulteração de sinal identificador de veículo" },
     ],
     "CTB": [
         { article: "Art. 302", name: "Homicídio culposo na direção de veículo" },
