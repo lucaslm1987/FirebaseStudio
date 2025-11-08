@@ -281,7 +281,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                 <p>{getSolutionText()}</p>
             </ReviewSection>
             
-            <ReviewSection title="Assinaturas" hasData={true} icon={Pen}>
+            <ReviewSection title="AUTENTICAÇÃO" hasData={true} icon={Pen}>
                 <div className="print-signatures-grid">
                     {team.map(m => (
                         <div key={m.name} className="print-signature-box">
