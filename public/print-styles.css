@@ -1,207 +1,165 @@
-/* Esconde tudo por padrão na impressão */
-body * {
-    visibility: hidden;
-}
 
-/* Mostra apenas o container de impressão e seus filhos */
-.print-container, .print-container * {
-    visibility: visible;
-}
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: #fff !important;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
 
-/* Define a área de impressão para ocupar a página inteira */
-.print-container {
-    position: absolute;
-    left: 0;
-    top: 0;
+  .print-hidden,
+  .print-hidden * {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+  
+  .print-container {
     width: 100%;
-    margin: 0;
-    padding: 1.5cm; /* Margens do A4 */
-    font-size: 10pt;
-    color: #000;
-    background-color: #fff;
-    box-sizing: border-box;
-}
-
-body, html {
     margin: 0;
     padding: 0;
-    background-color: #fff; /* Garante fundo branco para o corpo do documento */
-}
+    background-color: #fff !important;
+  }
 
-/* --- ESTILOS GERAIS PARA O CONTEÚDO DO PDF --- */
+  .print-container * {
+    background-color: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
 
-@page {
-    size: A4;
-    margin: 0; /* Remove margens padrão do navegador */
-}
-
-.print-header, .print-footer {
-    position: static;
-    width: 100%;
-}
-
-.print-header {
+  .print-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    padding: 1.5rem;
     border-bottom: 2px solid #333;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
+  }
 
-.print-header h2 {
-    font-size: 16pt;
-    font-weight: bold;
+  .print-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
     margin: 0;
-}
+  }
 
-.print-header p, .print-footer p {
+  .print-header p {
     margin: 0;
-    font-size: 9pt;
-}
+    font-size: 0.875rem;
+  }
 
-.print-main-content {
-    padding-top: 0; /* Remove o espaçamento que era para o header fixo */
-}
+  .print-main-content {
+    padding: 1.5rem;
+  }
 
-.print-section {
-    margin-bottom: 25px; /* Aumenta o espaço entre seções */
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #fff;
-    page-break-inside: avoid; /* Tenta evitar que a seção seja dividida */
-}
-
-.print-section-title {
-    font-size: 12pt;
+  .print-section {
+    margin-bottom: 2rem;
+    page-break-inside: avoid;
+  }
+  
+  .print-section-title {
+    font-size: 1rem;
     font-weight: bold;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #eee;
-}
+    text-transform: uppercase;
+    border-bottom: 1px solid #666;
+    padding-bottom: 0.25rem;
+    margin-bottom: 1rem;
+  }
 
-.print-section-content {
+  .print-section-content p {
+    margin: 0 0 0.5rem;
+  }
+  
+  .print-section-content .grid {
     display: grid;
-    gap: 8px;
-}
+    gap: 0.25rem 1rem;
+  }
 
-/* Tabela para dados gerais */
-.grid-cols-3 {
+  .print-section-content .grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.col-span-3 {
+  }
+
+  .print-section-content .col-span-3 {
     grid-column: span 3 / span 3;
-}
-.print-section-content p {
-    margin: 0;
-}
-.print-section-content p strong {
-    font-weight: bold;
-}
+  }
 
-
-/* Tabelas */
-.print-table {
+  .print-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 9pt;
-    page-break-inside: auto; /* Permite que tabelas grandes quebrem, mas as linhas não */
-}
+    margin-top: 1rem;
+    page-break-inside: avoid;
+  }
 
-.print-table th, .print-table td {
+  .print-table th, .print-table td {
     border: 1px solid #ccc;
-    padding: 6px;
+    padding: 0.5rem;
     text-align: left;
-}
+    font-size: 0.8rem;
+    vertical-align: top;
+  }
 
-.print-table thead {
+  .print-table th {
     background-color: #f2f2f2;
     font-weight: bold;
-}
+  }
 
-.print-table tr {
-    page-break-inside: avoid; /* Evita que uma linha da tabela seja dividida */
-}
-
-/* Cartão de Envolvido */
-.print-involved-card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    page-break-inside: avoid; /* Crucial para não quebrar o card de um envolvido */
-}
-
-.print-involved-card .grid {
-    display: grid;
-    gap: 4px 16px;
-}
-
-.print-involved-card p {
-    margin: 0;
-    font-size: 9pt;
-}
-
-/* Rodapé */
-.print-footer {
-    display: flex; /* Garante que será visível na impressão */
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 30px;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
-    width: 100%;
-    text-align: center;
-    page-break-before: auto;
+  .print-table tr {
     page-break-inside: avoid;
-}
+  }
 
-.print-footer-content {
+  .print-involved-card {
+    border: 1px solid #aaa;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    page-break-inside: avoid;
+  }
+
+  .print-footer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    text-align: center;
+    font-size: 0.75rem;
+    padding-top: 1rem;
+    margin-top: 2rem;
     width: 100%;
-    margin-bottom: 5px;
-}
+    page-break-before: auto;
+  }
+  
+  .print-footer-content {
+    font-weight: bold;
+  }
 
-.print-footer-line {
+  .print-footer-line {
     width: 100%;
     height: 1px;
     background-color: #000;
-    margin: 5px 0;
-}
+    margin: 0.5rem 0;
+  }
 
-.print-footer p {
-    font-size: 8pt;
-    color: #333;
-}
-
-
-/* Assinaturas */
-.print-signatures-section {
-    margin-top: 40px;
-    page-break-before: auto;
+  .print-signatures-section {
+    margin-top: 3rem;
     page-break-inside: avoid;
-}
-.print-signatures-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px 50px;
-    margin-top: 20px;
-}
-.print-signature-box {
-    border-top: 1px solid #000;
-    padding-top: 5px;
-    text-align: center;
-}
-.print-signature-box p {
-    margin: 0;
-    font-size: 9pt;
-}
+  }
 
-/* Ocultar elementos que não devem aparecer no PDF */
-.print-hidden, .print-hidden * {
-    display: none !important;
+  .print-signatures-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    margin-top: 2rem;
+  }
+
+  .print-signature-box {
+    border-top: 1px solid #000;
+    padding-top: 0.5rem;
+    text-align: center;
+  }
+
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: inherit;
+  }
 }
