@@ -82,14 +82,14 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
 
         <main className="print-main-content">
             <ReviewSection title="Dados Gerais" hasData={true} icon={FileText}>
-                 <div className="grid grid-cols-3 gap-x-4">
+                 <div className="grid grid-cols-2 gap-x-4">
                     <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
                     <p><strong>Origem da Solicitação:</strong> {capitalize(formData.requestOrigin)}</p>
                     <p><strong>Autoria:</strong> {capitalize(formData.authorship)}</p>
                     <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
                     <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
                     <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
-                    <p className="col-span-3"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+                    <p className="col-span-2"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
                 </div>
             </ReviewSection>
 
@@ -297,11 +297,8 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
              <div className="print-footer-content">
                 <span>Guarda Civil Municipal - 153</span>
             </div>
-            <div className="print-footer-line"></div>
             <p>Rua José Bonifácio, 378, Centro, Cordeirópolis-SP, fone (19) 3546-5838</p>
         </footer>
     </div>
   );
 }
-
-    
