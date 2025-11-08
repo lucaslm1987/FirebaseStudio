@@ -83,7 +83,29 @@ function NewOccurrenceReportContent() {
   
 
   const handlePrint = () => {
-    window.print();
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+        const printContent = document.getElementById('printable-content')?.innerHTML;
+        if (printContent) {
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Imprimir Boletim de Ocorrência</title>
+                        <link rel="stylesheet" href="/print-styles.css">
+                    </head>
+                    <body>
+                        ${printContent}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+              printWindow.print();
+              printWindow.close();
+            }, 250);
+        }
+    }
   };
 
   const handleNewReport = () => {
@@ -103,12 +125,13 @@ function NewOccurrenceReportContent() {
         </div>
     )
   }
-
+  
   const RenderedReview = <Step6Review formData={formData} />;
 
   return (
     <div className="flex h-full flex-col">
-       <div className="printable-content-only">{RenderedReview}</div>
+       <div id="printable-content" className="hidden print:block">{RenderedReview}</div>
+
       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Criar Boletim de Ocorrência

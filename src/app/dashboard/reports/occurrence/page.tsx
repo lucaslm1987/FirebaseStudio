@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import {
   Card,
   CardContent,
@@ -8,13 +9,6 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -58,9 +52,6 @@ export default function ConsultOccurrenceReportPage() {
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
-
-  const [isPrintModalOpen, setPrintModalOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   
   useEffect(() => {
     try {
@@ -122,12 +113,28 @@ export default function ConsultOccurrenceReportPage() {
   };
   
   const handlePrint = (report: Report) => {
-    setSelectedReport(report);
-    setPrintModalOpen(true);
-    setTimeout(() => {
-        window.print();
-    }, 500);
-  }
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+        const printContent = ReactDOMServer.renderToString(<Step6Review formData={report} />);
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Imprimir Boletim de Ocorrência</title>
+                    <link rel="stylesheet" href="/print-styles.css">
+                </head>
+                <body>
+                    ${printContent}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 250);
+    }
+  };
 
   const handleClearStorage = () => {
     if (window.confirm("Tem certeza que deseja apagar todos os BOs de teste? Esta ação não pode ser desfeita.")) {
@@ -138,18 +145,6 @@ export default function ConsultOccurrenceReportPage() {
 
   return (
     <>
-    <Dialog open={isPrintModalOpen} onOpenChange={setPrintModalOpen}>
-        <DialogContent className="max-w-4xl printable-content-only p-0 border-0">
-             <DialogHeader className="sr-only">
-                <DialogTitle>Visualização de Impressão do Boletim</DialogTitle>
-                <DialogDescription>
-                    Este é o layout do boletim de ocorrência para impressão.
-                </DialogDescription>
-            </DialogHeader>
-            {selectedReport && <Step6Review formData={selectedReport} />}
-        </DialogContent>
-    </Dialog>
-
     <div className="flex h-full flex-col print:hidden">
       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
