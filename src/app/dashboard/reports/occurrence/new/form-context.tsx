@@ -110,7 +110,12 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     try {
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
-        setFormData(JSON.parse(savedData));
+        const parsedData = JSON.parse(savedData);
+        // Ensure 'involved' is always an array to prevent crashes from old localStorage data
+        if (!Array.isArray(parsedData.involved)) {
+          parsedData.involved = [];
+        }
+        setFormData(parsedData);
       }
     } catch (error) {
       console.error("Failed to load form data from localStorage", error);
