@@ -72,7 +72,14 @@ const crimesPorLei = {
         { article: "Art. 68", name: "Omissão de cautela na guarda ou condução de animais" }
     ],
     "Lei Ambiental": [
+        { "article": "Art. 29", "name": "Crime contra a fauna (caça/pesca ilegal)" },
         { article: "Art. 32", name: "Maus-tratos a animais" },
+        { "article": "Art. 33", "name": "Poluição aquática com mortandade de peixes" },
+        { "article": "Art. 34", "name": "Pesca proibida" },
+        { "article": "Art. 35", "name": "Pesca com petrechos proibidos" },
+        { "article": "Art. 38", "name": "Destruição de floresta de preservação permanente" },
+        { "article": "Art. 39", "name": "Cortar árvores em floresta de preservação permanente sem permissão" },
+        { "article": "Art. 42", "name": "Fabricar, vender, transportar ou soltar balões" },
         { article: "Art. 50", name: "Desmatamento ilegal" }
     ],
 };
