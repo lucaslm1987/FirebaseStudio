@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -21,7 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Calendar as CalendarIcon, Search, Printer } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, Printer, AlertTriangle } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -29,7 +29,10 @@ import {
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
+import type { OccurrenceFormData, InvolvedPerson } from './new/form-context';
+
+type Report = OccurrenceFormData & { id: string };
 
 const maskCPF = (value: string) => {
     return value
@@ -40,50 +43,100 @@ const maskCPF = (value: string) => {
       .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 };
 
-
 export default function ConsultOccurrenceReportPage() {
+  const [allReports, setAllReports] = useState<Report[]>([]);
+  const [filteredReports, setFilteredReports] = useState<Report[]>([]);
+  
+  // Search state
+  const [reportId, setReportId] = useState('');
   const [cpf, setCpf] = useState('');
+  const [name, setName] = useState('');
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
+  
+  // Load reports from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedReportsString = localStorage.getItem('occurrenceReports');
+      const savedReports: Report[] = savedReportsString ? JSON.parse(savedReportsString) : [];
+      // Sort by date descending
+      savedReports.sort((a, b) => {
+        const dateA = a.factDate ? new Date(`${a.factDate}T${a.factTime || '00:00'}`).getTime() : 0;
+        const dateB = b.factDate ? new Date(`${b.factDate}T${b.factTime || '00:00'}`).getTime() : 0;
+        return dateB - dateA;
+      });
+      setAllReports(savedReports);
+      setFilteredReports(savedReports); // Initially show all
+    } catch (error) {
+      console.error("Failed to load reports from localStorage", error);
+    }
+  }, []);
 
-  const reports = [
-    {
-      id: 'BO2024001',
-      date: '2024-07-28 10:30',
-      location: 'Av. Paulista, 1578',
-      status: 'Em andamento',
-    },
-    {
-      id: 'BO2024002',
-      date: '2024-07-27 22:15',
-      location: 'Rua Augusta, 900',
-      status: 'Finalizado',
-    },
-    {
-      id: 'BO2024003',
-      date: '2024-07-27 14:00',
-      location: 'Pq. Ibirapuera, Portão 3',
-      status: 'Finalizado',
-    },
-  ];
+  const handleSearch = () => {
+    let results = allReports;
+
+    if (startDate) {
+      results = results.filter(report => {
+        if (!report.factDate) return false;
+        return new Date(report.factDate) >= startDate;
+      });
+    }
+
+    if (endDate) {
+      results = results.filter(report => {
+        if (!report.factDate) return false;
+        // Include the end date in the search
+        const reportDate = new Date(report.factDate);
+        reportDate.setHours(0,0,0,0);
+        const searchEndDate = new Date(endDate);
+        searchEndDate.setHours(23,59,59,999);
+        return reportDate <= searchEndDate;
+      });
+    }
+
+    if (reportId) {
+      results = results.filter(report => report.id.toLowerCase().includes(reportId.toLowerCase()));
+    }
+    
+    if (cpf) {
+      results = results.filter(report => 
+        report.involved.some(inv => inv.type === 'person' && (inv as InvolvedPerson).cpf === cpf)
+      );
+    }
+
+    if (name) {
+      results = results.filter(report => 
+        report.involved.some(inv => 
+          (inv.type === 'person' && inv.name.toLowerCase().includes(name.toLowerCase())) ||
+          (inv.type === 'company' && inv.corporateName.toLowerCase().includes(name.toLowerCase()))
+        )
+      );
+    }
+
+    setFilteredReports(results);
+  };
+  
+  const handlePrint = () => {
+    window.print();
+  }
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6">
+      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Consultar Boletins de Ocorrência
         </h1>
       </header>
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Consultar Boletins de Ocorrência</CardTitle>
+          <CardHeader className="print:hidden">
+            <CardTitle>Filtrar Boletins de Ocorrência</CardTitle>
             <CardDescription>
               Utilize os filtros abaixo para pesquisar os BOs registrados.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="rounded-md border bg-muted/50 p-4">
+            <div className="rounded-md border bg-muted/50 p-4 print:hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="startDate">Data Inicial</Label>
@@ -137,10 +190,10 @@ export default function ConsultOccurrenceReportPage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="bo-id">Nº do BO</Label>
-                        <Input id="bo-id" placeholder="Ex: BO2024001" />
+                        <Input id="bo-id" placeholder="Ex: BO2024001" value={reportId} onChange={e => setReportId(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="cpf">CPF</Label>
+                        <Label htmlFor="cpf">CPF do Envolvido</Label>
                         <Input 
                             id="cpf" 
                             placeholder="000.000.000-00" 
@@ -149,12 +202,12 @@ export default function ConsultOccurrenceReportPage() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="name">Nome</Label>
-                        <Input id="name" placeholder="Nome do envolvido" />
+                        <Label htmlFor="name">Nome do Envolvido</Label>
+                        <Input id="name" placeholder="Nome do envolvido" value={name} onChange={e => setName(e.target.value)} />
                     </div>
                 </div>
                  <div className="mt-4 flex justify-end">
-                    <Button>
+                    <Button onClick={handleSearch}>
                         <Search className="mr-2 h-4 w-4" />
                         Pesquisar
                     </Button>
@@ -167,36 +220,37 @@ export default function ConsultOccurrenceReportPage() {
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Data/Hora</TableHead>
+                    <TableHead>Natureza</TableHead>
                     <TableHead>Local</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
+                    <TableHead className="text-right print:hidden">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell className="font-medium">{report.id}</TableCell>
-                      <TableCell>{report.date}</TableCell>
-                      <TableCell>{report.location}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            report.status === 'Finalizado'
-                              ? 'secondary'
-                              : 'default'
-                          }
-                        >
-                          {report.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon">
-                          <Printer className="h-4 w-4" />
-                          <span className="sr-only">Imprimir</span>
-                        </Button>
+                  {filteredReports.length > 0 ? (
+                    filteredReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell className="font-medium">{report.id}</TableCell>
+                        <TableCell>{report.factDate ? `${format(new Date(report.factDate), 'dd/MM/yyyy')} ${report.factTime || ''}`: 'N/A'}</TableCell>
+                        <TableCell className="max-w-[250px] truncate">{report.nature || 'N/A'}</TableCell>
+                        <TableCell className="max-w-[250px] truncate">{`${report.street || ''}, ${report.number || ''}`}</TableCell>
+                        <TableCell className="text-right print:hidden">
+                          <Button variant="ghost" size="icon" onClick={handlePrint}>
+                            <Printer className="h-4 w-4" />
+                            <span className="sr-only">Imprimir</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                            <AlertTriangle className="h-8 w-8" />
+                            <p>Nenhum resultado encontrado.</p>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>

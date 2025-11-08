@@ -19,6 +19,7 @@ import {
 import {
   OccurrenceFormProvider,
   useOccurrenceForm,
+  type OccurrenceFormData,
 } from './form-context';
 import { Step1GeneralData } from './steps/step1-general-data';
 import { Step2Nature } from './steps/step2-nature';
@@ -47,7 +48,7 @@ function NewOccurrenceReportContent() {
       setCurrentStep(currentStep + 1);
     } else {
       // Final step logic
-      generateReportId();
+      generateReport();
     }
   };
 
@@ -59,13 +60,32 @@ function NewOccurrenceReportContent() {
     }
   };
 
-  const generateReportId = () => {
-    const year = new Date().getFullYear();
-    const sequential = Date.now() % 10000; // Placeholder
-    const newReportId = `BO${year}${String(sequential).padStart(5, '0')}`;
-    setReportId(newReportId);
-    setCurrentStep(7); // Go to the final screen
-    resetForm(); // Clear the form data after submission
+  const generateReport = () => {
+    try {
+      // Generate ID
+      const year = new Date().getFullYear();
+      const sequential = Date.now().toString().slice(-5);
+      const newReportId = `BO${year}${sequential}`;
+      
+      const newReport: OccurrenceFormData & { id: string } = {
+        ...formData,
+        id: newReportId,
+      };
+
+      // Save to localStorage
+      const savedReportsString = localStorage.getItem('occurrenceReports');
+      const savedReports: Array<OccurrenceFormData & { id: string }> = savedReportsString ? JSON.parse(savedReportsString) : [];
+      savedReports.push(newReport);
+      localStorage.setItem('occurrenceReports', JSON.stringify(savedReports));
+
+      // Update state and UI
+      setReportId(newReportId);
+      setCurrentStep(7); // Go to the final screen
+      resetForm(); // Clear the current form data
+    } catch (error) {
+      console.error("Failed to save report:", error);
+      alert("Ocorreu um erro ao salvar o relatório.");
+    }
   };
 
   const handlePrint = () => {
@@ -75,13 +95,14 @@ function NewOccurrenceReportContent() {
   const handleNewReport = () => {
     setCurrentStep(1);
     setReportId(null);
-    resetForm();
+    // The form is already reset, so just navigate state
   };
   
   const handleClearForm = () => {
     if (confirm("Tem certeza que deseja limpar todos os dados do formulário? O progresso salvo será perdido.")) {
       resetForm();
-      // Optionally, force a re-render or reload to show the cleared state
+      // Force a re-render to show the cleared state by resetting a volatile piece of state
+      setCurrentStep(1); 
       router.refresh();
     }
   }
@@ -105,7 +126,7 @@ function NewOccurrenceReportContent() {
         <div className="mx-auto max-w-5xl">
           {/* Stepper */}
           {currentStep <= 6 && (
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-8 flex items-center justify-between print:hidden">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
                   <div className="flex flex-col items-center">
@@ -190,7 +211,7 @@ function NewOccurrenceReportContent() {
               )}
 
               {currentStep <= 6 && (
-                <div className="mt-8 flex justify-between">
+                <div className="mt-8 flex justify-between print:hidden">
                   <Button variant="outline" onClick={handleBack}>
                     {currentStep === 1 ? 'Cancelar' : 'Voltar'}
                   </Button>
