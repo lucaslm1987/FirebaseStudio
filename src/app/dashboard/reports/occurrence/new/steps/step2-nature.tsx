@@ -37,6 +37,9 @@ const crimesPorLei = {
         { article: "Art. 299", name: "Falsidade Ideológica" },
         { article: "Art. 304", name: "Uso de Documento Falso" },
         { article: "Art. 311", name: "Adulteração de sinal identificador de veículo" },
+        { article: "Art. 329", name: "Resistência" },
+        { article: "Art. 330", name: "Desobediência" },
+        { article: "Art. 331", name: "Desacato" },
         { article: "Art. 345", name: "Exercício arbitrário das próprias razões" },
     ],
     "CTB": [
