@@ -1,7 +1,7 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import {
   Card,
   CardContent,
@@ -25,6 +25,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import type { ServiceReportData } from './new/page';
+import { ServiceReportPrint } from './service-report-print';
 
 
 export default function ConsultServiceReportPage() {
@@ -73,6 +74,30 @@ export default function ConsultServiceReportPage() {
     }
     
     setFilteredReports(results);
+  };
+  
+  const handlePrint = (report: ServiceReportData) => {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+        const printContent = ReactDOMServer.renderToString(<ServiceReportPrint reportData={report} />);
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Imprimir Relatório de Serviço</title>
+                    <link rel="stylesheet" href="/print-styles.css">
+                </head>
+                <body>
+                    ${printContent}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 250);
+    }
   };
 
 
@@ -167,7 +192,7 @@ export default function ConsultServiceReportPage() {
                       <TableRow key={report.id}>
                         <TableCell>{report.openingDate ? format(new Date(`${report.openingDate}T00:00:00`), 'dd/MM/yyyy') : 'N/A'}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
                             <Printer className="h-4 w-4" />
                             <span className="sr-only">Imprimir</span>
                           </Button>
@@ -193,5 +218,3 @@ export default function ConsultServiceReportPage() {
     </div>
   );
 }
-
-    
