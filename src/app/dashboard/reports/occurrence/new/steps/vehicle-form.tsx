@@ -26,10 +26,10 @@ import {
 const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 
 const vehicleTypes = [
-  'Automóvel', 'Bicicleta', 'Bonde', 'Caminhão', 'Caminhão trator', 'Caminhonete',
-  'Charrete', 'Ciclomotor', 'Microônibus', 'Motocicleta', 'Motoneta', 'Ônibus',
-  'Quadriciclo', 'Reboque ou semi-reboque', 'Triciclo'
-].sort();
+  'automóvel', 'bicicleta', 'bonde', 'caminhão', 'caminhão trator', 'caminhonete',
+  'charrete', 'ciclomotor', 'microônibus', 'motocicleta', 'motoneta', 'ônibus',
+  'quadriciclo', 'reboque ou semi-reboque', 'triciclo'
+];
 
 const carBrands = ["Fiat", "Chevrolet", "Volkswagen", "Ford", "Hyundai", "Toyota", "Honda", "Renault", "Jeep", "Nissan"];
 const motorcycleBrands = ["Honda", "Yamaha", "Suzuki", "Kawasaki", "BMW", "Harley-Davidson", "Triumph", "Ducati"];
@@ -39,6 +39,7 @@ const allBrands = [...new Set([...carBrands, ...motorcycleBrands, ...truckBrands
 
 const colors = ["Amarelo", "Azul", "Bege", "Branco", "Cinza", "Dourado", "Laranja", "Marrom", "Prata", "Preto", "Rosa", "Roxo", "Verde", "Vermelho", "Vinho"];
 
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const initialVehicleState: Omit<Vehicle, 'id'> = {
     condition: '',
@@ -139,7 +140,7 @@ export function VehicleForm({ isOpen, setIsOpen, vehicleData }: VehicleFormProps
                 <Select value={vehicle.type} onValueChange={handleSelectChange('type')} required>
                   <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                   <SelectContent>
-                    {vehicleTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    {vehicleTypes.sort().map(t => <SelectItem key={t} value={t}>{capitalize(t)}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
