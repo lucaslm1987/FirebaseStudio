@@ -118,7 +118,6 @@ export default function ConsultServiceReportPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
                     <TableHead>Data</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
@@ -126,7 +125,6 @@ export default function ConsultServiceReportPage() {
                 <TableBody>
                   {reports.map((report) => (
                     <TableRow key={report.id}>
-                      <TableCell className="font-medium">{report.id}</TableCell>
                       <TableCell>{report.date}</TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="icon">
