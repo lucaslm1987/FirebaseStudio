@@ -21,9 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../occurrence/new/form-context';
-import { PlusCircle, Trash2, User, Users, Car } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-
+import { PlusCircle, Trash2, User, Users, Car, Save } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const activityFields = [
     { id: 'adolescentesApreendidos', label: 'Adolescentes Apreendidos' },
@@ -44,7 +43,8 @@ type ActivityData = {
     [key in typeof activityFields[number]['id']]: number;
 }
 
-interface ServiceReportData {
+export interface ServiceReportData {
+    id: string;
     openingDate?: string;
     openingTime?: string;
     closingDate?: string;
@@ -61,17 +61,19 @@ const initialActivities: ActivityData = activityFields.reduce((acc, field) => {
     return acc;
 }, {} as ActivityData);
 
-const initialData: ServiceReportData = {
+const getInitialData = (): ServiceReportData => ({
+    id: `RSD-${Date.now()}`,
     team: [],
     activities: initialActivities,
     openingKm: 0,
     closingKm: 0,
-};
+});
 
 
 export default function NewServiceReportPage() {
     const router = useRouter();
-    const [formData, setFormData] = useState<ServiceReportData>(initialData);
+    const { toast } = useToast();
+    const [formData, setFormData] = useState<ServiceReportData>(getInitialData());
     const [selectedMember, setSelectedMember] = useState('');
 
     const kmTraveled = useMemo(() => {
@@ -104,35 +106,26 @@ export default function NewServiceReportPage() {
     };
 
     const addTeamMember = useCallback((name: string) => {
-        setFormData(prev => {
-            if (!prev) return prev;
-            return {
-                ...prev,
-                team: [...prev.team, { name, bodyCam: false, role: '' }]
-            };
-        });
+        setFormData(prev => ({
+            ...prev,
+            team: [...prev.team, { name, bodyCam: false, role: '' }]
+        }));
     }, []);
 
     const removeTeamMember = useCallback((name: string) => {
-        setFormData(prev => {
-            if (!prev) return prev;
-            return {
-                ...prev,
-                team: prev.team.filter(member => member.name !== name)
-            };
-        });
+        setFormData(prev => ({
+            ...prev,
+            team: prev.team.filter(member => member.name !== name)
+        }));
     }, []);
 
     const updateTeamMember = useCallback((name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => {
-        setFormData(prev => {
-            if (!prev) return prev;
-            return {
-                ...prev,
-                team: prev.team.map(member =>
-                    member.name === name ? { ...member, [field]: value } : member
-                )
-            };
-        });
+        setFormData(prev => ({
+            ...prev,
+            team: prev.team.map(member =>
+                member.name === name ? { ...member, [field]: value } : member
+            )
+        }));
     }, []);
 
     const handleAddMember = () => {
@@ -143,10 +136,32 @@ export default function NewServiceReportPage() {
     };
     
     const handleSave = () => {
-        // Here you would typically send the data to your backend or API
-        console.log('Saving report:', formData);
-        alert('Relatório salvo com sucesso! (Simulação)');
-        router.push('/dashboard/reports/service');
+        try {
+            const savedReportsString = localStorage.getItem('serviceReports');
+            const savedReports: ServiceReportData[] = savedReportsString ? JSON.parse(savedReportsString) : [];
+            
+            const existingReportIndex = savedReports.findIndex(report => report.id === formData.id);
+            if (existingReportIndex !== -1) {
+                savedReports[existingReportIndex] = formData;
+            } else {
+                savedReports.push(formData);
+            }
+
+            localStorage.setItem('serviceReports', JSON.stringify(savedReports));
+            
+            toast({
+                title: 'Relatório Salvo!',
+                description: 'O relatório de serviço foi salvo com sucesso.',
+            });
+            router.push('/dashboard/reports/service');
+        } catch (error) {
+            console.error("Failed to save service report:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Erro ao Salvar',
+                description: 'Não foi possível salvar o relatório de serviço.',
+            });
+        }
     };
 
     return (
@@ -312,10 +327,15 @@ export default function NewServiceReportPage() {
                 <Button variant="outline" type="button" onClick={() => router.back()}>
                     Cancelar
                 </Button>
-                <Button onClick={handleSave}>Salvar Relatório</Button>
+                <Button onClick={handleSave}>
+                    <Save className="mr-2 h-4 w-4" />
+                    Salvar Relatório
+                </Button>
             </div>
             </div>
         </main>
         </div>
     );
 }
+
+    

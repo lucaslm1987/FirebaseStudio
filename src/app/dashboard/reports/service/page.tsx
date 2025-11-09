@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -10,7 +10,6 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -19,23 +18,63 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Printer, Calendar as CalendarIcon } from 'lucide-react';
+import { Search, Printer, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import type { ServiceReportData } from './new/page';
 
 
 export default function ConsultServiceReportPage() {
+  const [allReports, setAllReports] = useState<ServiceReportData[]>([]);
+  const [filteredReports, setFilteredReports] = useState<ServiceReportData[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
+  
+  useEffect(() => {
+    try {
+      const savedReportsString = localStorage.getItem('serviceReports');
+      const savedReports: ServiceReportData[] = savedReportsString ? JSON.parse(savedReportsString) : [];
+      savedReports.sort((a, b) => {
+        const dateA = a.openingDate ? new Date(`${a.openingDate}T${a.openingTime || '00:00'}`).getTime() : 0;
+        const dateB = b.openingDate ? new Date(`${b.openingDate}T${b.openingTime || '00:00'}`).getTime() : 0;
+        return dateB - dateA;
+      });
+      setAllReports(savedReports);
+      setFilteredReports(savedReports);
+    } catch (error) {
+      console.error("Failed to load service reports from localStorage", error);
+    }
+  }, []);
 
-  const reports = [
-    { id: 'RSD20240728', date: '2024-07-28', team: 'GCM Silva, GCM Santos' },
-    { id: 'RSD20240727', date: '2024-07-27', team: 'GCM Lima, GCM Costa' },
-    { id: 'RSD20240726', date: '2024-07-26', team: 'GCM Pereira, GCM Oliveira' },
-  ];
+  const handleSearch = () => {
+    let results = allReports;
+
+    if (startDate) {
+      results = results.filter(report => {
+        if (!report.openingDate) return false;
+        const reportDate = new Date(report.openingDate);
+        reportDate.setHours(0,0,0,0);
+        return reportDate >= startDate;
+      });
+    }
+
+    if (endDate) {
+      results = results.filter(report => {
+        if (!report.openingDate) return false;
+        const reportDate = new Date(report.openingDate);
+        reportDate.setHours(0,0,0,0);
+        const searchEndDate = new Date(endDate);
+        searchEndDate.setHours(23,59,59,999);
+        return reportDate <= searchEndDate;
+      });
+    }
+    
+    setFilteredReports(results);
+  };
+
 
   return (
     <div className="flex h-full flex-col">
@@ -106,7 +145,7 @@ export default function ConsultServiceReportPage() {
                   </Popover>
                 </div>
                  <div className="space-y-2 self-end">
-                    <Button className='w-full'>
+                    <Button className='w-full' onClick={handleSearch}>
                       <Search className="mr-2 h-4 w-4" />
                       Pesquisar
                     </Button>
@@ -123,17 +162,28 @@ export default function ConsultServiceReportPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell>{report.date}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon">
-                          <Printer className="h-4 w-4" />
-                          <span className="sr-only">Imprimir</span>
-                        </Button>
+                  {filteredReports.length > 0 ? (
+                    filteredReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell>{report.openingDate ? format(new Date(`${report.openingDate}T00:00:00`), 'dd/MM/yyyy') : 'N/A'}</TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="icon">
+                            <Printer className="h-4 w-4" />
+                            <span className="sr-only">Imprimir</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                     <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                            <AlertTriangle className="h-8 w-8" />
+                            <p>Nenhum relatório encontrado.</p>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -143,3 +193,5 @@ export default function ConsultServiceReportPage() {
     </div>
   );
 }
+
+    
