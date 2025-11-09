@@ -45,6 +45,11 @@ export const allTeamMembers = [
 
 export const roles = ['Encarregado', 'Motorista', 'Auxiliar'];
 
+export const viaturas = [
+    'VTR-01', 'VTR-02', 'VTR-03', 'VTR-04', 'VTR-05',
+    'VTR-06', 'VTR-07', 'VTR-08', 'VTR-09', 'VTR-10'
+];
+
 
 export type TeamMember = {
     name: string;
@@ -575,4 +580,5 @@ export const useOccurrenceForm = () => {
     
 
     
+
 

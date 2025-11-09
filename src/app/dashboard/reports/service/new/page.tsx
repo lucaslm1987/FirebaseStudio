@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -19,8 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { allTeamMembers, roles, type TeamMember } from '../../occurrence/new/form-context';
-import { PlusCircle, Trash2, User, Users } from 'lucide-react';
+import { allTeamMembers, roles, viaturas, type TeamMember } from '../../occurrence/new/form-context';
+import { PlusCircle, Trash2, User, Users, Car } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
 
@@ -51,6 +52,7 @@ interface ServiceReportData {
     openingKm?: number;
     closingKm?: number;
     team: TeamMember[];
+    vehicle?: string;
     activities: ActivityData;
 }
 
@@ -84,6 +86,10 @@ export default function NewServiceReportPage() {
         ...prev,
         [id]: type === 'number' ? (value === '' ? 0 : parseFloat(value)) : value,
         }));
+    };
+    
+    const handleSelectChange = (id: keyof ServiceReportData) => (value: string) => {
+        setFormData(prev => ({ ...prev, [id]: value }));
     };
     
     const handleActivityChange = (id: keyof ActivityData, value: string) => {
@@ -256,6 +262,30 @@ export default function NewServiceReportPage() {
                     )}
                 </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Car className="h-5 w-5" /> Viatura
+                    </CardTitle>
+                </CardHeader>
+                 <CardContent>
+                    <div className="w-full max-w-xs">
+                        <Label htmlFor="vehicle">Viatura</Label>
+                        <Select value={formData.vehicle} onValueChange={handleSelectChange('vehicle')}>
+                            <SelectTrigger id="vehicle">
+                                <SelectValue placeholder="Selecione a viatura..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {viaturas.map((vtr) => (
+                                    <SelectItem key={vtr} value={vtr}>{vtr}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </CardContent>
+            </Card>
+
 
             <Card>
                 <CardHeader>
