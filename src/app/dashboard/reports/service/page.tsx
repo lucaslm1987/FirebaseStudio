@@ -120,7 +120,6 @@ export default function ConsultServiceReportPage() {
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Data</TableHead>
-                    <TableHead>Equipe</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -129,7 +128,6 @@ export default function ConsultServiceReportPage() {
                     <TableRow key={report.id}>
                       <TableCell className="font-medium">{report.id}</TableCell>
                       <TableCell>{report.date}</TableCell>
-                      <TableCell>{report.team}</TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="icon">
                           <Printer className="h-4 w-4" />
