@@ -112,10 +112,10 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
                     <tbody>
                         {activityPairs.map(([activity1, activity2], index) => (
                             <tr key={index}>
-                                <td className="w-1/2 py-1 pr-2">
+                                <td className="w-1/2 py-1 pr-4">
                                     <strong>{activity1.label}:</strong> {activities?.[activity1.id] || 0}
                                 </td>
-                                <td className="w-1/2 py-1 pl-2">
+                                <td className="w-1/2 py-1 pl-4">
                                     {activity2 && (
                                         <><strong>{activity2.label}:</strong> {activities?.[activity2.id] || 0}</>
                                     )}
