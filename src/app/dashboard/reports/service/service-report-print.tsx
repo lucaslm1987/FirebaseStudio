@@ -61,7 +61,12 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
         { id: 'notificacoesAmbientais', label: 'Notificações Ambientais' },
     ] as const;
 
-    const hasActivities = activityFields.some(field => (activities?.[field.id] || 0) > 0);
+    // Group activities into pairs for the two-column table
+    const activityPairs: Array<[typeof activityFields[number], (typeof activityFields[number] | null)]> = [];
+    for (let i = 0; i < activityFields.length; i += 2) {
+        activityPairs.push([activityFields[i], activityFields[i + 1] || null]);
+    }
+
 
     return (
         <PrintLayout
@@ -103,14 +108,22 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
 
             
             <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
-                <div className="grid grid-cols-3 gap-x-4 gap-y-1">
-                    {activityFields.map(field => {
-                        const value = activities?.[field.id] || 0;
-                        return (
-                            <p key={field.id}><strong>{field.label}:</strong> {value}</p>
-                        )
-                    })}
-                </div>
+                 <table className="w-full">
+                    <tbody>
+                        {activityPairs.map(([activity1, activity2], index) => (
+                            <tr key={index}>
+                                <td className="w-1/2 py-1 pr-2">
+                                    <strong>{activity1.label}:</strong> {activities?.[activity1.id] || 0}
+                                </td>
+                                <td className="w-1/2 py-1 pl-2">
+                                    {activity2 && (
+                                        <><strong>{activity2.label}:</strong> {activities?.[activity2.id] || 0}</>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </PrintSection>
             
 
