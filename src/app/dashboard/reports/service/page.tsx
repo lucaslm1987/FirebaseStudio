@@ -105,11 +105,6 @@ export default function ConsultServiceReportPage() {
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div className="space-y-2 self-end">
-                   <Input
-                    placeholder="Pesquisar por equipe..."
-                  />
-                </div>
                  <div className="space-y-2 self-end">
                     <Button className='w-full'>
                       <Search className="mr-2 h-4 w-4" />
