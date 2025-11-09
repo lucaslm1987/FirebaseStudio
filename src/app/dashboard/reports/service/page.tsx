@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -16,9 +19,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Printer } from 'lucide-react';
+import { Search, Printer, Calendar as CalendarIcon } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+
 
 export default function ConsultServiceReportPage() {
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+
   const reports = [
     { id: 'RSD20240728', date: '2024-07-28', team: 'GCM Silva, GCM Santos' },
     { id: 'RSD20240727', date: '2024-07-27', team: 'GCM Lima, GCM Costa' },
@@ -41,16 +53,72 @@ export default function ConsultServiceReportPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Pesquisar por data ou equipe..."
-                  className="pl-10"
-                />
+            <div className="rounded-md border bg-muted/50 p-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Data Inicial</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !startDate && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDate ? format(startDate, 'dd/MM/yyyy') : <span>Selecione a data</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={setStartDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">Data Final</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !endDate && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDate ? format(endDate, 'dd/MM/yyyy') : <span>Selecione a data</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={endDate}
+                        onSelect={setEndDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2 self-end">
+                   <Input
+                    placeholder="Pesquisar por equipe..."
+                  />
+                </div>
+                 <div className="space-y-2 self-end">
+                    <Button className='w-full'>
+                      <Search className="mr-2 h-4 w-4" />
+                      Pesquisar
+                    </Button>
+                </div>
               </div>
-              <Button>Pesquisar</Button>
             </div>
+            
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
