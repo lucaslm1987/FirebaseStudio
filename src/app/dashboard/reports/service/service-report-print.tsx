@@ -101,19 +101,18 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
                 </div>
             </PrintSection>
 
-            {hasActivities && (
-                <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
-                    <div className="grid grid-cols-3 gap-x-4 gap-y-1">
-                        {activityFields.map(field => {
-                            const value = activities?.[field.id] || 0;
-                            if (value === 0) return null;
-                            return (
-                                <p key={field.id}><strong>{field.label}:</strong> {value}</p>
-                            )
-                        })}
-                    </div>
-                </PrintSection>
-            )}
+            
+            <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
+                <div className="grid grid-cols-3 gap-x-4 gap-y-1">
+                    {activityFields.map(field => {
+                        const value = activities?.[field.id] || 0;
+                        return (
+                            <p key={field.id}><strong>{field.label}:</strong> {value}</p>
+                        )
+                    })}
+                </div>
+            </PrintSection>
+            
 
             <PrintSection title="AUTENTICAÇÃO" icon={Pen}>
                 <div className="print-signatures-grid">
