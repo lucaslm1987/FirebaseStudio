@@ -178,7 +178,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                         {items.vehicles.map(v => (
                             <tr key={v.id}>
                                 <td>{v.condition}</td>
-                                <td>{v.type}</td>
+                                <td>{capitalize(v.type)}</td>
                                 <td>{v.plate}</td>
                                 <td>{v.brand} {v.model}</td>
                                 <td>{v.color}</td>
@@ -288,3 +288,5 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
     </PrintLayout>
   );
 }
+
+    

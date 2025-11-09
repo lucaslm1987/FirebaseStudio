@@ -26,9 +26,9 @@ import {
 const conditions = ['Apreendido', 'Envolvido', 'Localizado', 'Outros', 'Extraviado', 'Subtraído'] as const;
 
 const vehicleTypes = [
-  'automóvel', 'bicicleta', 'bonde', 'caminhão', 'caminhão trator', 'caminhonete',
-  'charrete', 'ciclomotor', 'microônibus', 'motocicleta', 'motoneta', 'ônibus',
-  'quadriciclo', 'reboque ou semi-reboque', 'triciclo'
+  'Automóvel', 'Bicicleta', 'Bonde', 'Caminhão', 'Caminhão trator', 'Caminhonete',
+  'Charrete', 'Ciclomotor', 'Microônibus', 'Motocicleta', 'Motoneta', 'Ônibus',
+  'Quadriciclo', 'Reboque ou semi-reboque', 'Triciclo'
 ].sort();
 
 const carBrands = ["Fiat", "Chevrolet", "Volkswagen", "Ford", "Hyundai", "Toyota", "Honda", "Renault", "Jeep", "Nissan"];
@@ -139,7 +139,7 @@ export function VehicleForm({ isOpen, setIsOpen, vehicleData }: VehicleFormProps
                 <Select value={vehicle.type} onValueChange={handleSelectChange('type')} required>
                   <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                   <SelectContent>
-                    {vehicleTypes.map(t => <SelectItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</SelectItem>)}
+                    {vehicleTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -208,3 +208,5 @@ export function VehicleForm({ isOpen, setIsOpen, vehicleData }: VehicleFormProps
     </Dialog>
   );
 }
+
+    
