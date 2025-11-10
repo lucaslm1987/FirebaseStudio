@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Calendar as CalendarIcon, Search, Printer, AlertTriangle, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, Printer, AlertTriangle } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -143,12 +143,6 @@ export default function ConsultOccurrenceReportPage() {
     }
   };
 
-  const handleClearStorage = () => {
-    // This is a placeholder for a future "delete all" function with proper permissions.
-    // For now, it does nothing in Firestore context.
-    alert("A remoção em massa de registros do Firestore deve ser feita com cuidado e não está habilitada nesta interface de teste.");
-  }
-
   return (
     <>
     <div className="flex h-full flex-col print:hidden">
@@ -156,10 +150,6 @@ export default function ConsultOccurrenceReportPage() {
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
           Consultar Boletins de Ocorrência
         </h1>
-        <Button variant="destructive" size="sm" onClick={handleClearStorage}>
-            <Trash2 className="mr-2 h-4 w-4" />
-            Limpar Registros de Teste
-        </Button>
       </header>
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <Card>
