@@ -89,7 +89,7 @@ export default function ConsultSummonsPage() {
         printWindow.document.write(`
             <html>
                 <head>
-                    <title>TALÃO DE ATENDIMENTO / DESLOCAMENTO</title>
+                    <title>Talão de Atendimento</title>
                     <link rel="stylesheet" href="/print-styles.css">
                 </head>
                 <body>

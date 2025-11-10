@@ -48,7 +48,7 @@ export function SummonsPrint({ summonsData }: SummonsPrintProps) {
 
     return (
         <PrintLayout
-            title="TALÃO DE ATENDIMENTO / DESLOCAMENTO"
+            title="Talão de Atendimento"
             reportId={summonsData.id}
             reportDate={formatDateTime(summonsData.openingDate, summonsData.openingTime)}
         >
