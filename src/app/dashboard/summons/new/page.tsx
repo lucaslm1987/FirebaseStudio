@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -49,6 +50,29 @@ const getInitialData = (): Omit<SummonsData, 'id'> => ({
     openingKm: 0,
     closingKm: 0,
 });
+
+// Helper function to clean data for Firestore
+const cleanDataForFirestore = (data: any): any => {
+    if (Array.isArray(data)) {
+        return data.map(item => cleanDataForFirestore(item));
+    }
+    if (data !== null && typeof data === 'object') {
+        const newData: { [key: string]: any } = {};
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                const value = data[key];
+                if (value !== undefined) {
+                    newData[key] = cleanDataForFirestore(value);
+                }
+            }
+        }
+        return newData;
+    }
+    if (data === '') {
+        return null;
+    }
+    return data;
+};
 
 
 export default function NewSummonsPage() {
@@ -115,7 +139,8 @@ export default function NewSummonsPage() {
         e.preventDefault();
         try {
             const summonsCollection = collection(firestore, 'summons');
-            addDocumentNonBlocking(summonsCollection, formData);
+            const cleanedData = cleanDataForFirestore(formData);
+            addDocumentNonBlocking(summonsCollection, cleanedData);
             
             toast({
                 title: 'Talão Emitido!',

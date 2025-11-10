@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { allTeamMembers, roles, viaturas, type TeamMember } from '../../../occurrence/new/form-context';
+import { allTeamMembers, roles, viaturas, type TeamMember } from '../../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User, Users, Car, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore, addDocumentNonBlocking } from '@/firebase';
@@ -69,6 +70,29 @@ const getInitialData = (): ServiceReportData => ({
     openingKm: 0,
     closingKm: 0,
 });
+
+// Helper function to clean data for Firestore
+const cleanDataForFirestore = (data: any): any => {
+    if (Array.isArray(data)) {
+        return data.map(item => cleanDataForFirestore(item));
+    }
+    if (data !== null && typeof data === 'object') {
+        const newData: { [key: string]: any } = {};
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                const value = data[key];
+                if (value !== undefined) {
+                    newData[key] = cleanDataForFirestore(value);
+                }
+            }
+        }
+        return newData;
+    }
+    if (data === '') {
+        return null;
+    }
+    return data;
+};
 
 
 export default function NewServiceReportPage() {
@@ -140,7 +164,8 @@ export default function NewServiceReportPage() {
     const handleSave = () => {
         try {
             const reportsCollection = collection(firestore, 'service_reports');
-            addDocumentNonBlocking(reportsCollection, formData);
+            const cleanedData = cleanDataForFirestore(formData);
+            addDocumentNonBlocking(reportsCollection, cleanedData);
             
             toast({
                 title: 'Relatório Salvo!',
