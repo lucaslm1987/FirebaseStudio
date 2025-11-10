@@ -4,7 +4,7 @@
 import { PrintLayout } from '@/components/report/print-layout';
 import type { ServiceReportData } from './new/page';
 import { format } from 'date-fns';
-import { Users, Clock, Car, Activity, Pen } from 'lucide-react';
+import { Users, Clock, Activity, Pen } from 'lucide-react';
 
 interface ServiceReportPrintProps {
     reportData: ServiceReportData;

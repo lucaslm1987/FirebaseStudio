@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
-import { Users } from 'lucide-react';
 
 const maskPoliceReport = (value: string) => {
     return value
@@ -81,8 +80,7 @@ export function Step5Narrative() {
             )}
         </div>
          <div className="space-y-4 border-t pt-6">
-            <h3 className="text-lg font-medium flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-medium">
                 Equipe Responsável
             </h3>
             <div className="space-y-2 rounded-md border p-4 bg-muted/30">

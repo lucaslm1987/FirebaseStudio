@@ -4,7 +4,7 @@
 import { PrintLayout } from '@/components/report/print-layout';
 import type { SummonsData } from './new/page';
 import { format } from 'date-fns';
-import { Users, Clock, Car, FileText, Pen } from 'lucide-react';
+import { Users, Clock, FileText, Pen } from 'lucide-react';
 
 interface SummonsPrintProps {
     summonsData: SummonsData;
