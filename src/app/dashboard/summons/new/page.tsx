@@ -23,8 +23,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, setDocumentNonBlocking } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+import { collection, doc, setDoc } from 'firebase/firestore';
 
 export interface SummonsData {
     id: string;
@@ -42,7 +42,7 @@ export interface SummonsData {
 const generateNewId = () => {
     const year = new Date().getFullYear();
     const randomNumber = Math.floor(10000 + Math.random() * 90000);
-    return `${randomNumber}/${year}`;
+    return `${randomNumber}-${year}`;
 };
 
 const getInitialData = (): Omit<SummonsData, 'id'> => ({
@@ -144,7 +144,7 @@ export default function NewSummonsPage() {
         try {
             const cleanedData = cleanDataForFirestore(formData);
             const summonsDocRef = doc(firestore, 'summons', cleanedData.id);
-            setDocumentNonBlocking(summonsDocRef, cleanedData, { merge: true });
+            setDoc(summonsDocRef, cleanedData, { merge: true });
             
             toast({
                 title: 'Talão Emitido!',
@@ -294,5 +294,3 @@ export default function NewSummonsPage() {
         </div>
     );
 }
-
-    
