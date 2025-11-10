@@ -60,7 +60,11 @@ export default function ConsultSummonsPage() {
     if (startDate) {
       results = results.filter(s => {
         if (!s.openingDate) return false;
-        return new Date(s.openingDate) >= startDate;
+        const summonsDate = new Date(s.openingDate);
+        summonsDate.setUTCHours(0, 0, 0, 0);
+        const filterStartDate = new Date(startDate);
+        filterStartDate.setUTCHours(0, 0, 0, 0);
+        return summonsDate >= filterStartDate;
       });
     }
 
@@ -68,10 +72,10 @@ export default function ConsultSummonsPage() {
       results = results.filter(s => {
         if (!s.openingDate) return false;
         const summonsDate = new Date(s.openingDate);
-        summonsDate.setHours(0,0,0,0);
-        const searchEndDate = new Date(endDate);
-        searchEndDate.setHours(23,59,59,999);
-        return summonsDate <= searchEndDate;
+        summonsDate.setUTCHours(0, 0, 0, 0);
+        const filterEndDate = new Date(endDate);
+        filterEndDate.setUTCHours(0, 0, 0, 0);
+        return summonsDate <= filterEndDate;
       });
     }
 

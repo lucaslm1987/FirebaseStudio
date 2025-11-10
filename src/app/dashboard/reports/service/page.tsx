@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -57,19 +58,21 @@ export default function ConsultServiceReportPage() {
       results = results.filter(report => {
         if (!report.openingDate) return false;
         const reportDate = new Date(report.openingDate);
-        reportDate.setHours(0,0,0,0);
-        return reportDate >= startDate;
+        reportDate.setUTCHours(0, 0, 0, 0);
+        const filterStartDate = new Date(startDate);
+        filterStartDate.setUTCHours(0, 0, 0, 0);
+        return reportDate >= filterStartDate;
       });
     }
-
+  
     if (endDate) {
       results = results.filter(report => {
         if (!report.openingDate) return false;
         const reportDate = new Date(report.openingDate);
-        reportDate.setHours(0,0,0,0);
-        const searchEndDate = new Date(endDate);
-        searchEndDate.setHours(23,59,59,999);
-        return reportDate <= searchEndDate;
+        reportDate.setUTCHours(0, 0, 0, 0);
+        const filterEndDate = new Date(endDate);
+        filterEndDate.setUTCHours(0, 0, 0, 0);
+        return reportDate <= filterEndDate;
       });
     }
     
