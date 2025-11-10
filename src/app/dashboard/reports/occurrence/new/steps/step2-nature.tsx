@@ -207,3 +207,5 @@ export function Step2Nature() {
     </div>
   );
 }
+
+    

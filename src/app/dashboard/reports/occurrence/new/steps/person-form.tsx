@@ -183,7 +183,6 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
         <ScrollArea className="max-h-[70vh] p-4">
           <div className="space-y-6">
             
-            {/* General Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="condition">Condição *</Label>
@@ -284,7 +283,6 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
                 )}
             </div>
 
-            {/* Contact Info */}
             <div className="flex justify-between items-center border-t pt-4">
                 <h3 className="text-md font-medium">Dados de Contato</h3>
                  <Button variant="outline" size="sm" onClick={handleCopyAddress}>
@@ -345,7 +343,6 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
                 </RadioGroup>
             </div>
 
-            {/* Legal Status */}
             <h3 className="text-md font-medium border-t pt-4">Situação Legal</h3>
             <div className="flex flex-wrap items-center gap-6">
                 <div className="flex items-center space-x-2"><Switch id="isConducted" checked={!!person.isConducted} onCheckedChange={handleSwitchChange('isConducted')} /><Label htmlFor="isConducted">Pessoa conduzida?</Label></div>
@@ -363,7 +360,6 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
                 </div>
             )}
 
-            {/* Version */}
             <h3 className="text-md font-medium border-t pt-4">Versão do Envolvido</h3>
              <div className="space-y-2">
                 <Textarea id="version" placeholder="Digite a versão do envolvido..." rows={5} value={person.version || ''} onChange={handleChange}/>
@@ -378,3 +374,5 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
     </Dialog>
   );
 }
+
+    
