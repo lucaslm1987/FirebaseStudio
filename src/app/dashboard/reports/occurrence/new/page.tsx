@@ -27,8 +27,8 @@ import { Step3Involved } from './steps/step3-involved';
 import { Step4Items } from './steps/step4-items';
 import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
-import { useFirestore } from '@/firebase';
-import { collection, setDoc, doc } from 'firebase/firestore';
+import { useFirestore, useUser } from '@/firebase';
+import { setDoc, doc } from 'firebase/firestore';
 
 
 // Helper function to clean data for Firestore
@@ -52,6 +52,7 @@ const cleanDataForFirestore = (data: any): any => {
         }
         return newData;
     }
+    // Convert empty string to null, but allow 0
     if (data === '') {
         return null;
     }
@@ -71,6 +72,7 @@ function NewOccurrenceReportContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const router = useRouter();
   const { formData, resetForm } = useOccurrenceForm();
+  const { user } = useUser();
   const firestore = useFirestore();
 
 
@@ -89,18 +91,23 @@ function NewOccurrenceReportContent() {
   };
   
   const handleSaveReport = () => {
-    if (!formData || !firestore) return;
+    if (!formData || !firestore || !user) {
+        alert("Erro: Não foi possível identificar o usuário. Tente fazer login novamente.");
+        return;
+    }
     try {
-      const cleanedData = cleanDataForFirestore(formData);
+      const dataToSave = {
+          ...formData,
+          userId: user.uid, // Add the user ID to the data
+      };
+      const cleanedData = cleanDataForFirestore(dataToSave);
       const reportDocRef = doc(firestore, 'occurrence_reports', cleanedData.id);
 
-      // Use a non-blocking update.
       setDoc(reportDocRef, cleanedData, { merge: true }).catch(error => {
         console.error("Failed to save report:", error);
         alert("Ocorreu um erro ao salvar o relatório.");
       });
 
-      // Go to the final screen
       setCurrentStep(7); 
     } catch (error) {
       console.error("Failed to prepare report for saving:", error);
@@ -175,10 +182,10 @@ function NewOccurrenceReportContent() {
         <div className="mx-auto max-w-5xl">
           {/* Stepper */}
           {currentStep <= 6 && (
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
               {steps.map((step, index) => (
-                <div key={step.id} className="flex items-center">
-                  <div className="flex flex-col items-center">
+                <React.Fragment key={step.id}>
+                  <div className="flex items-center gap-4">
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
                         currentStep > step.id
@@ -195,7 +202,7 @@ function NewOccurrenceReportContent() {
                       )}
                     </div>
                     <p
-                      className={`mt-2 text-center text-xs font-medium ${
+                      className={`text-sm font-medium ${
                         currentStep >= step.id
                           ? 'text-foreground'
                           : 'text-muted-foreground'
@@ -206,14 +213,14 @@ function NewOccurrenceReportContent() {
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`mx-4 flex-auto border-t-2 ${
+                      className={`h-px w-full md:flex-1 md:h-auto md:w-auto border-t-2 ${
                         currentStep > index + 1
                           ? 'border-green-500'
                           : 'border-border'
                       }`}
                     />
                   )}
-                </div>
+                </React.Fragment>
               ))}
             </div>
           )}
