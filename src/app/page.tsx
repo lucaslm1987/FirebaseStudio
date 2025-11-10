@@ -81,7 +81,6 @@ export default function LoginPage() {
     setIsLoading(true);
 
     const actionCodeSettings = {
-      // Use the root URL to avoid mismatches. The user will be redirected to the dashboard on success anyway.
       url: `${window.location.origin}`,
       handleCodeInApp: true,
     };

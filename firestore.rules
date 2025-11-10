@@ -3,13 +3,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    function isOwner(reportId) {
+      return request.auth.uid == get(/databases/$(database)/documents/occurrence_reports/$(reportId)).data.userId;
+    }
+    
     // Regra para Relatórios de Ocorrência
     match /occurrence_reports/{reportId} {
-      // Qualquer usuário autenticado pode ler todos os relatórios.
       allow read: if request.auth != null;
-      
-      // Um usuário autenticado pode criar um relatório, mas não pode
-      // atualizar ou deletar depois de criado.
       allow create: if request.auth != null;
       allow update, delete: if false; 
     }

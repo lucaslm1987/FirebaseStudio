@@ -28,7 +28,7 @@ import { Step4Items } from './steps/step4-items';
 import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
 import { useFirestore, useUser } from '@/firebase';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 
 
 // Helper function to clean data for Firestore
@@ -39,7 +39,7 @@ const cleanDataForFirestore = (data: any): any => {
     if (Array.isArray(data)) {
         return data.map(item => cleanDataForFirestore(item));
     }
-    if (data !== null && typeof data === 'object' && !(data instanceof Date)) {
+    if (data !== null && typeof data === 'object' && !(data instanceof Date) && !(data instanceof Timestamp)) {
         const newData: { [key: string]: any } = {};
         for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -99,6 +99,7 @@ function NewOccurrenceReportContent() {
       const dataToSave = {
           ...formData,
           userId: user.uid, // Add the user ID to the data
+          createdAt: serverTimestamp(),
       };
       const cleanedData = cleanDataForFirestore(dataToSave);
       const reportDocRef = doc(firestore, 'occurrence_reports', cleanedData.id);
@@ -182,7 +183,7 @@ function NewOccurrenceReportContent() {
         <div className="mx-auto max-w-5xl">
           {/* Stepper */}
           {currentStep <= 6 && (
-            <div className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
               {steps.map((step, index) => (
                 <React.Fragment key={step.id}>
                   <div className="flex items-center gap-4">

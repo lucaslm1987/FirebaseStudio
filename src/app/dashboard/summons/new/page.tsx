@@ -23,8 +23,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore } from '@/firebase';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { useFirestore, useUser } from '@/firebase';
+import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface SummonsData {
     id: string;
@@ -37,6 +37,8 @@ export interface SummonsData {
     team: TeamMember[];
     vehicle?: string;
     description?: string;
+    userId?: string;
+    createdAt?: any;
 }
 
 const generateNewId = () => {
@@ -82,6 +84,7 @@ export default function NewSummonsPage() {
     const router = useRouter();
     const { toast } = useToast();
     const firestore = useFirestore();
+    const { user } = useUser();
     const [formData, setFormData] = useState<SummonsData>({ id: '', ...getInitialData() });
     const [selectedMember, setSelectedMember] = useState('');
 
@@ -140,9 +143,21 @@ export default function NewSummonsPage() {
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!firestore) return;
+        if (!firestore || !user) {
+             toast({
+                variant: 'destructive',
+                title: 'Erro de Autenticação',
+                description: 'Usuário não encontrado. Faça login novamente.',
+            });
+            return;
+        };
         try {
-            const cleanedData = cleanDataForFirestore(formData);
+            const dataToSave = {
+                ...formData,
+                userId: user.uid,
+                createdAt: serverTimestamp(),
+            };
+            const cleanedData = cleanDataForFirestore(dataToSave);
             const summonsDocRef = doc(firestore, 'summons', cleanedData.id);
             setDoc(summonsDocRef, cleanedData, { merge: true });
             

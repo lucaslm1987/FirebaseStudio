@@ -22,8 +22,8 @@ import {
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User, Users, Car, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, addDocumentNonBlocking } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { useFirestore, addDocumentNonBlocking, useUser } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
 
 
 const activityFields = [
@@ -56,6 +56,8 @@ export interface ServiceReportData {
     team: TeamMember[];
     vehicle?: string;
     activities: ActivityData;
+    userId?: string;
+    createdAt?: any;
 }
 
 const initialActivities: ActivityData = activityFields.reduce((acc, field) => {
@@ -99,6 +101,7 @@ export default function NewServiceReportPage() {
     const router = useRouter();
     const { toast } = useToast();
     const firestore = useFirestore();
+    const { user } = useUser();
     const [formData, setFormData] = useState<ServiceReportData>(getInitialData());
     const [selectedMember, setSelectedMember] = useState('');
 
@@ -162,9 +165,22 @@ export default function NewServiceReportPage() {
     };
     
     const handleSave = () => {
+        if (!user) {
+             toast({
+                variant: 'destructive',
+                title: 'Erro de Autenticação',
+                description: 'Usuário não encontrado. Faça login novamente.',
+            });
+            return;
+        }
         try {
             const reportsCollection = collection(firestore, 'service_reports');
-            const cleanedData = cleanDataForFirestore(formData);
+            const dataToSave = {
+                ...formData,
+                userId: user.uid,
+                createdAt: serverTimestamp(),
+            }
+            const cleanedData = cleanDataForFirestore(dataToSave);
             addDocumentNonBlocking(reportsCollection, cleanedData);
             
             toast({

@@ -105,6 +105,15 @@ const renderers = {
   },
 };
 
+const TypingIndicator = () => (
+    <div className="flex items-center gap-2">
+        <div className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-2 w-2 bg-primary rounded-full animate-bounce"></div>
+    </div>
+);
+
+
 export default function IntelligencePage() {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
@@ -189,9 +198,9 @@ export default function IntelligencePage() {
 
           {isLoading && (
              <Card>
-              <CardContent className="p-6 flex items-center justify-center gap-3">
-                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                 <p className="text-muted-foreground">Analisando dados e gerando resposta...</p>
+              <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
+                 <TypingIndicator />
+                 <p className="text-muted-foreground animate-pulse">Analisando dados e gerando resposta...</p>
               </CardContent>
             </Card>
           )}
