@@ -23,8 +23,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, addDocumentNonBlocking } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { useFirestore, setDocumentNonBlocking } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
 
 export interface SummonsData {
     id: string;
@@ -53,10 +53,13 @@ const getInitialData = (): Omit<SummonsData, 'id'> => ({
 
 // Helper function to clean data for Firestore
 const cleanDataForFirestore = (data: any): any => {
+    if (data === undefined) {
+        return null;
+    }
     if (Array.isArray(data)) {
         return data.map(item => cleanDataForFirestore(item));
     }
-    if (data !== null && typeof data === 'object') {
+    if (data !== null && typeof data === 'object' && !(data instanceof Date)) {
         const newData: { [key: string]: any } = {};
         for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -137,10 +140,11 @@ export default function NewSummonsPage() {
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!firestore) return;
         try {
-            const summonsCollection = collection(firestore, 'summons');
             const cleanedData = cleanDataForFirestore(formData);
-            addDocumentNonBlocking(summonsCollection, cleanedData);
+            const summonsDocRef = doc(firestore, 'summons', cleanedData.id);
+            setDocumentNonBlocking(summonsDocRef, cleanedData, { merge: true });
             
             toast({
                 title: 'Talão Emitido!',
@@ -290,3 +294,5 @@ export default function NewSummonsPage() {
         </div>
     );
 }
+
+    
