@@ -21,12 +21,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   
+  /*
   useEffect(() => {
     // If auth is done loading and there's no user, redirect to login.
     if (!isUserLoading && !user) {
       router.push('/');
     }
   }, [user, isUserLoading, router]);
+  */
 
   const handleSignOut = async () => {
     if (auth) {
@@ -35,6 +37,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     router.push('/');
   };
   
+  /*
   // While user state is loading, show a loading indicator
   if (isUserLoading || !user) {
     return (
@@ -43,6 +46,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
     )
   }
+  */
 
   return (
     <div className="flex min-h-screen w-full flex-col">
