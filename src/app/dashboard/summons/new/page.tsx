@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -43,8 +43,7 @@ const generateNewId = () => {
     return `${randomNumber}/${year}`;
 };
 
-const getInitialData = (): SummonsData => ({
-    id: generateNewId(),
+const getInitialData = (): Omit<SummonsData, 'id'> => ({
     team: [],
     openingKm: 0,
     closingKm: 0,
@@ -53,8 +52,12 @@ const getInitialData = (): SummonsData => ({
 
 export default function NewSummonsPage() {
     const router = useRouter();
-    const [formData, setFormData] = useState<SummonsData>(getInitialData());
+    const [formData, setFormData] = useState<SummonsData>({ id: '', ...getInitialData() });
     const [selectedMember, setSelectedMember] = useState('');
+
+    useEffect(() => {
+        setFormData(prev => ({ ...prev, id: generateNewId() }));
+    }, []);
 
     const kmTraveled = useMemo(() => {
         const start = formData.openingKm || 0;
