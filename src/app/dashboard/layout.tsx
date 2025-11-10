@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Shield, LogOut, BrainCircuit } from 'lucide-react';
@@ -20,15 +20,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  
-  /*
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
-    // If auth is done loading and there's no user, redirect to login.
-    if (!isUserLoading && !user) {
+    setIsClient(true);
+  }, []);
+  
+  useEffect(() => {
+    // Wait until on the client and auth state is determined
+    if (isClient && !isUserLoading && !user) {
       router.push('/');
     }
-  }, [user, isUserLoading, router]);
-  */
+  }, [user, isUserLoading, router, isClient]);
+  
 
   const handleSignOut = async () => {
     if (auth) {
@@ -37,16 +41,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     router.push('/');
   };
   
-  /*
-  // While user state is loading, show a loading indicator
-  if (isUserLoading || !user) {
+  // While loading on the client or if the user is not yet determined, show a loading state.
+  // This prevents hydration errors and content flashing.
+  if (!isClient || isUserLoading || !user) {
     return (
         <div className="flex h-screen w-screen items-center justify-center">
             <p>Carregando...</p>
         </div>
     )
   }
-  */
 
   return (
     <div className="flex min-h-screen w-full flex-col">
