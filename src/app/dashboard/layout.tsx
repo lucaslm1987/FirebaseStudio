@@ -4,7 +4,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Shield, LogOut } from 'lucide-react';
+import { Shield, LogOut, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -29,7 +29,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }, [user, isUserLoading, router]);
 
   const handleSignOut = async () => {
-    await auth.signOut();
+    if (auth) {
+      await auth.signOut();
+    }
     router.push('/');
   };
   
@@ -61,6 +63,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <DropdownMenuContent align="end">
              <DropdownMenuItem asChild>
                 <Link href="/dashboard">Dashboard</Link>
+              </DropdownMenuItem>
+               <DropdownMenuItem asChild>
+                <Link href="/dashboard/intelligence">
+                  <BrainCircuit className="mr-2 h-4 w-4" />
+                  Inteligência
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
