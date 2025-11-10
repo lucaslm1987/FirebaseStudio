@@ -71,8 +71,6 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
     return (
         <PrintLayout
             title="Relatório de Serviço Diário"
-            reportId={reportData.id}
-            reportIdLabel=""
         >
             <PrintSection title="Turno" icon={Clock}>
                 <div className="grid grid-cols-2 gap-x-4">

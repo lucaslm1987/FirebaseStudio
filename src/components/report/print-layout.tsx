@@ -5,7 +5,7 @@ import React from 'react';
 
 interface PrintLayoutProps {
     title: string;
-    reportId: string;
+    reportId?: string;
     reportDate?: string;
     reportIdLabel?: string;
     children: React.ReactNode;
@@ -20,7 +20,7 @@ export function PrintLayout({ title, reportId, reportDate, reportIdLabel = 'Nº 
                     <p className="text-sm text-muted-foreground">Guarda Civil Municipal</p>
                 </div>
                 <div className="text-right">
-                    <p><strong>{reportIdLabel}</strong> {reportId}</p>
+                    {reportId && <p><strong>{reportIdLabel}</strong> {reportId}</p>}
                     {reportDate && <p><strong>Data Comunicação:</strong> {reportDate}</p>}
                 </div>
             </header>
