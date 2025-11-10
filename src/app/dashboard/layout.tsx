@@ -1,29 +1,46 @@
 
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Shield } from 'lucide-react';
+import { Shield, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Menu } from 'lucide-react';
+import { useUser, useAuth } from '@/firebase';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const features = [
-    {
-      title: 'Dashboard',
-      href: '/dashboard',
-    },
-    {
-      title: 'Sair',
-      href: '/',
+  const router = useRouter();
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
+  
+  useEffect(() => {
+    // If auth is done loading and there's no user, redirect to login.
+    if (!isUserLoading && !user) {
+      router.push('/');
     }
-  ];
+  }, [user, isUserLoading, router]);
+
+  const handleSignOut = async () => {
+    await auth.signOut();
+    router.push('/');
+  };
+  
+  // While user state is loading, show a loading indicator
+  if (isUserLoading || !user) {
+    return (
+        <div className="flex h-screen w-screen items-center justify-center">
+            <p>Carregando...</p>
+        </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -42,11 +59,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {features.map((feature) => (
-              <DropdownMenuItem key={feature.title} asChild>
-                <Link href={feature.href}>{feature.title}</Link>
+             <DropdownMenuItem asChild>
+                <Link href="/dashboard">Dashboard</Link>
               </DropdownMenuItem>
-            ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair
+              </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
