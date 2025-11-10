@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -27,8 +28,32 @@ import { Step4Items } from './steps/step4-items';
 import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
 import { useFirestore } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, setDoc, doc } from 'firebase/firestore';
 import { addDocumentNonBlocking } from '@/firebase';
+
+
+// Helper function to clean data for Firestore
+const cleanDataForFirestore = (data: any): any => {
+    if (Array.isArray(data)) {
+        return data.map(item => cleanDataForFirestore(item));
+    }
+    if (data !== null && typeof data === 'object') {
+        const newData: { [key: string]: any } = {};
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                const value = data[key];
+                if (value !== undefined) {
+                    newData[key] = cleanDataForFirestore(value);
+                }
+            }
+        }
+        return newData;
+    }
+    if (data === '') {
+        return null;
+    }
+    return data;
+};
 
 const steps = [
   { id: 1, name: 'Dados Gerais', icon: FileText },
@@ -61,18 +86,22 @@ function NewOccurrenceReportContent() {
   };
   
   const handleSaveReport = () => {
-    if (!formData) return;
+    if (!formData || !firestore) return;
     try {
-      const reportsCollection = collection(firestore, 'occurrence_reports');
-      // Use a non-blocking update. We set the document ID to be the same as our form ID.
-      // Note: We are not using setDoc directly or awaiting the result.
-      addDocumentNonBlocking(reportsCollection, formData);
+      const cleanedData = cleanDataForFirestore(formData);
+      const reportDocRef = doc(firestore, 'occurrence_reports', cleanedData.id);
+
+      // Use a non-blocking update.
+      setDoc(reportDocRef, cleanedData, { merge: true }).catch(error => {
+        console.error("Failed to save report:", error);
+        alert("Ocorreu um erro ao salvar o relatório.");
+      });
 
       // Go to the final screen
       setCurrentStep(7); 
     } catch (error) {
-      console.error("Failed to save report:", error);
-      alert("Ocorreu um erro ao salvar o relatório.");
+      console.error("Failed to prepare report for saving:", error);
+      alert("Ocorreu um erro ao preparar os dados do relatório.");
     }
   };
   
