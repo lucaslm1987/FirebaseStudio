@@ -179,6 +179,7 @@ export interface OccurrenceFormData {
   complement?: string;
   city?: string;
   state?: string;
+  locationSubtype?: string;
   latitude?: string;
   longitude?: string;
   team: TeamMember[];
@@ -239,6 +240,7 @@ const getInitialFormData = (): OccurrenceFormData => ({
   isInfraction: false,
   isDomesticViolence: false,
   solutionType: 'register',
+  locationSubtype: '',
 });
 
 const LOCAL_STORAGE_KEY = 'occurrenceFormData';
@@ -582,3 +584,6 @@ export const useOccurrenceForm = () => {
     
 
 
+
+
+    

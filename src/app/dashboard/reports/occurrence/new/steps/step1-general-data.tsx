@@ -24,6 +24,16 @@ const states = [
   'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
 ];
 
+const locationSubtypes = [
+    "Estabelecimento Comercial",
+    "Estabelecimento Industrial",
+    "Lote/Terreno em Construção",
+    "Outros",
+    "Repartição/Prédio Público(a)",
+    "Residência",
+    "Via Pública",
+];
+
 export function Step1GeneralData() {
   const { formData, updateField, updateTeamMember, addTeamMember, removeTeamMember } = useOccurrenceForm();
   const [selectedMember, setSelectedMember] = useState('');
@@ -195,6 +205,19 @@ export function Step1GeneralData() {
                     </SelectContent>
                 </Select>
             </div>
+            <div className="space-y-2">
+                <Label htmlFor="locationSubtype">Subtipo do local</Label>
+                 <Select value={formData.locationSubtype} onValueChange={handleSelectChange('locationSubtype')}>
+                    <SelectTrigger id="locationSubtype">
+                        <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {locationSubtypes.map((subtype) => (
+                            <SelectItem key={subtype} value={subtype}>{subtype}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="space-y-2">
@@ -314,5 +337,8 @@ export function Step1GeneralData() {
 }
 
     
+
+    
+
 
     

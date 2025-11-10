@@ -88,6 +88,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                 <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
                 <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
                 <p className="col-span-2"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
+                <p className="col-span-2"><strong>Subtipo do local:</strong> {formData.locationSubtype || 'Não informado'}</p>
             </div>
         </ReviewSection>
 
@@ -306,3 +307,5 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
     </PrintLayout>
   );
 }
+
+    
