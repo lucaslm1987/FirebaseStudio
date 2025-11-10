@@ -105,3 +105,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer components {
+    .print-subsection {
+      @apply mt-4;
+    }
+    .print-subsection-title {
+        @apply flex items-center gap-2 text-sm font-semibold mb-2 text-primary;
+    }
+}

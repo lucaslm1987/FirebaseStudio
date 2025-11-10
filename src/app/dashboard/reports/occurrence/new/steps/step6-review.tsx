@@ -14,7 +14,8 @@ import {
     Target, 
     BookText, 
     Lightbulb, 
-    Pen 
+    Pen,
+    Briefcase
 } from 'lucide-react';
 import { PrintLayout } from '@/components/report/print-layout';
 
@@ -43,6 +44,9 @@ const capitalize = (s?: string) => {
 export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
 
   const { involved, items, team } = formData;
+  
+  const involvedPeople = involved.filter(i => i.type === 'person');
+  const involvedCompanies = involved.filter(i => i.type === 'company');
 
   const getSolutionText = () => {
     if (formData.solutionType === 'police_station') {
@@ -113,11 +117,15 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                 <p><strong>Viatura:</strong> {formData.vehicle || 'Não informada'}</p>
         </ReviewSection>
 
-        <ReviewSection title="Envolvidos" hasData={involved && involved.length > 0} icon={User}>
-            {involved.map(inv => (
-                <div key={inv.id} className="print-involved-card">
-                    {inv.type === 'person' && (
-                        <>
+        <ReviewSection title="Envolvidos" hasData={involved && involved.length > 0}>
+            {involvedPeople.length > 0 && (
+                <div className="print-subsection">
+                    <h6 className="print-subsection-title">
+                        <User className="h-4 w-4" />
+                        <span>Pessoa Física</span>
+                    </h6>
+                    {involvedPeople.map(inv => (
+                        <div key={inv.id} className="print-involved-card">
                             <div className="grid grid-cols-3 gap-x-4">
                                 <p><strong>Nome:</strong> {inv.name}</p>
                                 <p><strong>Nome Social:</strong> {inv.socialName || '--'}</p>
@@ -145,20 +153,30 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                                 <p><strong>Uso de Algemas:</strong> {inv.useHandcuffs ? `Sim (${inv.handcuffReason || ''})` : 'Não'}</p>
                             </div>
                             {inv.version && <div className="mt-2"><strong>Versão:</strong> <span className="font-normal">{inv.version}</span></div>}
-                        </>
-                    )}
-                    {inv.type === 'company' && (
-                            <div className="grid grid-cols-3 gap-x-4">
-                            <p><strong>Razão Social:</strong> {inv.corporateName}</p>
-                            <p><strong>Nome Fantasia:</strong> {inv.tradeName || '--'}</p>
-                            <p><strong>Condição:</strong> {inv.condition}</p>
-                            <p><strong>CNPJ:</strong> {inv.cnpj || '--'}</p>
-                            <p className="col-span-2"><strong>Representante:</strong> {inv.representative || '--'}</p>
-                            <p className="col-span-3"><strong>Endereço:</strong> {`${inv.street || ''}, ${inv.number || 'S/N'}, ${inv.neighborhood || ''}, ${inv.city || ''}-${inv.state || ''}`}</p>
                         </div>
-                    )}
+                    ))}
                 </div>
-            ))}
+            )}
+            {involvedCompanies.length > 0 && (
+                 <div className="print-subsection">
+                    <h6 className="print-subsection-title">
+                        <Briefcase className="h-4 w-4" />
+                        <span>Pessoa Jurídica</span>
+                    </h6>
+                    {involvedCompanies.map(inv => (
+                        <div key={inv.id} className="print-involved-card">
+                             <div className="grid grid-cols-3 gap-x-4">
+                                <p><strong>Razão Social:</strong> {inv.corporateName}</p>
+                                <p><strong>Nome Fantasia:</strong> {inv.tradeName || '--'}</p>
+                                <p><strong>Condição:</strong> {inv.condition}</p>
+                                <p><strong>CNPJ:</strong> {inv.cnpj || '--'}</p>
+                                <p className="col-span-2"><strong>Representante:</strong> {inv.representative || '--'}</p>
+                                <p className="col-span-3"><strong>Endereço:</strong> {`${inv.street || ''}, ${inv.number || 'S/N'}, ${inv.neighborhood || ''}, ${inv.city || ''}-${inv.state || ''}`}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </ReviewSection>
 
         {items.vehicles.length > 0 && 
