@@ -29,7 +29,6 @@ import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
 import { useFirestore } from '@/firebase';
 import { collection, setDoc, doc } from 'firebase/firestore';
-import { addDocumentNonBlocking } from '@/firebase';
 
 
 // Helper function to clean data for Firestore
