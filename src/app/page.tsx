@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -122,7 +123,7 @@ export default function LoginPage() {
       </div>
 
       <Card className="w-full max-w-sm">
-        <CardHeader>
+        <CardHeader className="text-center">
           <CardTitle>Acessar Sistema</CardTitle>
           <CardDescription>
             {isLinkSent
