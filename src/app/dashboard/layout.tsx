@@ -16,30 +16,6 @@ import { Menu } from 'lucide-react';
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const features = [
     {
-      title: 'Criar BO GCM',
-      href: '/dashboard/reports/occurrence/new',
-    },
-    {
-      title: 'Consultar BO GCM',
-      href: '/dashboard/reports/occurrence',
-    },
-    {
-      title: 'Criar Relatório Diário',
-      href: '/dashboard/reports/service/new',
-    },
-    {
-      title: 'Consultar Relatório Diário',
-      href: '/dashboard/reports/service',
-    },
-    {
-      title: 'Criar Talão',
-      href: '/dashboard/summons/new',
-    },
-    {
-      title: 'Consultar Talão',
-      href: '/dashboard/summons',
-    },
-    {
       title: 'Dashboard',
       href: '/dashboard',
     },
