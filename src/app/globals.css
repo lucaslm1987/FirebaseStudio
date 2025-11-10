@@ -112,6 +112,6 @@
       @apply mt-4;
     }
     .print-subsection-title {
-        @apply flex items-center gap-2 text-sm font-semibold mb-2 text-primary;
+        @apply flex items-center gap-2 text-base font-semibold mb-2 text-primary;
     }
 }
