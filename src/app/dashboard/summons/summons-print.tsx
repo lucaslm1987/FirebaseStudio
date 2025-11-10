@@ -50,7 +50,7 @@ export function SummonsPrint({ summonsData }: SummonsPrintProps) {
         <PrintLayout
             title="Talão de Atendimento"
             reportId={summonsData.id}
-            reportDate={formatDateTime(summonsData.openingDate, summonsData.openingTime)}
+            reportIdLabel="Nº Talão:"
         >
             <PrintSection title="Turno" icon={Clock}>
                 <div className="grid grid-cols-2 gap-x-4">

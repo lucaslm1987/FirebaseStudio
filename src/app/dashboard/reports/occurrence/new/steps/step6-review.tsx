@@ -288,5 +288,3 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
     </PrintLayout>
   );
 }
-
-    
