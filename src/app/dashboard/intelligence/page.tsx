@@ -77,7 +77,7 @@ const renderers = {
           pie: (
              <PieChart>
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Pie data={data} dataKey={config.dataKey} nameKey={config.nameKey} cx="50%" cy="50%" outerRadius={80} label>
+              <Pie data={data} dataKey={config.dataKey} nameKey={config.nameKey} cx="50%" cy="50%" outerRadius={80}>
                  {data.map((entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
