@@ -8,7 +8,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,9 +21,10 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
-import { PlusCircle, Trash2, User, Car } from 'lucide-react';
+import { PlusCircle, Trash2, User } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-interface SummonsData {
+export interface SummonsData {
     id: string;
     openingDate?: string;
     openingTime?: string;
@@ -52,10 +52,12 @@ const getInitialData = (): Omit<SummonsData, 'id'> => ({
 
 export default function NewSummonsPage() {
     const router = useRouter();
+    const { toast } = useToast();
     const [formData, setFormData] = useState<SummonsData>({ id: '', ...getInitialData() });
     const [selectedMember, setSelectedMember] = useState('');
 
     useEffect(() => {
+        // Generate ID only on the client side to avoid hydration errors
         setFormData(prev => ({ ...prev, id: generateNewId() }));
     }, []);
 
@@ -109,10 +111,32 @@ export default function NewSummonsPage() {
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically save the formData
-        console.log('Emitindo Talão:', formData);
-        alert(`Talão ${formData.id} emitido com sucesso!`);
-        router.push('/dashboard/summons');
+        try {
+            const savedSummonsString = localStorage.getItem('summons');
+            const savedSummons: SummonsData[] = savedSummonsString ? JSON.parse(savedSummonsString) : [];
+            
+            const existingSummonsIndex = savedSummons.findIndex(s => s.id === formData.id);
+            if (existingSummonsIndex !== -1) {
+                savedSummons[existingSummonsIndex] = formData;
+            } else {
+                savedSummons.push(formData);
+            }
+
+            localStorage.setItem('summons', JSON.stringify(savedSummons));
+            
+            toast({
+                title: 'Talão Emitido!',
+                description: `O talão ${formData.id} foi salvo com sucesso.`,
+            });
+            router.push('/dashboard/summons');
+        } catch (error) {
+            console.error("Failed to save summons:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Erro ao Salvar',
+                description: 'Não foi possível salvar o talão.',
+            });
+        }
     };
 
     return (
