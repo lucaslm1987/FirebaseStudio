@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -23,6 +22,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore, addDocumentNonBlocking } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 export interface SummonsData {
     id: string;
@@ -53,6 +54,7 @@ const getInitialData = (): Omit<SummonsData, 'id'> => ({
 export default function NewSummonsPage() {
     const router = useRouter();
     const { toast } = useToast();
+    const firestore = useFirestore();
     const [formData, setFormData] = useState<SummonsData>({ id: '', ...getInitialData() });
     const [selectedMember, setSelectedMember] = useState('');
 
@@ -75,7 +77,7 @@ export default function NewSummonsPage() {
         }));
     };
     
-    const handleSelectChange = (id: keyof SummonsData) => (value: string) => {
+    const handleSelectChange = (id: keyof Omit<SummonsData, 'team' | 'description'>) => (value: string) => {
         setFormData(prev => ({ ...prev, [id]: value }));
     };
 
@@ -112,17 +114,8 @@ export default function NewSummonsPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const savedSummonsString = localStorage.getItem('summons');
-            const savedSummons: SummonsData[] = savedSummonsString ? JSON.parse(savedSummonsString) : [];
-            
-            const existingSummonsIndex = savedSummons.findIndex(s => s.id === formData.id);
-            if (existingSummonsIndex !== -1) {
-                savedSummons[existingSummonsIndex] = formData;
-            } else {
-                savedSummons.push(formData);
-            }
-
-            localStorage.setItem('summons', JSON.stringify(savedSummons));
+            const summonsCollection = collection(firestore, 'summons');
+            addDocumentNonBlocking(summonsCollection, formData);
             
             toast({
                 title: 'Talão Emitido!',

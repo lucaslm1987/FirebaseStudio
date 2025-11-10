@@ -26,6 +26,9 @@ import { Step3Involved } from './steps/step3-involved';
 import { Step4Items } from './steps/step4-items';
 import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
+import { useFirestore } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { addDocumentNonBlocking } from '@/firebase';
 
 const steps = [
   { id: 1, name: 'Dados Gerais', icon: FileText },
@@ -40,6 +43,7 @@ function NewOccurrenceReportContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const router = useRouter();
   const { formData, resetForm } = useOccurrenceForm();
+  const firestore = useFirestore();
 
 
   const handleNext = () => {
@@ -59,19 +63,10 @@ function NewOccurrenceReportContent() {
   const handleSaveReport = () => {
     if (!formData) return;
     try {
-      // Save to localStorage
-      const savedReportsString = localStorage.getItem('occurrenceReports');
-      const savedReports: Array<OccurrenceFormData> = savedReportsString ? JSON.parse(savedReportsString) : [];
-      
-      // Prevent duplicates
-      const existingReportIndex = savedReports.findIndex(report => report.id === formData.id);
-      if (existingReportIndex !== -1) {
-          savedReports[existingReportIndex] = formData;
-      } else {
-          savedReports.push(formData);
-      }
-
-      localStorage.setItem('occurrenceReports', JSON.stringify(savedReports));
+      const reportsCollection = collection(firestore, 'occurrence_reports');
+      // Use a non-blocking update. We set the document ID to be the same as our form ID.
+      // Note: We are not using setDoc directly or awaiting the result.
+      addDocumentNonBlocking(reportsCollection, formData);
 
       // Go to the final screen
       setCurrentStep(7); 

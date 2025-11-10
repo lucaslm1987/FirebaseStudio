@@ -1,178 +1,19 @@
-/**
- * @fileoverview Firestore Security Rules for GCMobile application.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for data access. Each officer (ReportingOfficer, OfficerInCharge, IssuingOfficer)
- * owns their respective reports (OccurrenceReport, DailyServiceReport, Summons). Only the authenticated officer can create, read, update,
- * or delete their own data. Anonymous authentication is enabled.
- *
- * Data Structure:
- * - /reporting_officers/{reportingOfficerId}/occurrence_reports/{occurrenceReportId}
- * - /officers_in_charge/{officerInChargeId}/daily_service_reports/{dailyServiceReportId}
- * - /issuing_officers/{issuingOfficerId}/summons/{summonsId}
- *
- * Key Security Decisions:
- * - User listing is disallowed.
- * - Each officer can only access their own data.
- * - Rules are structured to ensure Authorization Independence, meaning access control is determined by the document's location,
- *   avoiding the need for costly `get()` calls.
- *
- * Denormalization for Authorization:
- *  To create simpler, more performant rules, the relationship between officers and their reports/summons is modeled using path-based ownership
- *  (e.g., `/reporting_officers/{reportingOfficerId}/occurrence_reports/{occurrenceReportId}`). This avoids the need to denormalize data onto
- *  the documents and is aligned with the authorization independence principle.
- *
- * Structural Segregation:
- * Each officer type (ReportingOfficer, OfficerInCharge, IssuingOfficer) has its own collection, as do their respective reports and summons.
- * This segregation simplifies security rules and enables secure list operations.
- */
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * @description Rule for ReportingOfficer documents.
-     * @path /reporting_officers/{reportingOfficerId}
-     * @allow (create) User with ID 'reportingOfficerId' can create their own document.
-     * @deny (create) User with ID 'otherUserId' cannot create a document with ID 'reportingOfficerId'.
-     * @allow (get, list, update, delete) User with ID 'reportingOfficerId' can access their own document.
-     * @deny (get, list, update, delete) User with ID 'otherUserId' cannot access document with ID 'reportingOfficerId'.
-     * @principle Enforces document ownership for all operations on ReportingOfficer.
-     */
-    match /reporting_officers/{reportingOfficerId} {
-      // Only the user with the matching ID can create the document.
-      allow create: if isSignedIn() && isOwner(reportingOfficerId);
-      // Only the user with the matching ID can read the document.
-      allow get: if isSignedIn() && isOwner(reportingOfficerId);
-      // Only the user with the matching ID can list the document.
-      allow list: if false;
-      // Only the user with the matching ID can update the document.
-      allow update: if isSignedIn() && isExistingOwner(reportingOfficerId);
-      // Only the user with the matching ID can delete the document.
-      allow delete: if isSignedIn() && isExistingOwner(reportingOfficerId);
+    // Allow public read/write access to all collections for this MVP.
+    // In a production app, you would want to secure this based on user roles and ownership.
+    match /occurrence_reports/{reportId} {
+      allow read, write: if true;
     }
 
-    /**
-     * @description Rule for OccurrenceReport documents under a specific ReportingOfficer.
-     * @path /reporting_officers/{reportingOfficerId}/occurrence_reports/{occurrenceReportId}
-     * @allow (create) User with ID 'reportingOfficerId' can create a new OccurrenceReport document.
-     * @deny (create) User with ID 'otherUserId' cannot create a new OccurrenceReport document under 'reportingOfficerId'.
-     * @allow (get, list, update, delete) User with ID 'reportingOfficerId' can access their own OccurrenceReport document.
-     * @deny (get, list, update, delete) User with ID 'otherUserId' cannot access OccurrenceReport document under 'reportingOfficerId'.
-     * @principle Enforces document ownership for all operations on OccurrenceReport.
-     */
-    match /reporting_officers/{reportingOfficerId}/occurrence_reports/{occurrenceReportId} {
-      // Only the owner (reportingOfficer) can create a new OccurrenceReport.
-      allow create: if isSignedIn() && isOwner(reportingOfficerId) && request.resource.data.reportingOfficerId == reportingOfficerId;
-      // Only the owner (reportingOfficer) can get their OccurrenceReport.
-      allow get: if isSignedIn() && isOwner(reportingOfficerId);
-      // Only the owner (reportingOfficer) can list their OccurrenceReports.
-      allow list: if isSignedIn() && isOwner(reportingOfficerId);
-      // Only the owner (reportingOfficer) can update their OccurrenceReport.
-      allow update: if isSignedIn() && isExistingOwner(reportingOfficerId) && resource.data.reportingOfficerId == reportingOfficerId;
-      // Only the owner (reportingOfficer) can delete their OccurrenceReport.
-      allow delete: if isSignedIn() && isExistingOwner(reportingOfficerId);
+    match /service_reports/{reportId} {
+      allow read, write: if true;
     }
 
-    /**
-     * @description Rule for OfficerInCharge documents.
-     * @path /officers_in_charge/{officerInChargeId}
-     * @allow (create) User with ID 'officerInChargeId' can create their own document.
-     * @deny (create) User with ID 'otherUserId' cannot create a document with ID 'officerInChargeId'.
-     * @allow (get, list, update, delete) User with ID 'officerInChargeId' can access their own document.
-     * @deny (get, list, update, delete) User with ID 'otherUserId' cannot access document with ID 'officerInChargeId'.
-     * @principle Enforces document ownership for all operations on OfficerInCharge.
-     */
-    match /officers_in_charge/{officerInChargeId} {
-      // Only the user with the matching ID can create the document.
-      allow create: if isSignedIn() && isOwner(officerInChargeId);
-      // Only the user with the matching ID can read the document.
-      allow get: if isSignedIn() && isOwner(officerInChargeId);
-      // Only the user with the matching ID can list the document.
-      allow list: if false;
-      // Only the user with the matching ID can update the document.
-      allow update: if isSignedIn() && isExistingOwner(officerInChargeId);
-      // Only the user with the matching ID can delete the document.
-      allow delete: if isSignedIn() && isExistingOwner(officerInChargeId);
-    }
-
-    /**
-     * @description Rule for DailyServiceReport documents under a specific OfficerInCharge.
-     * @path /officers_in_charge/{officerInChargeId}/daily_service_reports/{dailyServiceReportId}
-     * @allow (create) User with ID 'officerInChargeId' can create a new DailyServiceReport document.
-     * @deny (create) User with ID 'otherUserId' cannot create a new DailyServiceReport document under 'officerInChargeId'.
-     * @allow (get, list, update, delete) User with ID 'officerInChargeId' can access their own DailyServiceReport document.
-     * @deny (get, list, update, delete) User with ID 'otherUserId' cannot access DailyServiceReport document under 'officerInChargeId'.
-     * @principle Enforces document ownership for all operations on DailyServiceReport.
-     */
-    match /officers_in_charge/{officerInChargeId}/daily_service_reports/{dailyServiceReportId} {
-      // Only the owner (officerInCharge) can create a new DailyServiceReport.
-      allow create: if isSignedIn() && isOwner(officerInChargeId) && request.resource.data.officerInChargeId == officerInChargeId;
-      // Only the owner (officerInCharge) can get their DailyServiceReport.
-      allow get: if isSignedIn() && isOwner(officerInChargeId);
-      // Only the owner (officerInCharge) can list their DailyServiceReports.
-      allow list: if isSignedIn() && isOwner(officerInChargeId);
-      // Only the owner (officerInCharge) can update their DailyServiceReport.
-      allow update: if isSignedIn() && isExistingOwner(officerInChargeId) && resource.data.officerInChargeId == officerInChargeId;
-      // Only the owner (officerInCharge) can delete their DailyServiceReport.
-      allow delete: if isSignedIn() && isExistingOwner(officerInChargeId);
-    }
-
-    /**
-     * @description Rule for IssuingOfficer documents.
-     * @path /issuing_officers/{issuingOfficerId}
-     * @allow (create) User with ID 'issuingOfficerId' can create their own document.
-     * @deny (create) User with ID 'otherUserId' cannot create a document with ID 'issuingOfficerId'.
-     * @allow (get, list, update, delete) User with ID 'issuingOfficerId' can access their own document.
-     * @deny (get, list, update, delete) User with ID 'otherUserId' cannot access document with ID 'issuingOfficerId'.
-     * @principle Enforces document ownership for all operations on IssuingOfficer.
-     */
-    match /issuing_officers/{issuingOfficerId} {
-      // Only the user with the matching ID can create the document.
-      allow create: if isSignedIn() && isOwner(issuingOfficerId);
-      // Only the user with the matching ID can read the document.
-      allow get: if isSignedIn() && isOwner(issuingOfficerId);
-      // Only the user with the matching ID can list the document.
-      allow list: if false;
-      // Only the user with the matching ID can update the document.
-      allow update: if isSignedIn() && isExistingOwner(issuingOfficerId);
-      // Only the user with the matching ID can delete the document.
-      allow delete: if isSignedIn() && isExistingOwner(issuingOfficerId);
-    }
-
-    /**
-     * @description Rule for Summons documents under a specific IssuingOfficer.
-     * @path /issuing_officers/{issuingOfficerId}/summons/{summonsId}
-     * @allow (create) User with ID 'issuingOfficerId' can create a new Summons document.
-     * @deny (create) User with ID 'otherUserId' cannot create a new Summons document under 'issuingOfficerId'.
-     * @allow (get, list, update, delete) User with ID 'issuingOfficerId' can access their own Summons document.
-     * @deny (get, list, update, delete) User with ID 'otherUserId' cannot access Summons document under 'issuingOfficerId'.
-     * @principle Enforces document ownership for all operations on Summons.
-     */
-    match /issuing_officers/{issuingOfficerId}/summons/{summonsId} {
-      // Only the owner (issuingOfficer) can create a new Summons.
-      allow create: if isSignedIn() && isOwner(issuingOfficerId) && request.resource.data.issuingOfficerId == issuingOfficerId;
-      // Only the owner (issuingOfficer) can get their Summons.
-      allow get: if isSignedIn() && isOwner(issuingOfficerId);
-      // Only the owner (issuingOfficer) can list their Summons.
-      allow list: if isSignedIn() && isOwner(issuingOfficerId);
-      // Only the owner (issuingOfficer) can update their Summons.
-      allow update: if isSignedIn() && isExistingOwner(issuingOfficerId) && resource.data.issuingOfficerId == issuingOfficerId;
-      // Only the owner (issuingOfficer) can delete their Summons.
-      allow delete: if isSignedIn() && isExistingOwner(issuingOfficerId);
-    }
-
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+    match /summons/{summonsId} {
+      allow read, write: if true;
     }
   }
 }

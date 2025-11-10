@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {
   Card,
@@ -32,6 +31,8 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import type { OccurrenceFormData, InvolvedPerson } from './new/form-context';
 import { Step6Review } from './new/steps/step6-review';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, where, Timestamp } from 'firebase/firestore';
 
 type Report = OccurrenceFormData & { id: string };
 
@@ -45,7 +46,11 @@ const maskCPF = (value: string) => {
 };
 
 export default function ConsultOccurrenceReportPage() {
-  const [allReports, setAllReports] = useState<Report[]>([]);
+  const firestore = useFirestore();
+  const reportsCollection = useMemoFirebase(() => collection(firestore, 'occurrence_reports'), [firestore]);
+  
+  const { data: allReports, isLoading } = useCollection<Report>(reportsCollection);
+  
   const [filteredReports, setFilteredReports] = useState<Report[]>([]);
   
   const [reportId, setReportId] = useState('');
@@ -55,28 +60,24 @@ export default function ConsultOccurrenceReportPage() {
   const [endDate, setEndDate] = useState<Date | undefined>();
   
   useEffect(() => {
-    try {
-      const savedReportsString = localStorage.getItem('occurrenceReports');
-      const savedReports: Report[] = savedReportsString ? JSON.parse(savedReportsString) : [];
-      savedReports.sort((a, b) => {
-        const dateA = a.factDate ? new Date(`${a.factDate}T${a.factTime || '00:00'}`).getTime() : 0;
-        const dateB = b.factDate ? new Date(`${b.factDate}T${b.factTime || '00:00'}`).getTime() : 0;
-        return dateB - dateA;
-      });
-      setAllReports(savedReports);
-      setFilteredReports(savedReports);
-    } catch (error) {
-      console.error("Failed to load reports from localStorage", error);
+    if (allReports) {
+        const sorted = [...allReports].sort((a, b) => {
+            const dateA = a.factDate ? new Date(`${a.factDate}T${a.factTime || '00:00'}`).getTime() : 0;
+            const dateB = b.factDate ? new Date(`${b.factDate}T${b.factTime || '00:00'}`).getTime() : 0;
+            return dateB - dateA;
+        });
+        setFilteredReports(sorted);
     }
-  }, []);
+  }, [allReports]);
 
   const handleSearch = () => {
+    if (!allReports) return;
+
     let results = allReports;
 
     if (startDate) {
       results = results.filter(report => {
         if (!report.factDate) return false;
-        // Compare dates without timezones
         const reportDate = new Date(report.factDate);
         reportDate.setUTCHours(0,0,0,0);
         const filterStartDate = new Date(startDate);
@@ -88,7 +89,6 @@ export default function ConsultOccurrenceReportPage() {
     if (endDate) {
       results = results.filter(report => {
         if (!report.factDate) return false;
-        // Compare dates without timezones
         const reportDate = new Date(report.factDate);
         reportDate.setUTCHours(0,0,0,0);
         const filterEndDate = new Date(endDate);
@@ -144,10 +144,9 @@ export default function ConsultOccurrenceReportPage() {
   };
 
   const handleClearStorage = () => {
-    if (window.confirm("Tem certeza que deseja apagar todos os BOs de teste? Esta ação não pode ser desfeita.")) {
-      localStorage.removeItem('occurrenceReports');
-      window.location.reload();
-    }
+    // This is a placeholder for a future "delete all" function with proper permissions.
+    // For now, it does nothing in Firestore context.
+    alert("A remoção em massa de registros do Firestore deve ser feita com cuidado e não está habilitada nesta interface de teste.");
   }
 
   return (
@@ -261,7 +260,8 @@ export default function ConsultOccurrenceReportPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredReports.length > 0 ? (
+                  {isLoading && <TableRow><TableCell colSpan={5} className="h-24 text-center">Carregando...</TableCell></TableRow>}
+                  {!isLoading && filteredReports.length > 0 ? (
                     filteredReports.map((report) => (
                       <TableRow key={report.id}>
                         <TableCell className="font-medium">{report.id}</TableCell>
@@ -277,7 +277,7 @@ export default function ConsultOccurrenceReportPage() {
                       </TableRow>
                     ))
                   ) : (
-                    <TableRow>
+                    !isLoading && <TableRow>
                       <TableCell colSpan={5} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
                             <AlertTriangle className="h-8 w-8" />

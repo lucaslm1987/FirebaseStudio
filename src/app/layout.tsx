@@ -1,7 +1,7 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'GCMobile',
@@ -29,11 +29,11 @@ export default function RootLayout({
         <link rel="stylesheet" href="/print-styles.css" media="print" />
       </head>
       <body className="h-full font-body antialiased">
-        {children}
+        <FirebaseClientProvider>
+          {children}
+        </FirebaseClientProvider>
         <Toaster />
       </body>
     </html>
   );
 }
-
-    

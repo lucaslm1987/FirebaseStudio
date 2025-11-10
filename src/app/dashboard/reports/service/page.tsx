@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -27,31 +26,32 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import type { ServiceReportData } from './new/page';
 import { ServiceReportPrint } from './service-report-print';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 
 export default function ConsultServiceReportPage() {
-  const [allReports, setAllReports] = useState<ServiceReportData[]>([]);
+  const firestore = useFirestore();
+  const reportsCollection = useMemoFirebase(() => collection(firestore, 'service_reports'), [firestore]);
+  const { data: allReports, isLoading } = useCollection<ServiceReportData>(reportsCollection);
+  
   const [filteredReports, setFilteredReports] = useState<ServiceReportData[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   
   useEffect(() => {
-    try {
-      const savedReportsString = localStorage.getItem('serviceReports');
-      const savedReports: ServiceReportData[] = savedReportsString ? JSON.parse(savedReportsString) : [];
-      savedReports.sort((a, b) => {
+    if (allReports) {
+      const sorted = [...allReports].sort((a, b) => {
         const dateA = a.openingDate ? new Date(`${a.openingDate}T${a.openingTime || '00:00'}`).getTime() : 0;
         const dateB = b.openingDate ? new Date(`${b.openingDate}T${b.openingTime || '00:00'}`).getTime() : 0;
         return dateB - dateA;
       });
-      setAllReports(savedReports);
-      setFilteredReports(savedReports);
-    } catch (error) {
-      console.error("Failed to load service reports from localStorage", error);
+      setFilteredReports(sorted);
     }
-  }, []);
+  }, [allReports]);
 
   const handleSearch = () => {
+    if (!allReports) return;
     let results = allReports;
 
     if (startDate) {
@@ -190,7 +190,8 @@ export default function ConsultServiceReportPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredReports.length > 0 ? (
+                  {isLoading && <TableRow><TableCell colSpan={2} className="h-24 text-center">Carregando...</TableCell></TableRow>}
+                  {!isLoading && filteredReports.length > 0 ? (
                     filteredReports.map((report) => (
                       <TableRow key={report.id}>
                         <TableCell>{report.openingDate ? format(new Date(`${report.openingDate}T00:00:00`), 'dd/MM/yyyy') : 'N/A'}</TableCell>
@@ -203,7 +204,7 @@ export default function ConsultServiceReportPage() {
                       </TableRow>
                     ))
                   ) : (
-                     <TableRow>
+                     !isLoading && <TableRow>
                       <TableCell colSpan={5} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
                             <AlertTriangle className="h-8 w-8" />

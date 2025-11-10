@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -8,7 +7,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,9 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { allTeamMembers, roles, viaturas, type TeamMember } from '../../occurrence/new/form-context';
+import { allTeamMembers, roles, viaturas, type TeamMember } from '../../../occurrence/new/form-context';
 import { PlusCircle, Trash2, User, Users, Car, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore, addDocumentNonBlocking } from '@/firebase';
+import { collection } from 'firebase/firestore';
+
 
 const activityFields = [
     { id: 'adolescentesApreendidos', label: 'Adolescentes Apreendidos' },
@@ -73,6 +74,7 @@ const getInitialData = (): ServiceReportData => ({
 export default function NewServiceReportPage() {
     const router = useRouter();
     const { toast } = useToast();
+    const firestore = useFirestore();
     const [formData, setFormData] = useState<ServiceReportData>(getInitialData());
     const [selectedMember, setSelectedMember] = useState('');
 
@@ -90,7 +92,7 @@ export default function NewServiceReportPage() {
         }));
     };
     
-    const handleSelectChange = (id: keyof ServiceReportData) => (value: string) => {
+    const handleSelectChange = (id: keyof Omit<ServiceReportData, 'activities' | 'team'>) => (value: string) => {
         setFormData(prev => ({ ...prev, [id]: value }));
     };
     
@@ -137,17 +139,8 @@ export default function NewServiceReportPage() {
     
     const handleSave = () => {
         try {
-            const savedReportsString = localStorage.getItem('serviceReports');
-            const savedReports: ServiceReportData[] = savedReportsString ? JSON.parse(savedReportsString) : [];
-            
-            const existingReportIndex = savedReports.findIndex(report => report.id === formData.id);
-            if (existingReportIndex !== -1) {
-                savedReports[existingReportIndex] = formData;
-            } else {
-                savedReports.push(formData);
-            }
-
-            localStorage.setItem('serviceReports', JSON.stringify(savedReports));
+            const reportsCollection = collection(firestore, 'service_reports');
+            addDocumentNonBlocking(reportsCollection, formData);
             
             toast({
                 title: 'Relatório Salvo!',
@@ -337,5 +330,3 @@ export default function NewServiceReportPage() {
         </div>
     );
 }
-
-    

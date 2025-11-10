@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,10 +27,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 
 export default function ConsultSummonsPage() {
-  const [allSummons, setAllSummons] = useState<SummonsData[]>([]);
+  const firestore = useFirestore();
+  const summonsCollection = useMemoFirebase(() => collection(firestore, 'summons'), [firestore]);
+  const { data: allSummons, isLoading } = useCollection<SummonsData>(summonsCollection);
+  
   const [filteredSummons, setFilteredSummons] = useState<SummonsData[]>([]);
   
   const [summonsId, setSummonsId] = useState('');
@@ -39,22 +43,18 @@ export default function ConsultSummonsPage() {
   const [endDate, setEndDate] = useState<Date | undefined>();
 
   useEffect(() => {
-    try {
-      const savedSummonsString = localStorage.getItem('summons');
-      const savedSummons: SummonsData[] = savedSummonsString ? JSON.parse(savedSummonsString) : [];
-      savedSummons.sort((a, b) => {
+    if (allSummons) {
+      const sorted = [...allSummons].sort((a, b) => {
         const dateA = a.openingDate ? new Date(`${a.openingDate}T${a.openingTime || '00:00'}`).getTime() : 0;
         const dateB = b.openingDate ? new Date(`${b.openingDate}T${b.openingTime || '00:00'}`).getTime() : 0;
         return dateB - dateA;
       });
-      setAllSummons(savedSummons);
-      setFilteredSummons(savedSummons);
-    } catch (error) {
-      console.error("Failed to load summons from localStorage", error);
+      setFilteredSummons(sorted);
     }
-  }, []);
+  }, [allSummons]);
 
   const handleSearch = () => {
+    if (!allSummons) return;
     let results = allSummons;
 
     if (startDate) {
@@ -208,7 +208,8 @@ export default function ConsultSummonsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredSummons.length > 0 ? (
+                  {isLoading && <TableRow><TableCell colSpan={5} className="h-24 text-center">Carregando...</TableCell></TableRow>}
+                  {!isLoading && filteredSummons.length > 0 ? (
                     filteredSummons.map((s) => (
                       <TableRow key={s.id}>
                         <TableCell className="font-medium">{s.id}</TableCell>
@@ -224,7 +225,7 @@ export default function ConsultSummonsPage() {
                       </TableRow>
                     ))
                   ) : (
-                     <TableRow>
+                     !isLoading && <TableRow>
                       <TableCell colSpan={5} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
                             <AlertTriangle className="h-8 w-8" />

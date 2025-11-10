@@ -23,10 +23,6 @@
           "type": "string",
           "description": "Detailed description of the occurrence."
         },
-        "reportingOfficerId": {
-          "type": "string",
-          "description": "Reference to the Reporting Officer. (Relationship: ReportingOfficer 1:N OccurrenceReport)"
-        },
         "involvedParties": {
           "type": "string",
           "description": "Involved parties in the occurrence."
@@ -36,8 +32,7 @@
         "id",
         "date",
         "location",
-        "description",
-        "reportingOfficerId"
+        "description"
       ]
     },
     "DailyServiceReport": {
@@ -62,18 +57,13 @@
         "activities": {
           "type": "string",
           "description": "Description of activities performed during the service."
-        },
-        "officerInChargeId": {
-          "type": "string",
-          "description": "Reference to the Officer in Charge. (Relationship: OfficerInCharge 1:N DailyServiceReport)"
         }
       },
       "required": [
         "id",
         "date",
         "shift",
-        "activities",
-        "officerInChargeId"
+        "activities"
       ]
     },
     "Summons": {
@@ -98,213 +88,39 @@
         "violationDescription": {
           "type": "string",
           "description": "Description of the violation."
-        },
-        "issuingOfficerId": {
-          "type": "string",
-          "description": "Reference to the Issuing Officer. (Relationship: IssuingOfficer 1:N Summons)"
         }
       },
       "required": [
         "id",
         "date",
         "violatorName",
-        "violationDescription",
-        "issuingOfficerId"
-      ]
-    },
-    "ReportingOfficer": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "ReportingOfficer",
-      "type": "object",
-      "description": "Represents an officer who reports an occurrence.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Reporting Officer."
-        },
-        "name": {
-          "type": "string",
-          "description": "Name of the reporting officer."
-        },
-        "badgeNumber": {
-          "type": "string",
-          "description": "Badge number of the reporting officer."
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "badgeNumber"
-      ]
-    },
-    "OfficerInCharge": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "OfficerInCharge",
-      "type": "object",
-      "description": "Represents an officer in charge of a daily service.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Officer in Charge."
-        },
-        "name": {
-          "type": "string",
-          "description": "Name of the officer in charge."
-        },
-        "badgeNumber": {
-          "type": "string",
-          "description": "Badge number of the officer in charge."
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "badgeNumber"
-      ]
-    },
-    "IssuingOfficer": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "IssuingOfficer",
-      "type": "object",
-      "description": "Represents an officer who issues a summons.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Issuing Officer."
-        },
-        "name": {
-          "type": "string",
-          "description": "Name of the issuing officer."
-        },
-        "badgeNumber": {
-          "type": "string",
-          "description": "Badge number of the issuing officer."
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "badgeNumber"
+        "violationDescription"
       ]
     }
   },
   "auth": {
     "providers": [
-      "password",
       "anonymous"
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/reporting_officers/{reportingOfficerId}",
-        "definition": {
-          "entityName": "ReportingOfficer",
-          "schema": {
-            "$ref": "#/backend/entities/ReportingOfficer"
-          },
-          "description": "Collection of reporting officers.",
-          "params": [
-            {
-              "name": "reportingOfficerId",
-              "description": "The unique identifier of the reporting officer."
-            }
-          ]
-        }
+    "/occurrence_reports/{occurrenceReportId}": {
+      "schema": {
+        "$ref": "#/entities/OccurrenceReport"
       },
-      {
-        "path": "/reporting_officers/{reportingOfficerId}/occurrence_reports/{occurrenceReportId}",
-        "definition": {
-          "entityName": "OccurrenceReport",
-          "schema": {
-            "$ref": "#/backend/entities/OccurrenceReport"
-          },
-          "description": "Collection of occurrence reports created by a specific reporting officer.",
-          "params": [
-            {
-              "name": "reportingOfficerId",
-              "description": "The unique identifier of the reporting officer."
-            },
-            {
-              "name": "occurrenceReportId",
-              "description": "The unique identifier of the occurrence report."
-            }
-          ]
-        }
+      "description": "Collection of all occurrence reports."
+    },
+    "/service_reports/{serviceReportId}": {
+      "schema": {
+        "$ref": "#/entities/DailyServiceReport"
       },
-      {
-        "path": "/officers_in_charge/{officerInChargeId}",
-        "definition": {
-          "entityName": "OfficerInCharge",
-          "schema": {
-            "$ref": "#/backend/entities/OfficerInCharge"
-          },
-          "description": "Collection of officers in charge.",
-          "params": [
-            {
-              "name": "officerInChargeId",
-              "description": "The unique identifier of the officer in charge."
-            }
-          ]
-        }
+      "description": "Collection of all daily service reports."
+    },
+    "/summons/{summonsId}": {
+      "schema": {
+        "$ref": "#/entities/Summons"
       },
-      {
-        "path": "/officers_in_charge/{officerInChargeId}/daily_service_reports/{dailyServiceReportId}",
-        "definition": {
-          "entityName": "DailyServiceReport",
-          "schema": {
-            "$ref": "#/backend/entities/DailyServiceReport"
-          },
-          "description": "Collection of daily service reports created by a specific officer in charge.",
-          "params": [
-            {
-              "name": "officerInChargeId",
-              "description": "The unique identifier of the officer in charge."
-            },
-            {
-              "name": "dailyServiceReportId",
-              "description": "The unique identifier of the daily service report."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/issuing_officers/{issuingOfficerId}",
-        "definition": {
-          "entityName": "IssuingOfficer",
-          "schema": {
-            "$ref": "#/backend/entities/IssuingOfficer"
-          },
-          "description": "Collection of issuing officers.",
-          "params": [
-            {
-              "name": "issuingOfficerId",
-              "description": "The unique identifier of the issuing officer."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/issuing_officers/{issuingOfficerId}/summons/{summonsId}",
-        "definition": {
-          "entityName": "Summons",
-          "schema": {
-            "$ref": "#/backend/entities/Summons"
-          },
-          "description": "Collection of summons issued by a specific issuing officer.",
-          "params": [
-            {
-              "name": "issuingOfficerId",
-              "description": "The unique identifier of the issuing officer."
-            },
-            {
-              "name": "summonsId",
-              "description": "The unique identifier of the summons."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore data structure is designed to support the GCMobile application's requirements for creating and consulting occurrence reports, daily service reports, and summons. It leverages path-based ownership and structural segregation to ensure clear authorization rules and efficient data access. Each officer type (ReportingOfficer, OfficerInCharge, IssuingOfficer) has its own collection, as do their respective reports and summons. This segregation simplifies security rules and enables secure list operations, fulfilling QAPs. Relationships between officers and their reports/summons are modeled using path-based ownership (e.g., `/reporting_officers/{reportingOfficerId}/occurrence_reports/{occurrenceReportId}`). This structure inherently supports Authorization Independence because each document's access control is determined by its location within the hierarchy (owned by a specific officer), avoiding the need for `get()` calls to parent documents and enabling atomic operations."
+      "description": "Collection of all summons."
+    }
   }
 }
