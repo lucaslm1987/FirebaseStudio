@@ -71,7 +71,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                <DropdownMenuItem asChild>
                 <Link href="/dashboard/intelligence">
                   <BrainCircuit className="mr-2 h-4 w-4" />
-                  Inteligência
+                  INTEL GCM
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

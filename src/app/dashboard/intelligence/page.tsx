@@ -142,7 +142,7 @@ export default function IntelligencePage() {
       <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6">
         <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl flex items-center gap-2">
           <BrainCircuit />
-          Painel de Inteligência
+          INTEL GCM
         </h1>
       </header>
       <main className="flex-1 overflow-auto p-4 md:p-6">

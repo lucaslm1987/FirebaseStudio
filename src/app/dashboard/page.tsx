@@ -49,7 +49,7 @@ export default function DashboardPage() {
       Icon: Ticket,
     },
     {
-      title: 'Painel de Inteligência',
+      title: 'INTEL GCM',
       description: 'Analise os dados com IA.',
       href: '/dashboard/intelligence',
       Icon: BrainCircuit,
