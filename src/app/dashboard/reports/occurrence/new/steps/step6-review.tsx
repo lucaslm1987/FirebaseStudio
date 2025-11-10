@@ -117,7 +117,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                 <p><strong>Viatura:</strong> {formData.vehicle || 'Não informada'}</p>
         </ReviewSection>
 
-        <ReviewSection title="Envolvidos" hasData={involved && involved.length > 0}>
+        <ReviewSection title="Envolvidos" hasData={involved && involved.length > 0} icon={Users}>
             {involvedPeople.length > 0 && (
                 <div className="print-subsection">
                     <h6 className="print-subsection-title">
