@@ -7,7 +7,6 @@ import {
   FileText,
   Search,
   Ticket,
-  BrainCircuit,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -47,12 +46,6 @@ export default function DashboardPage() {
       description: 'Busque por talões já emitidos.',
       href: '/dashboard/summons',
       Icon: Ticket,
-    },
-    {
-      title: 'INTEL GCM',
-      description: 'Analise os dados com IA.',
-      href: '/dashboard/intelligence',
-      Icon: BrainCircuit,
     },
   ];
 
