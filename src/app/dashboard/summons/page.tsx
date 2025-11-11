@@ -118,37 +118,43 @@ export default function ConsultSummonsPage() {
     const tempContainer = document.createElement('div');
     tempContainer.innerHTML = summonsHtml;
 
-    const printStyles = await fetch('/print-styles.css').then(res => res.text());
-    const styleEl = document.createElement('style');
-    styleEl.innerHTML = printStyles;
-    tempContainer.querySelector('.print-container')?.prepend(styleEl);
+    try {
+        const printStyles = await fetch('/print-styles.css').then(res => res.text());
+        const styleEl = document.createElement('style');
+        styleEl.innerHTML = printStyles;
+        tempContainer.querySelector('.print-container')?.prepend(styleEl);
 
-    document.body.appendChild(tempContainer);
+        document.body.appendChild(tempContainer);
 
-    const canvas = await html2canvas(tempContainer.querySelector('.print-container') as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false
-    });
-    
-    document.body.removeChild(tempContainer);
+        const canvas = await html2canvas(tempContainer.querySelector('.print-container') as HTMLElement, {
+            scale: 2,
+            useCORS: true,
+            logging: false
+        });
+        
+        document.body.removeChild(tempContainer);
 
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: 'a4'
-    });
-    
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-    const ratio = canvasWidth / canvasHeight;
-    const height = pdfWidth / ratio;
-    
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height < pdfHeight ? height : pdfHeight);
-    pdf.save(`${summons.id}.pdf`);
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'px',
+            format: 'a4'
+        });
+        
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const ratio = canvasWidth / canvasHeight;
+        const height = pdfWidth / ratio;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height < pdfHeight ? height : pdfHeight);
+        pdf.save(`${summons.id}.pdf`);
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+        alert("Não foi possível gerar o PDF. Verifique o console para mais detalhes.")
+        document.body.removeChild(tempContainer); // Ensure cleanup on error
+    }
   };
 
 
