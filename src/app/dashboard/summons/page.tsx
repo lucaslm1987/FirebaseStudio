@@ -147,13 +147,17 @@ export default function ConsultSummonsPage() {
             format: 'a4'
         });
         
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const ratio = canvasWidth / canvasHeight;
-        const pdfHeight = pdfWidth / ratio;
+        const pageTotalWidth = pdf.internal.pageSize.getWidth();
+        const pageTotalHeight = pdf.internal.pageSize.getHeight();
+        const scale = 0.8;
         
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const pdfWidth = pageTotalWidth * scale;
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        
+        const x = (pageTotalWidth - pdfWidth) / 2;
+        const y = (pageTotalHeight - pdfHeight) / 2;
+        
+        pdf.addImage(imgData, 'PNG', x, y, pdfWidth, pdfHeight);
         pdf.save(`${summons.id}.pdf`);
     } catch (error) {
         console.error("Error generating PDF:", error);
