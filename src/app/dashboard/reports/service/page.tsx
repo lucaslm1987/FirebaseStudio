@@ -3,6 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   Card,
   CardContent,
@@ -104,6 +106,44 @@ export default function ConsultServiceReportPage() {
     }
   };
 
+  const handleSave = async (report: ServiceReportData) => {
+    const reportHtml = ReactDOMServer.renderToString(<ServiceReportPrint reportData={report} />);
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = reportHtml;
+    
+    const printStyles = await fetch('/print-styles.css').then(res => res.text());
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = printStyles;
+    tempContainer.querySelector('.print-container')?.prepend(styleEl);
+
+    document.body.appendChild(tempContainer);
+
+    const canvas = await html2canvas(tempContainer.querySelector('.print-container') as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+    });
+    
+    document.body.removeChild(tempContainer);
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: 'a4'
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    const height = pdfWidth / ratio;
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height < pdfHeight ? height : pdfHeight);
+    pdf.save(`${report.id}.pdf`);
+  };
+
 
   return (
     <div className="flex h-full flex-col">
@@ -197,7 +237,7 @@ export default function ConsultServiceReportPage() {
                       <TableRow key={report.id}>
                         <TableCell>{report.openingDate ? format(new Date(`${report.openingDate}T00:00:00`), 'dd/MM/yyyy') : 'N/A'}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
+                          <Button variant="ghost" size="icon" onClick={() => handleSave(report)}>
                             <Save className="h-4 w-4" />
                             <span className="sr-only">Salvar</span>
                           </Button>

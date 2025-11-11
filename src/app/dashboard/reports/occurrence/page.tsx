@@ -1,8 +1,10 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   Card,
   CardContent,
@@ -33,7 +35,7 @@ import { format } from 'date-fns';
 import type { OccurrenceFormData, InvolvedPerson } from './new/form-context';
 import { Step6Review } from './new/steps/step6-review';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, where, Timestamp } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
 
 type Report = OccurrenceFormData & { id: string };
 
@@ -142,6 +144,46 @@ export default function ConsultOccurrenceReportPage() {
           printWindow.close();
         }, 250);
     }
+  };
+
+  const handleSave = async (report: Report) => {
+    const reportHtml = ReactDOMServer.renderToString(<Step6Review formData={report} />);
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = reportHtml;
+
+    // We need to fetch the print styles and inline them for html2canvas
+    const printStyles = await fetch('/print-styles.css').then(res => res.text());
+    
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = printStyles;
+    tempContainer.querySelector('.print-container')?.prepend(styleEl);
+
+    document.body.appendChild(tempContainer);
+
+    const canvas = await html2canvas(tempContainer.querySelector('.print-container') as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+    });
+    
+    document.body.removeChild(tempContainer);
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: 'a4'
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    const height = pdfWidth / ratio;
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height < pdfHeight ? height : pdfHeight);
+    pdf.save(`${report.id}.pdf`);
   };
 
   return (
@@ -260,7 +302,7 @@ export default function ConsultOccurrenceReportPage() {
                         <TableCell className="max-w-[250px] truncate">{report.nature || 'N/A'}</TableCell>
                         <TableCell className="max-w-[250px] truncate">{`${report.street || ''}, ${report.number || ''}`}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
+                          <Button variant="ghost" size="icon" onClick={() => handleSave(report)}>
                             <Save className="h-4 w-4" />
                             <span className="sr-only">Salvar</span>
                           </Button>

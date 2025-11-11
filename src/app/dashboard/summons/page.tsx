@@ -3,6 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   Card,
   CardContent,
@@ -109,6 +111,44 @@ export default function ConsultSummonsPage() {
           printWindow.close();
         }, 250);
     }
+  };
+
+  const handleSave = async (summons: SummonsData) => {
+    const summonsHtml = ReactDOMServer.renderToString(<SummonsPrint summonsData={summons} />);
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = summonsHtml;
+
+    const printStyles = await fetch('/print-styles.css').then(res => res.text());
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = printStyles;
+    tempContainer.querySelector('.print-container')?.prepend(styleEl);
+
+    document.body.appendChild(tempContainer);
+
+    const canvas = await html2canvas(tempContainer.querySelector('.print-container') as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+    });
+    
+    document.body.removeChild(tempContainer);
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: 'a4'
+    });
+    
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    const height = pdfWidth / ratio;
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height < pdfHeight ? height : pdfHeight);
+    pdf.save(`${summons.id}.pdf`);
   };
 
 
@@ -218,7 +258,7 @@ export default function ConsultSummonsPage() {
                         <TableCell>{s.vehicle}</TableCell>
                         <TableCell className="max-w-xs truncate">{s.description}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handlePrint(s)}>
+                          <Button variant="ghost" size="icon" onClick={() => handleSave(s)}>
                             <Save className="h-4 w-4" />
                             <span className="sr-only">Salvar</span>
                           </Button>
