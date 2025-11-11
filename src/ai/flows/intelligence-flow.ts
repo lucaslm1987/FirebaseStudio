@@ -103,14 +103,20 @@ const intelligenceFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (promptMessage) => {
-    const llmResponse = await prompt(promptMessage);
+    try {
+        const llmResponse = await prompt(promptMessage);
 
-    if (!llmResponse || !llmResponse.output) {
-      console.error('Invalid response from model:', llmResponse);
-      throw new Error("Resposta inválida do modelo de IA. A propriedade 'output' não foi encontrada.");
+        if (!llmResponse || !llmResponse.output) {
+            console.error('Invalid response from model:', llmResponse);
+            throw new Error("Resposta inválida ou vazia do modelo de IA.");
+        }
+        
+        return llmResponse.output;
+
+    } catch (error) {
+        console.error("Erro ao processar fluxo de inteligência:", error);
+        return "Desculpe, ocorreu um erro ao processar sua solicitação de IA. Verifique o console para mais detalhes.";
     }
-    
-    return llmResponse.output;
   }
 );
 
