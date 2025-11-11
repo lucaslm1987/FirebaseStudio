@@ -61,13 +61,6 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
         { id: 'notificacoesAmbientais', label: 'Notificações Ambientais' },
     ] as const;
 
-    // Group activities into pairs for the two-column table
-    const activityPairs: Array<[typeof activityFields[number], (typeof activityFields[number] | null)]> = [];
-    for (let i = 0; i < activityFields.length; i += 2) {
-        activityPairs.push([activityFields[i], activityFields[i + 1] || null]);
-    }
-
-
     return (
         <PrintLayout
             title="Relatório de Serviço Diário"
@@ -108,16 +101,10 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
             <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
                  <table className="w-full">
                     <tbody>
-                        {activityPairs.map(([activity1, activity2], index) => (
-                            <tr key={index}>
-                                <td className="w-1/2 py-1 pr-4">
-                                    <strong>{activity1.label}:</strong> {activities?.[activity1.id] || 0}
-                                </td>
-                                <td className="w-1/2 py-1 pl-4">
-                                    {activity2 && (
-                                        <><strong>{activity2.label}:</strong> {activities?.[activity2.id] || 0}</>
-                                    )}
-                                </td>
+                        {activityFields.map((activity, index) => (
+                           <tr key={index}>
+                                <td className="w-3/4 py-1 pr-4 font-semibold">{activity.label}</td>
+                                <td className="w-1/4 py-1 text-right">{activities?.[activity.id] || 0}</td>
                             </tr>
                         ))}
                     </tbody>
