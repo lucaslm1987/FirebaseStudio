@@ -104,6 +104,25 @@ const intelligenceFlow = ai.defineFlow(
   },
   async (promptMessage) => {
     const llmResponse = await prompt(promptMessage);
+
+    const content = llmResponse.output?.content;
+
+    if (!content) {
+        // If there's no content, it might be a tool call.
+        // The `prompt` function with tools handles this automatically
+        // by returning the final result after tool execution.
+        // If we still get here, something is wrong.
+        if (llmResponse.isToolRequest()) {
+             // This block should ideally not be hit if the tool is defined correctly
+             // and the prompt function handles the tool execution loop.
+             // However, as a fallback:
+            const toolResponse = await llmResponse.toolRequest?.run();
+            const finalResponse = await prompt(promptMessage, {toolResponse});
+            return finalResponse.text;
+        }
+        return llmResponse.text;
+    }
+    
     return llmResponse.text;
   }
 );
