@@ -18,28 +18,28 @@ export default function DashboardPage() {
       Icon: FilePlus2,
     },
     {
-      title: 'Consultar BO GCM',
-      description: 'Pesquise ocorrências existentes.',
-      href: '/dashboard/reports/occurrence',
-      Icon: Search,
-    },
-    {
       title: 'Criar Relatório Diário',
       description: 'Elabore o relatório de serviço do dia.',
       href: '/dashboard/reports/service/new',
       Icon: ClipboardPlus,
     },
     {
-      title: 'Consultar Relatório Diário',
-      description: 'Acesse relatórios de serviço anteriores.',
-      href: '/dashboard/reports/service',
-      Icon: ClipboardList,
-    },
-    {
       title: 'Criar Talão',
       description: 'Emita um novo talão de ocorrência.',
       href: '/dashboard/summons/new',
       Icon: FileText,
+    },
+    {
+      title: 'Consultar BO GCM',
+      description: 'Pesquise ocorrências existentes.',
+      href: '/dashboard/reports/occurrence',
+      Icon: Search,
+    },
+    {
+      title: 'Consultar Relatório Diário',
+      description: 'Acesse relatórios de serviço anteriores.',
+      href: '/dashboard/reports/service',
+      Icon: ClipboardList,
     },
     {
       title: 'Consultar Talão',
