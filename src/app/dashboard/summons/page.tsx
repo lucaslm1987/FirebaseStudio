@@ -116,6 +116,10 @@ export default function ConsultSummonsPage() {
   const handleSave = async (summons: SummonsData) => {
     const summonsHtml = ReactDOMServer.renderToString(<SummonsPrint summonsData={summons} />);
     const tempContainer = document.createElement('div');
+    // Set a fixed width to simulate A4 paper and control the layout
+    tempContainer.style.width = '210mm';
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
     tempContainer.innerHTML = summonsHtml;
 
     try {
@@ -126,7 +130,9 @@ export default function ConsultSummonsPage() {
 
         document.body.appendChild(tempContainer);
 
-        const canvas = await html2canvas(tempContainer.querySelector('.print-container') as HTMLElement, {
+        const printableElement = tempContainer.querySelector('.print-container') as HTMLElement;
+        
+        const canvas = await html2canvas(printableElement, {
             scale: 2,
             useCORS: true,
             logging: false
@@ -137,23 +143,24 @@ export default function ConsultSummonsPage() {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF({
             orientation: 'portrait',
-            unit: 'px',
+            unit: 'mm',
             format: 'a4'
         });
         
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         const ratio = canvasWidth / canvasHeight;
-        const height = pdfWidth / ratio;
+        const pdfHeight = pdfWidth / ratio;
         
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height < pdfHeight ? height : pdfHeight);
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`${summons.id}.pdf`);
     } catch (error) {
         console.error("Error generating PDF:", error);
         alert("Não foi possível gerar o PDF. Verifique o console para mais detalhes.")
-        document.body.removeChild(tempContainer); // Ensure cleanup on error
+        if (document.body.contains(tempContainer)) {
+            document.body.removeChild(tempContainer); // Ensure cleanup on error
+        }
     }
   };
 
