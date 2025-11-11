@@ -103,12 +103,15 @@ const intelligenceFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (promptMessage) => {
-    // The prompt handles the tool loop automatically.
-    // It will call the tool if needed and then re-prompt with the tool's output.
     const llmResponse = await prompt(promptMessage);
+    const responseText = llmResponse.text;
 
-    // The final response's text content is accessed via the `text` property.
-    return llmResponse.text;
+    if (!responseText) {
+      console.error('LLM response output was undefined.');
+      return 'Desculpe, não consegui gerar uma resposta. Tente novamente.';
+    }
+    
+    return responseText;
   }
 );
 
