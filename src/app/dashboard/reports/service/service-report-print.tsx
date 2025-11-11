@@ -60,6 +60,12 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
         { id: 'multasTransito', label: 'Multas de Trânsito' },
         { id: 'notificacoesAmbientais', label: 'Notificações Ambientais' },
     ] as const;
+    
+    // Group activities into pairs for the two-column layout
+    const activityPairs: Array<[typeof activityFields[number], (typeof activityFields[number] | undefined)]> = [];
+    for (let i = 0; i < activityFields.length; i += 2) {
+        activityPairs.push([activityFields[i], activityFields[i + 1]]);
+    }
 
     return (
         <PrintLayout
@@ -101,10 +107,22 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
             <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
                  <table className="w-full">
                     <tbody>
-                        {activityFields.map((activity, index) => (
+                        {activityPairs.map(([activity1, activity2], index) => (
                            <tr key={index}>
-                                <td className="w-3/4 py-1 pr-4 font-semibold">{activity.label}</td>
-                                <td className="w-1/4 py-1 text-right">{activities?.[activity.id] || 0}</td>
+                                <td className="w-2/5 py-1 pr-2 font-semibold">{activity1.label}</td>
+                                <td className="w-1/10 py-1 text-right">{activities?.[activity1.id] || 0}</td>
+                                
+                                {activity2 ? (
+                                    <>
+                                        <td className="w-2/5 py-1 px-4 font-semibold border-l border-gray-300">{activity2.label}</td>
+                                        <td className="w-1/10 py-1 text-right">{activities?.[activity2.id] || 0}</td>
+                                    </>
+                                ) : (
+                                    <>
+                                      <td className="w-2/5 py-1 px-4 border-l border-gray-300"></td>
+                                      <td className="w-1/10 py-1"></td>
+                                    </>
+                                )}
                             </tr>
                         ))}
                     </tbody>
