@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PrintLayout } from '@/components/report/print-layout';
@@ -61,10 +60,9 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
         { id: 'notificacoesAmbientais', label: 'Notificações Ambientais' },
     ] as const;
     
-    const activityRows: Array<[typeof activityFields[number], (typeof activityFields[number] | undefined)]> = [];
-    for (let i = 0; i < activityFields.length; i += 2) {
-        activityRows.push([activityFields[i], activityFields[i + 1]]);
-    }
+    const midPoint = Math.ceil(activityFields.length / 2);
+    const leftColumnActivities = activityFields.slice(0, midPoint);
+    const rightColumnActivities = activityFields.slice(midPoint);
 
     return (
         <PrintLayout
@@ -104,26 +102,24 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
 
             
             <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
-                 <table className="w-full text-sm">
-                    <tbody>
-                        {activityRows.map(([item1, item2], index) => (
-                            <tr key={index}>
-                                <td className="py-1 pr-4 w-[35%]">{item1.label}</td>
-                                <td className="py-1 text-right w-[15%]">{activities?.[item1.id] || 0}</td>
-                                {item2 ? (
-                                    <>
-                                        <td className="py-1 pr-4 pl-8 w-[35%]">{item2.label}</td>
-                                        <td className="py-1 text-right w-[15%]">{activities?.[item2.id] || 0}</td>
-                                    </>
-                                ) : (
-                                    <>
-                                        <td colSpan={2}></td>
-                                    </>
-                                )}
-                            </tr>
+                 <div className="grid grid-cols-2 gap-x-8 text-sm">
+                    <div>
+                        {leftColumnActivities.map(item => (
+                            <div key={item.id} className="flex justify-between py-1">
+                                <span>{item.label}</span>
+                                <span>{activities?.[item.id] || 0}</span>
+                            </div>
                         ))}
-                    </tbody>
-                 </table>
+                    </div>
+                     <div>
+                        {rightColumnActivities.map(item => (
+                            <div key={item.id} className="flex justify-between py-1">
+                                <span>{item.label}</span>
+                                <span>{activities?.[item.id] || 0}</span>
+                            </div>
+                        ))}
+                    </div>
+                 </div>
             </PrintSection>
             
             {reportData.notes && (
