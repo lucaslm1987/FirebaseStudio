@@ -3,8 +3,6 @@
 
 import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import {
   Card,
   CardContent,
@@ -107,9 +105,13 @@ export default function ConsultServiceReportPage() {
   };
 
   const handleSave = async (report: ServiceReportData) => {
+    const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas')
+    ]);
+
     const reportHtml = ReactDOMServer.renderToString(<ServiceReportPrint reportData={report} />);
     const tempContainer = document.createElement('div');
-    // Set a fixed width to simulate A4 paper and control the layout
     tempContainer.style.width = '210mm';
     tempContainer.style.position = 'absolute';
     tempContainer.style.left = '-9999px';
@@ -126,14 +128,14 @@ export default function ConsultServiceReportPage() {
         const printableElement = tempContainer.querySelector('.print-container') as HTMLElement;
 
         const canvas = await html2canvas(printableElement, {
-            scale: 1, // REDUCED SCALE FOR SMALLER FILE SIZE
+            scale: 1,
             useCORS: true,
             logging: false
         });
         
         document.body.removeChild(tempContainer);
 
-        const imgData = canvas.toDataURL('image/jpeg', 0.9); // USE JPEG COMPRESSION
+        const imgData = canvas.toDataURL('image/jpeg', 0.9);
         const pdf = new jsPDF({
             orientation: 'portrait',
             unit: 'mm',
@@ -156,7 +158,7 @@ export default function ConsultServiceReportPage() {
         console.error("Error generating PDF:", error);
         alert("Não foi possível gerar o PDF. Verifique o console para mais detalhes.")
         if (document.body.contains(tempContainer)) {
-          document.body.removeChild(tempContainer); // Ensure cleanup on error
+          document.body.removeChild(tempContainer);
         }
     }
   };
