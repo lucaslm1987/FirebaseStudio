@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -31,7 +30,7 @@ export function PrintLayout({ title, reportId, reportDate, reportIdLabel = 'Nº 
 
             <footer className="print-footer">
                 <div className="print-footer-content">
-                    <span>Guarda Civil - Disque 153</span>
+                    <span>Guarda Civil Municipal - Disque 153</span>
                 </div>
                 <hr className="print-footer-line" />
                 <p>Rua José Bonifácio, 378, Centro, Cordeirópolis-SP, fone (19) 3546-5838</p>
