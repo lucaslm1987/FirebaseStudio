@@ -3,8 +3,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    function isOwner(reportId) {
-      return request.auth.uid == get(/databases/$(database)/documents/occurrence_reports/$(reportId)).data.userId;
+    // Função para verificar se o usuário é o proprietário do documento (para uso futuro, se necessário)
+    function isOwner(docId, collectionName) {
+      return request.auth.uid == get(/databases/$(database)/documents/$(collectionName)/$(docId)).data.userId;
     }
     
     // Regra para Relatórios de Ocorrência
