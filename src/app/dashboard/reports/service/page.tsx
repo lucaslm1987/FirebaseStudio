@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -18,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Printer, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react';
+import { Search, Printer, Calendar as CalendarIcon, AlertTriangle, Save } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -196,6 +197,10 @@ export default function ConsultServiceReportPage() {
                       <TableRow key={report.id}>
                         <TableCell>{report.openingDate ? format(new Date(`${report.openingDate}T00:00:00`), 'dd/MM/yyyy') : 'N/A'}</TableCell>
                         <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
+                            <Save className="h-4 w-4" />
+                            <span className="sr-only">Salvar</span>
+                          </Button>
                           <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
                             <Printer className="h-4 w-4" />
                             <span className="sr-only">Imprimir</span>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -20,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Calendar as CalendarIcon, Search, Printer, AlertTriangle } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, Printer, AlertTriangle, Save } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -259,6 +260,10 @@ export default function ConsultOccurrenceReportPage() {
                         <TableCell className="max-w-[250px] truncate">{report.nature || 'N/A'}</TableCell>
                         <TableCell className="max-w-[250px] truncate">{`${report.street || ''}, ${report.number || ''}`}</TableCell>
                         <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
+                            <Save className="h-4 w-4" />
+                            <span className="sr-only">Salvar</span>
+                          </Button>
                           <Button variant="ghost" size="icon" onClick={() => handlePrint(report)}>
                             <Printer className="h-4 w-4" />
                             <span className="sr-only">Imprimir</span>

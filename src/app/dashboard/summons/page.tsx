@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Printer, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react';
+import { Search, Printer, Calendar as CalendarIcon, AlertTriangle, Save } from 'lucide-react';
 import { SummonsData } from './new/page';
 import { SummonsPrint } from './summons-print';
 import { Label } from '@/components/ui/label';
@@ -217,6 +218,10 @@ export default function ConsultSummonsPage() {
                         <TableCell>{s.vehicle}</TableCell>
                         <TableCell className="max-w-xs truncate">{s.description}</TableCell>
                         <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" onClick={() => handlePrint(s)}>
+                            <Save className="h-4 w-4" />
+                            <span className="sr-only">Salvar</span>
+                          </Button>
                           <Button variant="ghost" size="icon" onClick={() => handlePrint(s)}>
                             <Printer className="h-4 w-4" />
                             <span className="sr-only">Imprimir</span>
