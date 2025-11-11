@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PrintLayout } from '@/components/report/print-layout';
@@ -46,19 +45,19 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
 
     const kmTraveled = (reportData.closingKm || 0) - (reportData.openingKm || 0);
 
-    const activityFields = [
-        { id: 'pessoasAbordadas', label: 'Pessoas Abordadas' },
-        { id: 'veiculosAbordados', label: 'Veículos Abordados' },
-        { id: 'veiculosLocalizados', label: 'Veículos Localizados' },
-        { id: 'capturados', label: 'Capturados' },
-        { id: 'flagrantes', label: 'Flagrantes' },
-        { id: 'adolescentesApreendidos', label: 'Adolescentes Apreendidos' },
-        { id: 'pessoasPresas', label: 'Pessoas Presas' },
-        { id: 'armasBrancasApreendidas', label: 'Armas Brancas Apreendidas' },
-        { id: 'armasFogoApreendidas', label: 'Armas de Fogo Apreendidas' },
-        { id: 'multasAmbientais', label: 'Multas Ambientais' },
-        { id: 'multasTransito', label: 'Multas de Trânsito' },
-        { id: 'notificacoesAmbientais', label: 'Notificações Ambientais' },
+     const activityFields = [
+        { id: 'adolescentesApreendidos', label: 'ADOLESCENTES APREENDIDOS' },
+        { id: 'armasFogoApreendidas', label: 'ARMAS FOGO' },
+        { id: 'flagrantes', label: 'FLAGRANTES' },
+        { id: 'multasTransito', label: 'MULTAS TRANSITO' },
+        { id: 'pessoasAbordadas', label: 'PESSOAS ABORDADAS' },
+        { id: 'veiculosAbordados', label: 'VEICULOS ABORDADOS' },
+        { id: 'armasBrancasApreendidas', label: 'ARMAS BRANCAS' },
+        { id: 'capturados', label: 'CAPTURADOS' },
+        { id: 'multasAmbientais', label: 'MULTAS AMBIENTAIS' },
+        { id: 'notificacoesAmbientais', label: 'NOTIFICACOES AMBIENTAIS' },
+        { id: 'pessoasPresas', label: 'PESSOAS PRESAS' },
+        { id: 'veiculosLocalizados', label: 'VEICULOS LOCALIZADOS' },
     ] as const;
     
     const midPoint = Math.ceil(activityFields.length / 2);
@@ -103,11 +102,11 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
 
             
             <PrintSection title="Atividades Policiais e Administrativas" icon={Activity}>
-                 <div className="grid grid-cols-2 gap-x-8 text-sm">
+                 <div className="grid grid-cols-2 gap-x-8 text-sm font-semibold">
                     <div>
                         {leftColumnActivities.map(item => (
                             <div key={item.id} className="flex justify-between py-1">
-                                <span>{item.label}</span>
+                                <span>{item.label}:</span>
                                 <span>{activities?.[item.id] || 0}</span>
                             </div>
                         ))}
@@ -115,7 +114,7 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
                      <div>
                         {rightColumnActivities.map(item => (
                             <div key={item.id} className="flex justify-between py-1">
-                                <span>{item.label}</span>
+                                <span>{item.label}:</span>
                                 <span>{activities?.[item.id] || 0}</span>
                             </div>
                         ))}
