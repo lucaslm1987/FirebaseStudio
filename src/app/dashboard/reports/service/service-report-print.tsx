@@ -106,18 +106,16 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
                  <div className="grid grid-cols-2 gap-x-8 text-sm">
                     <div>
                         {leftColumnActivities.map(item => (
-                            <div key={item.id} className="flex py-1">
+                            <div key={item.id} className="flex justify-between py-1">
                                 <span>{item.label}</span>
-                                <span className="flex-grow"></span>
                                 <span>{activities?.[item.id] || 0}</span>
                             </div>
                         ))}
                     </div>
                      <div>
                         {rightColumnActivities.map(item => (
-                            <div key={item.id} className="flex py-1">
+                            <div key={item.id} className="flex justify-between py-1">
                                 <span>{item.label}</span>
-                                <span className="flex-grow"></span>
                                 <span>{activities?.[item.id] || 0}</span>
                             </div>
                         ))}
