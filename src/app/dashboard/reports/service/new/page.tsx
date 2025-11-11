@@ -19,10 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User, Users, Car, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, addDocumentNonBlocking, useUser } from '@/firebase';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 
 
@@ -56,6 +57,7 @@ export interface ServiceReportData {
     team: TeamMember[];
     vehicle?: string;
     activities: ActivityData;
+    notes?: string;
     userId?: string;
     createdAt?: any;
 }
@@ -78,7 +80,7 @@ const cleanDataForFirestore = (data: any): any => {
     if (Array.isArray(data)) {
         return data.map(item => cleanDataForFirestore(item));
     }
-    if (data !== null && typeof data === 'object') {
+    if (data !== null && typeof data === 'object' && !(data instanceof Date)) {
         const newData: { [key: string]: any } = {};
         for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -111,7 +113,7 @@ export default function NewServiceReportPage() {
         return end > start ? end - start : 0;
     }, [formData.openingKm, formData.closingKm]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { id, value, type } = e.target;
         setFormData(prev => ({
         ...prev,
@@ -119,7 +121,7 @@ export default function NewServiceReportPage() {
         }));
     };
     
-    const handleSelectChange = (id: keyof Omit<ServiceReportData, 'activities' | 'team'>) => (value: string) => {
+    const handleSelectChange = (id: keyof Omit<ServiceReportData, 'activities' | 'team' | 'notes'>) => (value: string) => {
         setFormData(prev => ({ ...prev, [id]: value }));
     };
     
@@ -165,11 +167,11 @@ export default function NewServiceReportPage() {
     };
     
     const handleSave = () => {
-        if (!user) {
+        if (!user || !firestore) {
              toast({
                 variant: 'destructive',
                 title: 'Erro de Autenticação',
-                description: 'Usuário não encontrado. Faça login novamente.',
+                description: 'Usuário ou conexão com banco de dados não encontrado. Faça login novamente.',
             });
             return;
         }
@@ -181,6 +183,7 @@ export default function NewServiceReportPage() {
                 createdAt: serverTimestamp(),
             }
             const cleanedData = cleanDataForFirestore(dataToSave);
+            
             addDocumentNonBlocking(reportsCollection, cleanedData);
             
             toast({
@@ -354,6 +357,21 @@ export default function NewServiceReportPage() {
                             />
                         </div>
                     ))}
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Observações Gerais</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Textarea 
+                        id="notes"
+                        placeholder="Descreva quaisquer observações relevantes do turno..."
+                        rows={5}
+                        value={formData.notes || ''}
+                        onChange={handleChange}
+                    />
                 </CardContent>
             </Card>
 

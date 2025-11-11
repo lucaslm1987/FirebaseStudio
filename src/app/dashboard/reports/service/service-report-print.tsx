@@ -4,15 +4,15 @@
 import { PrintLayout } from '@/components/report/print-layout';
 import type { ServiceReportData } from './new/page';
 import { format } from 'date-fns';
-import { Users, Clock, Activity, Pen } from 'lucide-react';
+import { Users, Clock, Activity, Pen, BookText } from 'lucide-react';
 
 interface ServiceReportPrintProps {
     reportData: ServiceReportData;
 }
 
-const PrintSection = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: React.ElementType }) => {
+const PrintSection = ({ title, children, icon: Icon, className }: { title: string, children: React.ReactNode, icon?: React.ElementType, className?: string }) => {
     return (
-        <section className="print-section">
+        <section className={`print-section ${className}`}>
             <h5 className="print-section-title">
                 {Icon && <Icon className="h-5 w-5 text-primary" />}
                 <span>{title}</span>
@@ -124,6 +124,11 @@ export function ServiceReportPrint({ reportData }: ServiceReportPrintProps) {
                 </table>
             </PrintSection>
             
+            {reportData.notes && (
+                 <PrintSection title="Observações Gerais" icon={BookText}>
+                    <p className="whitespace-pre-wrap">{reportData.notes}</p>
+                </PrintSection>
+            )}
 
             <PrintSection title="AUTENTICAÇÃO" icon={Pen}>
                 <div className="print-signatures-grid">
