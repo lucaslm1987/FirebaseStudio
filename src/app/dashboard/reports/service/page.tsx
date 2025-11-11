@@ -126,14 +126,14 @@ export default function ConsultServiceReportPage() {
         const printableElement = tempContainer.querySelector('.print-container') as HTMLElement;
 
         const canvas = await html2canvas(printableElement, {
-            scale: 2,
+            scale: 1, // REDUCED SCALE FOR SMALLER FILE SIZE
             useCORS: true,
             logging: false
         });
         
         document.body.removeChild(tempContainer);
 
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/jpeg', 0.9); // USE JPEG COMPRESSION
         const pdf = new jsPDF({
             orientation: 'portrait',
             unit: 'mm',
@@ -150,7 +150,7 @@ export default function ConsultServiceReportPage() {
         const x = (pageTotalWidth - pdfWidth) / 2;
         const y = (pageTotalHeight - pdfHeight) / 2;
 
-        pdf.addImage(imgData, 'PNG', x, y, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'JPEG', x, y, pdfWidth, pdfHeight, undefined, 'FAST');
         pdf.save(`${report.id}.pdf`);
     } catch (error) {
         console.error("Error generating PDF:", error);
