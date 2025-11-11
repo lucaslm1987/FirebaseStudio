@@ -104,14 +104,13 @@ const intelligenceFlow = ai.defineFlow(
   },
   async (promptMessage) => {
     const llmResponse = await prompt(promptMessage);
-    const responseText = llmResponse.text;
 
-    if (!responseText) {
-      console.error('LLM response output was undefined.');
-      return 'Desculpe, não consegui gerar uma resposta. Tente novamente.';
+    if (!llmResponse || !llmResponse.output) {
+      console.error('Invalid response from model:', llmResponse);
+      throw new Error("Resposta inválida do modelo de IA. A propriedade 'output' não foi encontrada.");
     }
     
-    return responseText;
+    return llmResponse.output;
   }
 );
 
