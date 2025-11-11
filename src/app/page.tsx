@@ -114,49 +114,51 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <div className="flex items-center gap-2 mb-6">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Shield className="h-6 w-6" />
+    <div className="min-h-screen bg-[url('/pcar.png')] bg-cover bg-center">
+      <div className="min-h-screen w-full flex-col items-center justify-center bg-black/60 p-4 flex">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Shield className="h-6 w-6" />
+          </div>
+          <span className="text-2xl font-semibold text-white">GCMobile</span>
         </div>
-        <span className="text-2xl font-semibold">GCMobile</span>
-      </div>
 
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle>Acessar Sistema</CardTitle>
-          <CardDescription>
-            {isLinkSent
-              ? 'Um link de acesso foi enviado para o seu e-mail.'
-              : 'Insira seu e-mail para receber um link de acesso.'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLinkSent ? (
-            <div className="text-center text-sm text-muted-foreground">
-              <p>Verifique sua caixa de entrada (e a pasta de spam) e clique no link para fazer o login.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSendLink} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu.email@gcm.sp.gov.br"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                />
+        <Card className="w-full max-w-sm bg-card/80 backdrop-blur-sm">
+          <CardHeader className="text-center">
+            <CardTitle>Acessar Sistema</CardTitle>
+            <CardDescription>
+              {isLinkSent
+                ? 'Um link de acesso foi enviado para o seu e-mail.'
+                : 'Insira seu e-mail para receber um link de acesso.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLinkSent ? (
+              <div className="text-center text-sm text-muted-foreground">
+                <p>Verifique sua caixa de entrada (e a pasta de spam) e clique no link para fazer o login.</p>
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Enviando...' : 'Enviar Link de Acesso'}
-              </Button>
-            </form>
-          )}
-        </CardContent>
-      </Card>
-    </main>
+            ) : (
+              <form onSubmit={handleSendLink} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="seu.email@gcm.sp.gov.br"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Enviando...' : 'Enviar Link de Acesso'}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
