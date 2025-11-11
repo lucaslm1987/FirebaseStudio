@@ -23,8 +23,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, useUser } from '@/firebase';
-import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
+import { doc, serverTimestamp } from 'firebase/firestore';
 
 export interface SummonsData {
     id: string;
@@ -159,7 +159,7 @@ export default function NewSummonsPage() {
             };
             const cleanedData = cleanDataForFirestore(dataToSave);
             const summonsDocRef = doc(firestore, 'summons', cleanedData.id);
-            setDoc(summonsDocRef, cleanedData, { merge: true });
+            setDocumentNonBlocking(summonsDocRef, cleanedData, { merge: true });
             
             toast({
                 title: 'Talão Emitido!',
