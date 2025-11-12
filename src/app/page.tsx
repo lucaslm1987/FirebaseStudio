@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   isSignInWithEmailLink,
@@ -31,50 +31,59 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLinkSent, setIsLinkSent] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   // Effect to handle the sign-in link verification
-  useEffect(() => {
-    // Avoid running this logic on the server or if auth is not ready.
+  useState(() => {
     if (typeof window === 'undefined' || !auth) {
       return;
     }
 
     if (isSignInWithEmailLink(auth, window.location.href)) {
+      setIsVerifying(true);
       let storedEmail = window.localStorage.getItem('emailForSignIn');
       if (!storedEmail) {
-        // If email is not in storage, prompt the user for it.
-        // This can happen if the user opens the link on a different device.
         storedEmail = window.prompt(
           'Por favor, forneça seu e-mail para concluir o login.'
         );
       }
       
       if (storedEmail) {
-        setIsLoading(true);
         signInWithEmailLink(auth, storedEmail, window.location.href)
           .then(() => {
             window.localStorage.removeItem('emailForSignIn');
-            // The onAuthStateChanged listener in FirebaseProvider will handle the redirect.
+            // onAuthStateChanged listener will handle redirect
           })
           .catch((error) => {
             console.error('Login failed:', error);
             toast({
               variant: 'destructive',
               title: 'Falha no Login',
-              description: 'O link de login é inválido ou expirou.',
+              description: 'O link de login é inválido ou expirou. Por favor, tente novamente.',
             });
-            setIsLoading(false);
+            // Redirect back to home to allow user to try again
+            router.replace('/'); 
+            setIsVerifying(false);
           });
+      } else {
+        // No email, can't proceed
+        toast({
+          variant: 'destructive',
+          title: 'Falha no Login',
+          description: 'O e-mail não foi encontrado para completar o login.',
+        });
+        router.replace('/');
+        setIsVerifying(false);
       }
     }
-  }, [auth, toast]);
+  });
 
   // Redirect if user is already logged in
-  useEffect(() => {
+  useState(() => {
     if (!isUserLoading && user) {
       router.push('/dashboard');
     }
-  }, [user, isUserLoading, router]);
+  });
 
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +95,7 @@ export default function LoginPage() {
     };
 
     try {
+      if (!auth) throw new Error("Firebase Auth not available");
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', email);
       setIsLinkSent(true);
@@ -105,7 +115,7 @@ export default function LoginPage() {
     }
   };
   
-  if (isUserLoading || user) {
+  if (isUserLoading || user || isVerifying) {
       return (
           <div className="flex h-screen w-screen items-center justify-center">
               <p>Carregando...</p>
