@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   isSignInWithEmailLink,
@@ -30,10 +30,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLinkSent, setIsLinkSent] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true);
 
   // Effect to handle the sign-in link verification
-  useEffect(() => {
+  useState(() => {
     if (typeof window === 'undefined' || !auth) {
       return;
     }
@@ -74,15 +74,17 @@ export default function LoginPage() {
         router.replace('/');
         setIsVerifying(false);
       }
+    } else {
+        setIsVerifying(false);
     }
-  }, [auth, router, toast]);
+  });
 
   // Redirect if user is already logged in
-  useEffect(() => {
+  useState(() => {
     if (!isUserLoading && user) {
       router.push('/dashboard');
     }
-  }, [isUserLoading, user, router]);
+  });
 
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();

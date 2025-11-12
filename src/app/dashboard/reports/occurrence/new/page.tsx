@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,8 +38,7 @@ import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
-
+import { toast } from '@/hooks/use-toast';
 
 // Helper function to clean data for Firestore
 const cleanDataForFirestore = (data: any): any => {
@@ -85,7 +83,6 @@ function NewOccurrenceReportContent() {
   const { formData, resetForm } = useOccurrenceForm();
   const { user } = useUser();
   const firestore = useFirestore();
-  const { toast } = useToast();
   const [isClearAlertOpen, setIsClearAlertOpen] = useState(false);
 
 
@@ -163,6 +160,7 @@ function NewOccurrenceReportContent() {
 
   const handleNewReport = () => {
     resetForm();
+    setCurrentStep(1);
   };
   
   const handleClearForm = () => {
