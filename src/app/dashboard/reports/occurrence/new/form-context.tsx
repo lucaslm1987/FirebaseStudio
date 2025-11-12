@@ -529,7 +529,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
   const resetForm = useCallback(() => {
     try {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      window.location.reload();
+      setFormData(getInitialFormData());
     } catch (error) {
       console.error("Failed to clear form data from localStorage", error);
     }
@@ -578,12 +578,5 @@ export const useOccurrenceForm = () => {
   }
   return context;
 };
-
-    
-
-    
-
-
-
 
     
