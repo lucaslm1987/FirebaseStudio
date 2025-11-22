@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   isSignInWithEmailLink,
@@ -32,14 +33,13 @@ export default function LoginPage() {
   const [isLinkSent, setIsLinkSent] = useState(false);
   const [isVerifying, setIsVerifying] = useState(true);
 
-  // Effect to handle the sign-in link verification
-  useState(() => {
+  useEffect(() => {
     if (typeof window === 'undefined' || !auth) {
+      setIsVerifying(false);
       return;
     }
 
     if (isSignInWithEmailLink(auth, window.location.href)) {
-      setIsVerifying(true);
       let storedEmail = window.localStorage.getItem('emailForSignIn');
       if (!storedEmail) {
         storedEmail = window.prompt(
@@ -56,20 +56,18 @@ export default function LoginPage() {
           .catch((error) => {
             console.error('Login failed:', error);
             toast({
-              variant: 'destructive',
-              title: 'Falha no Login',
-              description: 'O link de login é inválido ou expirou. Por favor, tente novamente.',
+                variant: 'destructive',
+                title: 'Falha no Login',
+                description: 'O link de login é inválido ou expirou. Por favor, tente novamente.',
             });
-            // Redirect back to home to allow user to try again
             router.replace('/'); 
             setIsVerifying(false);
           });
       } else {
-        // No email, can't proceed
         toast({
-          variant: 'destructive',
-          title: 'Falha no Login',
-          description: 'O e-mail não foi encontrado para completar o login.',
+            variant: 'destructive',
+            title: 'Falha no Login',
+            description: 'O e-mail não foi encontrado para completar o login.',
         });
         router.replace('/');
         setIsVerifying(false);
@@ -77,26 +75,26 @@ export default function LoginPage() {
     } else {
         setIsVerifying(false);
     }
-  });
+  }, [auth, router, toast]);
 
-  // Redirect if user is already logged in
-  useState(() => {
+  useEffect(() => {
     if (!isUserLoading && user) {
       router.push('/dashboard');
     }
-  });
+  }, [user, isUserLoading, router]);
 
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) return;
+
     setIsLoading(true);
 
     const actionCodeSettings = {
-      url: `${window.location.origin}`,
+      url: window.location.href,
       handleCodeInApp: true,
     };
 
     try {
-      if (!auth) throw new Error("Firebase Auth not available");
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', email);
       setIsLinkSent(true);
@@ -116,7 +114,7 @@ export default function LoginPage() {
     }
   };
   
-  if (isUserLoading || user || isVerifying) {
+  if (isUserLoading || isVerifying || user) {
       return (
           <div className="flex h-screen w-screen items-center justify-center">
               <p>Carregando...</p>
