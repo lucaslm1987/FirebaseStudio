@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -203,7 +204,7 @@ function NewOccurrenceReportContent() {
       <div className="flex h-full flex-col">
         <div id="printable-content" className="hidden print:block">{RenderedReview}</div>
 
-        <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-6 print:hidden">
+        <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-transparent px-6 print:hidden">
           <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">
             Criar Boletim de Ocorrência
           </h1>

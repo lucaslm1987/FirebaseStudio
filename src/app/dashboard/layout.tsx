@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6 print:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-card/80 backdrop-blur-sm px-4 sm:px-6 print:hidden">
         <Link href="/dashboard" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Shield className="h-5 w-5" />
@@ -74,8 +74,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
-      <main className="flex-1 overflow-auto bg-background">{children}</main>
-      <footer className="flex h-10 items-center justify-center border-t bg-card px-6 print:hidden">
+      <main className="flex-1 overflow-auto bg-transparent">{children}</main>
+      <footer className="flex h-10 items-center justify-center border-t bg-card/80 backdrop-blur-sm px-6 print:hidden">
         <p className="text-xs text-muted-foreground">
             Secretaria de Segurança Pública de Cordeirópolis-SP
         </p>
