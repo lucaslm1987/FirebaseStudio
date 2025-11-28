@@ -120,13 +120,13 @@ export default function ConsultOccurrenceReportPage() {
     
     if (cpf) {
       results = results.filter(report => 
-        report.involved.some(inv => inv.type === 'person' && (inv as InvolvedPerson).cpf === cpf)
+        (report.involved ?? []).some(inv => inv.type === 'person' && (inv as InvolvedPerson).cpf === cpf)
       );
     }
 
     if (name) {
       results = results.filter(report => 
-        report.involved.some(inv => 
+        (report.involved ?? []).some(inv => 
           (inv.type === 'person' && inv.name.toLowerCase().includes(name.toLowerCase())) ||
           (inv.type === 'company' && inv.corporateName.toLowerCase().includes(name.toLowerCase()))
         )
