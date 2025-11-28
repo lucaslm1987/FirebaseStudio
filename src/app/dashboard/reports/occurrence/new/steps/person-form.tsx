@@ -148,12 +148,12 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
   const handleCopyAddress = () => {
     setPerson(prev => ({
         ...prev,
-        street: formData.street || '',
-        number: formData.number || '',
-        neighborhood: formData.neighborhood || '',
-        complement: formData.complement || '',
-        city: formData.city || '',
-        state: formData.state || '',
+        street: formData?.street || '',
+        number: formData?.number || '',
+        neighborhood: formData?.neighborhood || '',
+        complement: formData?.complement || '',
+        city: formData?.city || '',
+        state: formData?.state || '',
     }));
   }
 

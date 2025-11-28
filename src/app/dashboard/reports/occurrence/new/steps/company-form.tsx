@@ -95,12 +95,12 @@ export function CompanyForm({ isOpen, setIsOpen, companyData }: CompanyFormProps
   const handleCopyAddress = () => {
     setCompany(prev => ({
         ...prev,
-        street: formData.street || '',
-        number: formData.number || '',
-        neighborhood: formData.neighborhood || '',
-        complement: formData.complement || '',
-        city: formData.city || '',
-        state: formData.state || '',
+        street: formData?.street || '',
+        number: formData?.number || '',
+        neighborhood: formData?.neighborhood || '',
+        complement: formData?.complement || '',
+        city: formData?.city || '',
+        state: formData?.state || '',
     }));
   }
 
