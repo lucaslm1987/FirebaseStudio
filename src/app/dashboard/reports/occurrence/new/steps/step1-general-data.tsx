@@ -259,7 +259,7 @@ export function Step1GeneralData() {
                       </SelectTrigger>
                       <SelectContent>
                           {allTeamMembers.map((member) => (
-                              <SelectItem key={member} value={member} disabled={formData.team.some(m => m.name === member)}>{member}</SelectItem>
+                              <SelectItem key={member} value={member} disabled={formData?.team?.some(m => m.name === member)}>{member}</SelectItem>
                           ))}
                       </SelectContent>
                   </Select>
@@ -270,7 +270,7 @@ export function Step1GeneralData() {
               </div>
           </div>
 
-          {formData.team.length > 0 && (
+          {(formData?.team?.length ?? 0) > 0 && (
               <div className="rounded-md border p-4 space-y-3">
                   <h4 className="text-sm font-medium">Membros Selecionados:</h4>
                   <ul className="space-y-4">
@@ -352,3 +352,5 @@ export function Step1GeneralData() {
     </TooltipProvider>
   );
 }
+
+    
