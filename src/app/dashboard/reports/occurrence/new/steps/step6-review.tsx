@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { OccurrenceFormData } from '../form-context';
+import type { OccurrenceFormData, InvolvedPerson, InvolvedCompany } from '../form-context';
 import { format } from 'date-fns';
 import { 
     FileText, 
@@ -43,14 +43,16 @@ const capitalize = (s?: string) => {
 
 export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
 
-  const { involved, items, team } = formData;
+  const involved = formData?.involved ?? [];
+  const items = formData?.items ?? { vehicles: [], objects: [], narcotics: [], weapons: [] };
+  const team = formData?.team ?? [];
   
-  const involvedPeople = involved.filter(i => i.type === 'person');
-  const involvedCompanies = involved.filter(i => i.type === 'company');
+  const involvedPeople = involved.filter(i => i.type === 'person') as InvolvedPerson[];
+  const involvedCompanies = involved.filter(i => i.type === 'company') as InvolvedCompany[];
 
   const getSolutionText = () => {
-    if (formData.solutionType === 'police_station') {
-      return `Delegacia de Polícia (BO PC: ${formData.solutionPoliceReport || 'Não informado'})`;
+    if (formData?.solutionType === 'police_station') {
+      return `Delegacia de Polícia (BO PC: ${formData?.solutionPoliceReport || 'Não informado'})`;
     }
     return 'BO para registro';
   };
@@ -76,27 +78,27 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
   return (
     <PrintLayout
         title="Boletim de Ocorrência"
-        reportId={formData.id || 'Não gerado'}
-        reportDate={formatDateTime(formData.communicationDate, formData.communicationTime)}
+        reportId={formData?.id || 'Não gerado'}
+        reportDate={formatDateTime(formData?.communicationDate, formData?.communicationTime)}
     >
         <ReviewSection title="Dados Gerais" hasData={true} icon={FileText}>
                 <div className="grid grid-cols-2 gap-x-4">
-                <p><strong>Data do Fato:</strong> {formatDateTime(formData.factDate, formData.factTime)}</p>
-                <p><strong>Origem da Solicitação:</strong> {capitalize(formData.requestOrigin)}</p>
-                <p><strong>Autoria:</strong> {capitalize(formData.authorship)}</p>
-                <p><strong>Flagrante:</strong> {formData.isFlagrant ? 'Sim' : 'Não'}</p>
-                <p><strong>Ato Infracional:</strong> {formData.isInfraction ? 'Sim' : 'Não'}</p>
-                <p><strong>Violência Doméstica:</strong> {formData.isDomesticViolence ? 'Sim' : 'Não'}</p>
-                <p className="col-span-2"><strong>Local:</strong> {`${formData.street || ''}, ${formData.number || 'S/N'}, ${formData.neighborhood || ''}, ${formData.city || ''}-${formData.state || ''}`}</p>
-                <p className="col-span-2"><strong>Subtipo do local:</strong> {formData.locationSubtype || 'Não informado'}</p>
+                <p><strong>Data do Fato:</strong> {formatDateTime(formData?.factDate, formData?.factTime)}</p>
+                <p><strong>Origem da Solicitação:</strong> {capitalize(formData?.requestOrigin)}</p>
+                <p><strong>Autoria:</strong> {capitalize(formData?.authorship)}</p>
+                <p><strong>Flagrante:</strong> {formData?.isFlagrant ? 'Sim' : 'Não'}</p>
+                <p><strong>Ato Infracional:</strong> {formData?.isInfraction ? 'Sim' : 'Não'}</p>
+                <p><strong>Violência Doméstica:</strong> {formData?.isDomesticViolence ? 'Sim' : 'Não'}</p>
+                <p className="col-span-2"><strong>Local:</strong> {`${formData?.street || ''}, ${formData?.number || 'S/N'}, ${formData?.neighborhood || ''}, ${formData?.city || ''}-${formData?.state || ''}`}</p>
+                <p className="col-span-2"><strong>Subtipo do local:</strong> {formData?.locationSubtype || 'Não informado'}</p>
             </div>
         </ReviewSection>
 
-        <ReviewSection title="Natureza da Ocorrência" hasData={!!formData.nature} icon={Scale}>
-            <p>{formData.nature}</p>
+        <ReviewSection title="Natureza da Ocorrência" hasData={!!formData?.nature} icon={Scale}>
+            <p>{formData?.nature}</p>
         </ReviewSection>
 
-        <ReviewSection title="Equipe de Atendimento" hasData={team && team.length > 0} icon={Users}>
+        <ReviewSection title="Equipe de Atendimento" hasData={team.length > 0} icon={Users}>
             <table className="print-table">
                 <thead>
                     <tr>
@@ -115,10 +117,10 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
                     ))}
                 </tbody>
             </table>
-                <p><strong>Viatura:</strong> {formData.vehicle || 'Não informada'}</p>
+                <p><strong>Viatura:</strong> {formData?.vehicle || 'Não informada'}</p>
         </ReviewSection>
 
-        <ReviewSection title="Envolvidos" hasData={involved && involved.length > 0} icon={Users}>
+        <ReviewSection title="Envolvidos" hasData={involved.length > 0} icon={Users}>
             {involvedPeople.length > 0 && (
                 <div className="print-subsection">
                     <h6 className="print-subsection-title">
@@ -286,8 +288,8 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             </ReviewSection>
         }
         
-            <ReviewSection title="Narrativa" hasData={!!formData.narrative} icon={BookText}>
-            <p className="whitespace-pre-wrap">{formData.narrative}</p>
+            <ReviewSection title="Narrativa" hasData={!!formData?.narrative} icon={BookText}>
+            <p className="whitespace-pre-wrap">{formData?.narrative}</p>
         </ReviewSection>
         
         <ReviewSection title="Solução" hasData={true} icon={Lightbulb}>
@@ -307,5 +309,3 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
     </PrintLayout>
   );
 }
-
-    
