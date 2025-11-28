@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -85,6 +85,8 @@ function NewOccurrenceReportContent() {
   const { user } = useUser();
   const firestore = useFirestore();
   const [isClearAlertOpen, setIsClearAlertOpen] = useState(false);
+  
+  const printRef = useRef<HTMLDivElement>(null);
 
 
   const handleNext = () => {
@@ -130,29 +132,7 @@ function NewOccurrenceReportContent() {
   
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-        const printContent = document.getElementById('printable-content')?.innerHTML;
-        if (printContent) {
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Imprimir Boletim de Ocorrência</title>
-                        <link rel="stylesheet" href="/print-styles.css">
-                    </head>
-                    <body>
-                        ${printContent}
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => {
-              printWindow.print();
-              printWindow.close();
-            }, 250);
-        }
-    }
+    window.print();
   };
 
   const handleNewReport = () => {
@@ -198,7 +178,9 @@ function NewOccurrenceReportContent() {
       </AlertDialog>
 
       <div className="flex h-full flex-col">
-        <div id="printable-content" className="hidden print:block">{RenderedReview}</div>
+        <div ref={printRef} className="print-only">
+          {currentStep === 6 && RenderedReview}
+        </div>
 
         <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-transparent px-6 print:hidden">
           <h1 className="flex-1 font-headline text-lg font-semibold md:text-xl">

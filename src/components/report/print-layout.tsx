@@ -1,6 +1,8 @@
+
 'use client';
 
 import React from 'react';
+import { Shield } from 'lucide-react';
 
 interface PrintLayoutProps {
     title: string;
@@ -14,11 +16,17 @@ export function PrintLayout({ title, reportId, reportDate, reportIdLabel = 'Nº 
     return (
         <div className="print-container bg-white text-black">
             <header className="print-header">
-                <div>
-                    <h2 className="text-2xl font-bold">{title}</h2>
-                    <p className="text-sm text-muted-foreground">Guarda Civil Municipal</p>
+                 <div className="print-logo">
+                    <Shield className="h-12 w-12 text-black" />
+                    <div>
+                        <p className="font-bold">ESTADO DE SÃO PAULO</p>
+                        <p className="font-bold">PREFEITURA MUNICIPAL DE CORDEIRÓPOLIS</p>
+                        <p>Secretaria Municipal de Segurança, Trânsito e Defesa Civil</p>
+                        <p className='font-semibold'>Guarda Civil Municipal</p>
+                    </div>
                 </div>
-                <div className="text-right">
+                <div className="print-header-details">
+                    <h2 className="text-xl font-bold">{title}</h2>
                     {reportId && <p><strong>{reportIdLabel}</strong> {reportId}</p>}
                     {reportDate && <p><strong>Data Comunicação:</strong> {reportDate}</p>}
                 </div>
