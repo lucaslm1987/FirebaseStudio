@@ -22,7 +22,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User, Users, Car, Save } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 
@@ -105,7 +105,6 @@ export default function NewServiceReportPage() {
     const { user } = useUser();
     const [formData, setFormData] = useState<ServiceReportData>(getInitialData());
     const [selectedMember, setSelectedMember] = useState('');
-    const { toast } = useToast();
 
     const kmTraveled = useMemo(() => {
         const start = formData.openingKm || 0;
@@ -168,9 +167,7 @@ export default function NewServiceReportPage() {
     
     const handleSave = () => {
         if (!user || !firestore) {
-             toast({
-                variant: 'destructive',
-                title: 'Erro de Autenticação',
+             toast.error('Erro de Autenticação', {
                 description: 'Usuário ou conexão com banco de dados não encontrado. Faça login novamente.',
             });
             return;
@@ -186,16 +183,13 @@ export default function NewServiceReportPage() {
             
             addDocumentNonBlocking(reportsCollection, cleanedData);
             
-            toast({
-                title: 'Relatório Salvo!',
+            toast.success('Relatório Salvo!', {
                 description: 'O relatório de serviço foi salvo com sucesso.',
             });
             router.push('/dashboard/reports/service');
         } catch (error) {
             console.error("Failed to save service report:", error);
-            toast({
-                variant: 'destructive',
-                title: 'Erro ao Salvar',
+            toast.error('Erro ao Salvar', {
                 description: 'Não foi possível salvar o relatório de serviço.',
             });
         }

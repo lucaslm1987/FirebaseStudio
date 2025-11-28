@@ -39,7 +39,7 @@ import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 // Helper function to clean data for Firestore
 const cleanDataForFirestore = (data: any): any => {
@@ -85,7 +85,6 @@ function NewOccurrenceReportContent() {
   const { user } = useUser();
   const firestore = useFirestore();
   const [isClearAlertOpen, setIsClearAlertOpen] = useState(false);
-  const { toast } = useToast();
 
 
   const handleNext = () => {
@@ -104,9 +103,7 @@ function NewOccurrenceReportContent() {
   
   const handleSaveReport = () => {
     if (!formData || !firestore || !user) {
-        toast({
-            variant: "destructive",
-            title: "Erro: Usuário não autenticado",
+        toast.error("Erro: Usuário não autenticado", {
             description: "Não foi possível identificar o usuário. Tente fazer login novamente.",
         });
         return;
@@ -125,9 +122,7 @@ function NewOccurrenceReportContent() {
       setCurrentStep(7); 
     } catch (error) {
       console.error("Failed to prepare report for saving:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao Salvar",
+      toast.error("Erro ao Salvar", {
         description: "Ocorreu um erro ao preparar os dados do relatório.",
       });
     }

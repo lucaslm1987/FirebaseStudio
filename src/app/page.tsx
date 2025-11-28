@@ -19,14 +19,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Shield } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  const { toast } = useToast();
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -55,18 +54,14 @@ export default function LoginPage() {
           })
           .catch((error) => {
             console.error('Login failed:', error);
-            toast({
-                variant: 'destructive',
-                title: 'Falha no Login',
+            toast.error('Falha no Login', {
                 description: 'O link de login é inválido ou expirou. Por favor, tente novamente.',
             });
             router.replace('/'); 
             setIsVerifying(false);
           });
       } else {
-        toast({
-            variant: 'destructive',
-            title: 'Falha no Login',
+        toast.error('Falha no Login', {
             description: 'O e-mail não foi encontrado para completar o login.',
         });
         router.replace('/');
@@ -75,7 +70,7 @@ export default function LoginPage() {
     } else {
         setIsVerifying(false);
     }
-  }, [auth, router, toast]);
+  }, [auth, router]);
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -98,15 +93,12 @@ export default function LoginPage() {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', email);
       setIsLinkSent(true);
-      toast({
-        title: 'Link Enviado!',
+      toast.success('Link Enviado!', {
         description: 'Verifique sua caixa de entrada para o link de login.',
       });
     } catch (error) {
       console.error('Failed to send sign-in link:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Erro',
+      toast.error('Erro', {
         description: 'Não foi possível enviar o link. Tente novamente.',
       });
     } finally {
