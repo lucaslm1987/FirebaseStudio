@@ -76,7 +76,7 @@ const crimesPorLei = {
     ],
     "Lei Ambiental": [
         { "article": "Art. 29", "name": "Crime contra a fauna (caça/pesca ilegal)" },
-        { article: "Art. 32", name: "Maus-tratos a animais" },
+        { "article": "Art. 32", "name": "Maus-tratos a animais" },
         { "article": "Art. 33", "name": "Poluição aquática com mortandade de peixes" },
         { "article": "Art. 34", "name": "Pesca proibida" },
         { "article": "Art. 35", "name": "Pesca com petrechos proibidos" },
@@ -108,7 +108,9 @@ export function Step2Nature() {
   const { formData, updateField } = useOccurrenceForm();
   const [searchTerm, setSearchTerm] = useState('');
   
-  const selectedNatures = formData.nature ? formData.nature.split(',').filter(n => n).map(s => s.trim()) : [];
+  const selectedNatures = formData?.nature
+    ? formData.nature.split(',').filter(n => n).map(s => s.trim())
+    : [];
 
   const handleNatureChange = (crime: Crime, isSelected: boolean) => {
     const natureString = crime.article ? `${crime.name} (${crime.article})` : crime.name;
@@ -207,5 +209,3 @@ export function Step2Nature() {
     </div>
   );
 }
-
-    
