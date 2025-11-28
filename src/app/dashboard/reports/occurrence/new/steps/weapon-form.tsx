@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useOccurrenceForm, type WeaponItem } from '../form-context';
+import type { WeaponItem } from '@/types/form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -74,10 +73,11 @@ interface WeaponFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   weaponData?: WeaponItem;
+  addWeapon: (item: Omit<WeaponItem, 'id'>) => void;
+  updateWeapon: (id: string, data: Partial<WeaponItem>) => void;
 }
 
-export function WeaponForm({ isOpen, setIsOpen, weaponData }: WeaponFormProps) {
-  const { addWeapon, updateWeapon } = useOccurrenceForm();
+export function WeaponForm({ isOpen, setIsOpen, weaponData, addWeapon, updateWeapon }: WeaponFormProps) {
   const [weaponItem, setWeaponItem] = useState<Omit<WeaponItem, 'id'>>(initialWeaponState);
 
   useEffect(() => {

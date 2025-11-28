@@ -1,7 +1,6 @@
-
 'use client';
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useOccurrenceForm, type InvolvedPerson } from '../form-context';
+import type { FormData, InvolvedPerson } from '@/types/form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -68,6 +67,9 @@ interface PersonFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   personData?: InvolvedPerson;
+  addInvolved: (involved: InvolvedPerson) => void;
+  updateInvolved: (id: string, data: Partial<InvolvedPerson>) => void;
+  formData: FormData;
 }
 
 const maskCPF = (value: string) => {
@@ -100,8 +102,7 @@ const maskPhone = (value: string) => {
 };
 
 
-export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
-  const { formData, addInvolved, updateInvolved } = useOccurrenceForm();
+export function PersonForm({ isOpen, setIsOpen, personData, addInvolved, updateInvolved, formData }: PersonFormProps) {
   const [person, setPerson] = useState<Omit<InvolvedPerson, 'id' | 'type'>>(initialPersonState);
   
   useEffect(() => {
@@ -374,7 +375,3 @@ export function PersonForm({ isOpen, setIsOpen, personData }: PersonFormProps) {
     </Dialog>
   );
 }
-
-    
-
-    

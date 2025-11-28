@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -30,7 +29,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import type { OccurrenceFormData, InvolvedPerson } from './new/form-context';
+import type { FormData as OccurrenceFormData, InvolvedPerson } from '@/types/form';
 import { Step6Review } from './new/steps/step6-review';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';

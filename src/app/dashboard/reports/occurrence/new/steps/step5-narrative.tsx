@@ -1,11 +1,10 @@
-
 'use client';
 
-import { useOccurrenceForm } from '../form-context';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
+import type { FormData } from '@/types/form';
 
 const maskPoliceReport = (value: string) => {
     return value
@@ -23,9 +22,16 @@ const maskPoliceReport = (value: string) => {
       });
 };
 
+interface Step5NarrativeProps {
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+}
 
-export function Step5Narrative() {
-  const { formData, updateField } = useOccurrenceForm();
+export function Step5Narrative({ formData, setFormData }: Step5NarrativeProps) {
+  
+  const updateField = (update: Partial<FormData>) => {
+    setFormData((prev) => ({ ...prev, ...update }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -84,7 +90,7 @@ export function Step5Narrative() {
                 Equipe Responsável
             </h3>
             <div className="space-y-2 rounded-md border p-4 bg-muted/30">
-                {formData?.team?.length > 0 ? (
+                {(formData?.team ?? []).length > 0 ? (
                     formData.team.map((member) => (
                         <div key={member.name} className="flex justify-between items-center">
                             <span className="font-medium">{member.name}</span>
@@ -99,5 +105,3 @@ export function Step5Narrative() {
     </div>
   );
 }
-
-    

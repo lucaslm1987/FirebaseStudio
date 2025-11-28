@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useOccurrenceForm, type NarcoticItem } from '../form-context';
+import type { NarcoticItem } from '@/types/form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -40,10 +40,11 @@ interface NarcoticFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   narcoticData?: NarcoticItem;
+  addNarcotic: (item: Omit<NarcoticItem, 'id'>) => void;
+  updateNarcotic: (id: string, data: Partial<NarcoticItem>) => void;
 }
 
-export function NarcoticForm({ isOpen, setIsOpen, narcoticData }: NarcoticFormProps) {
-  const { addNarcotic, updateNarcotic } = useOccurrenceForm();
+export function NarcoticForm({ isOpen, setIsOpen, narcoticData, addNarcotic, updateNarcotic }: NarcoticFormProps) {
   const [narcoticItem, setNarcoticItem] = useState<Omit<NarcoticItem, 'id'>>(initialNarcoticState);
   const [customType, setCustomType] = useState('');
 

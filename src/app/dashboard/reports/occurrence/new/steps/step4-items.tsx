@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState } from 'react';
-import { useOccurrenceForm, type WeaponItem, type Vehicle, type ObjectItem, type NarcoticItem } from '../form-context';
+import type { FormData, WeaponItem, Vehicle, ObjectItem, NarcoticItem } from '@/types/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Car, Box, Pill, Target, PlusCircle } from 'lucide-react';
@@ -15,11 +14,24 @@ import { NarcoticCard } from './narcotic-card';
 import { WeaponForm } from './weapon-form';
 import { WeaponCard } from './weapon-card';
 
+interface Step4ItemsProps {
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+}
 
-const VehicleSection = () => {
-    const { formData, removeVehicle } = useOccurrenceForm();
+const VehicleSection = ({ formData, setFormData }: Step4ItemsProps) => {
     const [isFormOpen, setFormOpen] = useState(false);
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined);
+
+    const addVehicle = (vehicle: Omit<Vehicle, 'id'>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, vehicles: [...(prev.items?.vehicles ?? []), { ...vehicle, id: new Date().toISOString() }] } }));
+    };
+    const updateVehicle = (id: string, data: Partial<Vehicle>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, vehicles: (prev.items?.vehicles ?? []).map(v => v.id === id ? { ...v, ...data } : v) } }));
+    };
+    const removeVehicle = (id: string) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, vehicles: (prev.items?.vehicles ?? []).filter(v => v.id !== id) } }));
+    };
 
     const handleAdd = () => {
         setSelectedVehicle(undefined);
@@ -37,6 +49,8 @@ const VehicleSection = () => {
                 isOpen={isFormOpen}
                 setIsOpen={setFormOpen}
                 vehicleData={selectedVehicle}
+                addVehicle={addVehicle}
+                updateVehicle={updateVehicle}
             />
             <div className="space-y-4 p-1">
                 <Button onClick={handleAdd}>
@@ -54,7 +68,7 @@ const VehicleSection = () => {
                         />
                     ))}
                 </div>
-                 {formData?.items?.vehicles?.length === 0 && (
+                 {(formData?.items?.vehicles ?? []).length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhum veículo adicionado.</p>
                     </div>
@@ -64,10 +78,19 @@ const VehicleSection = () => {
     )
 }
 
-const ObjectSection = () => {
-    const { formData, removeObject } = useOccurrenceForm();
+const ObjectSection = ({ formData, setFormData }: Step4ItemsProps) => {
     const [isFormOpen, setFormOpen] = useState(false);
     const [selectedObject, setSelectedObject] = useState<ObjectItem | undefined>(undefined);
+
+    const addObject = (object: Omit<ObjectItem, 'id'>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, objects: [...(prev.items?.objects ?? []), { ...object, id: new Date().toISOString() }] } }));
+    };
+    const updateObject = (id: string, data: Partial<ObjectItem>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, objects: (prev.items?.objects ?? []).map(o => o.id === id ? { ...o, ...data } : o) } }));
+    };
+    const removeObject = (id: string) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, objects: (prev.items?.objects ?? []).filter(o => o.id !== id) } }));
+    };
 
     const handleAdd = () => {
         setSelectedObject(undefined);
@@ -85,6 +108,8 @@ const ObjectSection = () => {
                 isOpen={isFormOpen}
                 setIsOpen={setFormOpen}
                 objectData={selectedObject}
+                addObject={addObject}
+                updateObject={updateObject}
             />
             <div className="space-y-4 p-1">
                 <Button onClick={handleAdd}>
@@ -93,7 +118,7 @@ const ObjectSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData?.items?.objects?.map(object => (
+                    {(formData?.items?.objects ?? []).map(object => (
                         <ObjectCard 
                             key={object.id}
                             object={object}
@@ -102,7 +127,7 @@ const ObjectSection = () => {
                         />
                     ))}
                 </div>
-                 {formData?.items?.objects?.length === 0 && (
+                 {(formData?.items?.objects ?? []).length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhum objeto adicionado.</p>
                     </div>
@@ -112,10 +137,19 @@ const ObjectSection = () => {
     )
 }
 
-const NarcoticSection = () => {
-    const { formData, removeNarcotic } = useOccurrenceForm();
+const NarcoticSection = ({ formData, setFormData }: Step4ItemsProps) => {
     const [isFormOpen, setFormOpen] = useState(false);
     const [selectedNarcotic, setSelectedNarcotic] = useState<NarcoticItem | undefined>(undefined);
+
+    const addNarcotic = (narcotic: Omit<NarcoticItem, 'id'>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, narcotics: [...(prev.items?.narcotics ?? []), { ...narcotic, id: new Date().toISOString() }] } }));
+    };
+    const updateNarcotic = (id: string, data: Partial<NarcoticItem>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, narcotics: (prev.items?.narcotics ?? []).map(n => n.id === id ? { ...n, ...data } : n) } }));
+    };
+    const removeNarcotic = (id: string) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, narcotics: (prev.items?.narcotics ?? []).filter(n => n.id !== id) } }));
+    };
 
     const handleAdd = () => {
         setSelectedNarcotic(undefined);
@@ -133,6 +167,8 @@ const NarcoticSection = () => {
                 isOpen={isFormOpen}
                 setIsOpen={setFormOpen}
                 narcoticData={selectedNarcotic}
+                addNarcotic={addNarcotic}
+                updateNarcotic={updateNarcotic}
             />
             <div className="space-y-4 p-1">
                 <Button onClick={handleAdd}>
@@ -141,7 +177,7 @@ const NarcoticSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData?.items?.narcotics?.map(narcotic => (
+                    {(formData?.items?.narcotics ?? []).map(narcotic => (
                         <NarcoticCard 
                             key={narcotic.id}
                             narcotic={narcotic}
@@ -150,7 +186,7 @@ const NarcoticSection = () => {
                         />
                     ))}
                 </div>
-                 {formData?.items?.narcotics?.length === 0 && (
+                 {(formData?.items?.narcotics ?? []).length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhum entorpecente adicionado.</p>
                     </div>
@@ -160,10 +196,20 @@ const NarcoticSection = () => {
     )
 }
 
-const WeaponSection = () => {
-    const { formData, removeWeapon } = useOccurrenceForm();
+const WeaponSection = ({ formData, setFormData }: Step4ItemsProps) => {
     const [isFormOpen, setFormOpen] = useState(false);
     const [selectedWeapon, setSelectedWeapon] = useState<WeaponItem | undefined>(undefined);
+
+    const addWeapon = (weapon: Omit<WeaponItem, 'id'>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, weapons: [...(prev.items?.weapons ?? []), { ...weapon, id: new Date().toISOString() }] } }));
+    };
+    const updateWeapon = (id: string, data: Partial<WeaponItem>) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, weapons: (prev.items?.weapons ?? []).map(w => w.id === id ? { ...w, ...data } : w) } }));
+    };
+    const removeWeapon = (id: string) => {
+        setFormData(prev => ({ ...prev, items: { ...prev.items, weapons: (prev.items?.weapons ?? []).filter(w => w.id !== id) } }));
+    };
+
 
     const handleAdd = () => {
         setSelectedWeapon(undefined);
@@ -181,6 +227,8 @@ const WeaponSection = () => {
                 isOpen={isFormOpen}
                 setIsOpen={setFormOpen}
                 weaponData={selectedWeapon}
+                addWeapon={addWeapon}
+                updateWeapon={updateWeapon}
             />
             <div className="space-y-4 p-1">
                 <Button onClick={handleAdd}>
@@ -189,7 +237,7 @@ const WeaponSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData?.items?.weapons?.map(weapon => (
+                    {(formData?.items?.weapons ?? []).map(weapon => (
                         <WeaponCard 
                             key={weapon.id}
                             weapon={weapon}
@@ -198,7 +246,7 @@ const WeaponSection = () => {
                         />
                     ))}
                 </div>
-                 {formData?.items?.weapons?.length === 0 && (
+                 {(formData?.items?.weapons ?? []).length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhuma arma adicionada.</p>
                     </div>
@@ -209,7 +257,7 @@ const WeaponSection = () => {
 }
 
 
-export function Step4Items() {
+export function Step4Items({ formData, setFormData }: Step4ItemsProps) {
   return (
     <div className="space-y-4">
         <h3 className="text-lg font-medium">Veículos, Objetos, Entorpecentes e Armas</h3>
@@ -226,7 +274,7 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <VehicleSection />
+                    <VehicleSection formData={formData} setFormData={setFormData} />
                 </AccordionContent>
             </AccordionItem>
             
@@ -238,7 +286,7 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <ObjectSection />
+                    <ObjectSection formData={formData} setFormData={setFormData} />
                 </AccordionContent>
             </AccordionItem>
 
@@ -250,7 +298,7 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                   <NarcoticSection />
+                   <NarcoticSection formData={formData} setFormData={setFormData} />
                 </AccordionContent>
             </AccordionItem>
             
@@ -262,12 +310,10 @@ export function Step4Items() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <WeaponSection />
+                    <WeaponSection formData={formData} setFormData={setFormData} />
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
     </div>
   );
 }
-
-    

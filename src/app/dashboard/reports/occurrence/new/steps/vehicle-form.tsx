@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useEffect, ChangeEvent, useMemo } from 'react';
-import { useOccurrenceForm, type Vehicle } from '../form-context';
+import type { Vehicle } from '@/types/form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -57,6 +56,8 @@ interface VehicleFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   vehicleData?: Vehicle;
+  addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void;
+  updateVehicle: (id: string, data: Partial<Vehicle>) => void;
 }
 
 const maskPlate = (value: string) => {
@@ -69,8 +70,7 @@ const maskPlate = (value: string) => {
 };
 
 
-export function VehicleForm({ isOpen, setIsOpen, vehicleData }: VehicleFormProps) {
-  const { addVehicle, updateVehicle } = useOccurrenceForm();
+export function VehicleForm({ isOpen, setIsOpen, vehicleData, addVehicle, updateVehicle }: VehicleFormProps) {
   const [vehicle, setVehicle] = useState<Omit<Vehicle, 'id'>>(initialVehicleState);
 
   const years = useMemo(() => {
@@ -209,5 +209,3 @@ export function VehicleForm({ isOpen, setIsOpen, vehicleData }: VehicleFormProps
     </Dialog>
   );
 }
-
-    

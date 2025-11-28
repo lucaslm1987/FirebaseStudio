@@ -1,22 +1,48 @@
 'use client';
 
 import { useState } from 'react';
-import { useOccurrenceForm } from '../form-context';
+import type { FormData, InvolvedPerson, InvolvedCompany } from '@/types/form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Building2 } from 'lucide-react';
 import { PersonForm } from './person-form';
 import { CompanyForm } from './company-form';
-import type { InvolvedPerson, InvolvedCompany } from '../form-context';
 import { InvolvedPersonCard } from './involved-person-card';
 import { InvolvedCompanyCard } from './involved-company-card';
 
-export function Step3Involved() {
-  const { formData, removeInvolved } = useOccurrenceForm();
+
+interface Step3InvolvedProps {
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+}
+
+export function Step3Involved({ formData, setFormData }: Step3InvolvedProps) {
   const [isPersonFormOpen, setIsPersonFormOpen] = useState(false);
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<InvolvedPerson | undefined>(undefined);
   const [selectedCompany, setSelectedCompany] = useState<InvolvedCompany | undefined>(undefined);
+
+  const addInvolved = (involved: InvolvedPerson | InvolvedCompany) => {
+    setFormData(prev => ({
+      ...prev,
+      involved: [...(prev.involved ?? []), involved]
+    }));
+  };
+
+  const updateInvolved = (involvedId: string, updatedData: Partial<InvolvedPerson> | Partial<InvolvedCompany>) => {
+    setFormData(prev => ({
+      ...prev,
+      involved: (prev.involved ?? []).map(i => i.id === involvedId ? { ...i, ...updatedData } : i) as Array<InvolvedPerson | InvolvedCompany>,
+    }));
+  };
+
+  const removeInvolved = (involvedId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      involved: (prev.involved ?? []).filter(i => i.id !== involvedId)
+    }));
+  };
+
 
   const handleAddPerson = () => {
     setSelectedPerson(undefined);
@@ -38,7 +64,6 @@ export function Step3Involved() {
     setIsCompanyFormOpen(true);
   };
 
-  // 🔥 Fallback seguro caso formData venha null
   const involvedList = formData?.involved ?? [];
 
   return (
@@ -47,12 +72,18 @@ export function Step3Involved() {
         isOpen={isPersonFormOpen} 
         setIsOpen={setIsPersonFormOpen}
         personData={selectedPerson}
+        addInvolved={addInvolved}
+        updateInvolved={updateInvolved}
+        formData={formData}
       />
 
       <CompanyForm 
         isOpen={isCompanyFormOpen}
         setIsOpen={setIsCompanyFormOpen}
         companyData={selectedCompany}
+        addInvolved={addInvolved}
+        updateInvolved={updateInvolved}
+        formData={formData}
       />
 
       <div className="text-center">

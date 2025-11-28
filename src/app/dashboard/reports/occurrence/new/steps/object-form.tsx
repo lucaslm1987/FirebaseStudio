@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useOccurrenceForm, type ObjectItem } from '../form-context';
+import type { ObjectItem } from '@/types/form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -43,10 +42,11 @@ interface ObjectFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   objectData?: ObjectItem;
+  addObject: (item: Omit<ObjectItem, 'id'>) => void;
+  updateObject: (id: string, data: Partial<ObjectItem>) => void;
 }
 
-export function ObjectForm({ isOpen, setIsOpen, objectData }: ObjectFormProps) {
-  const { addObject, updateObject } = useOccurrenceForm();
+export function ObjectForm({ isOpen, setIsOpen, objectData, addObject, updateObject }: ObjectFormProps) {
   const [objectItem, setObjectItem] = useState<Omit<ObjectItem, 'id'>>(initialObjectState);
 
   useEffect(() => {

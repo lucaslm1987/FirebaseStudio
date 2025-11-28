@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,11 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  OccurrenceFormProvider,
-  useOccurrenceForm,
-  type OccurrenceFormData,
-} from './form-context';
+
 import { Step1GeneralData } from './steps/step1-general-data';
 import { Step2Nature } from './steps/step2-nature';
 import { Step3Involved } from './steps/step3-involved';
@@ -40,6 +35,8 @@ import { Step6Review } from './steps/step6-review';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
+import { defaultFormData, type FormData } from '@/types/form';
+
 
 // Helper function to clean data for Firestore
 const cleanDataForFirestore = (data: any): any => {
@@ -54,7 +51,6 @@ const cleanDataForFirestore = (data: any): any => {
         for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
                 const value = data[key];
-                // Retain the field as null if it's explicitly set to that, otherwise skip undefined
                 if (value !== undefined) {
                     newData[key] = cleanDataForFirestore(value);
                 }
@@ -62,7 +58,6 @@ const cleanDataForFirestore = (data: any): any => {
         }
         return newData;
     }
-    // Convert empty string to null, but allow 0
     if (data === '') {
         return null;
     }
@@ -81,13 +76,16 @@ const steps = [
 function NewOccurrenceReportContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const router = useRouter();
-  const { formData, resetForm } = useOccurrenceForm();
+  const [formData, setFormData] = useState<FormData>(defaultFormData);
   const { user } = useUser();
   const firestore = useFirestore();
   const [isClearAlertOpen, setIsClearAlertOpen] = useState(false);
   
   const printRef = useRef<HTMLDivElement>(null);
 
+  const resetForm = () => {
+      setFormData(defaultFormData);
+  }
 
   const handleNext = () => {
     if (currentStep < 6) {
@@ -149,14 +147,6 @@ function NewOccurrenceReportContent() {
     setIsClearAlertOpen(false);
   }
 
-  if (!formData || formData.id === 'Loading...') {
-    return (
-        <div className="flex h-full items-center justify-center">
-            <p>Carregando dados do formulário...</p>
-        </div>
-    )
-  }
-  
   const RenderedReview = <Step6Review formData={formData} />;
 
   return (
@@ -244,11 +234,11 @@ function NewOccurrenceReportContent() {
             <Card>
               <CardContent className="p-0">
                   <div className='p-6'>
-                      {currentStep === 1 && <Step1GeneralData />}
-                      {currentStep === 2 && <Step2Nature />}
-                      {currentStep === 3 && <Step3Involved />}
-                      {currentStep === 4 && <Step4Items />}
-                      {currentStep === 5 && <Step5Narrative />}
+                      {currentStep === 1 && <Step1GeneralData formData={formData} setFormData={setFormData} />}
+                      {currentStep === 2 && <Step2Nature formData={formData} setFormData={setFormData} />}
+                      {currentStep === 3 && <Step3Involved formData={formData} setFormData={setFormData} />}
+                      {currentStep === 4 && <Step4Items formData={formData} setFormData={setFormData} />}
+                      {currentStep === 5 && <Step5Narrative formData={formData} setFormData={setFormData} />}
                   </div>
 
                   {currentStep === 6 && (
@@ -322,15 +312,15 @@ export default function NewOccurrenceReportPage() {
         setIsClient(true);
     }, []);
 
+    if (!isClient) {
+        return (
+            <div className="flex h-full items-center justify-center">
+                <p>Carregando formulário...</p>
+            </div>
+        );
+    }
+    
     return (
-        <OccurrenceFormProvider>
-            {isClient ? (
-                <NewOccurrenceReportContent />
-            ) : (
-                <div className="flex h-full items-center justify-center">
-                    <p>Carregando formulário...</p>
-                </div>
-            )}
-        </OccurrenceFormProvider>
+        <NewOccurrenceReportContent />
     )
 }

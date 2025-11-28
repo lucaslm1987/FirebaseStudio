@@ -1,7 +1,6 @@
-
 'use client';
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useOccurrenceForm, type InvolvedCompany } from '../form-context';
+import type { FormData, InvolvedCompany } from '@/types/form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -46,6 +45,9 @@ interface CompanyFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   companyData?: InvolvedCompany;
+  addInvolved: (involved: InvolvedCompany) => void;
+  updateInvolved: (id: string, data: Partial<InvolvedCompany>) => void;
+  formData: FormData;
 }
 
 const maskCNPJ = (value: string) => {
@@ -66,8 +68,7 @@ const maskPhone = (value: string) => {
       .replace(/(\d{5})(\d)/, '$1-$2');
 };
 
-export function CompanyForm({ isOpen, setIsOpen, companyData }: CompanyFormProps) {
-  const { formData, addInvolved, updateInvolved } = useOccurrenceForm();
+export function CompanyForm({ isOpen, setIsOpen, companyData, addInvolved, updateInvolved, formData }: CompanyFormProps) {
   const [company, setCompany] = useState<Omit<InvolvedCompany, 'id' | 'type'>>(initialCompanyState);
   
   useEffect(() => {

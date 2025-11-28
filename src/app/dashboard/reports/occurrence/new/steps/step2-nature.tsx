@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState } from 'react';
-import { useOccurrenceForm } from '../form-context';
+import type { FormData } from '@/types/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -104,10 +103,18 @@ const crimesPorLei = {
 type CrimeKey = keyof typeof crimesPorLei;
 type Crime = { article: string; name: string };
 
-export function Step2Nature() {
-  const { formData, updateField } = useOccurrenceForm();
+interface Step2NatureProps {
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+}
+
+export function Step2Nature({ formData, setFormData }: Step2NatureProps) {
   const [searchTerm, setSearchTerm] = useState('');
   
+  const updateField = (update: Partial<FormData>) => {
+    setFormData((prev) => ({ ...prev, ...update }));
+  };
+
   const selectedNatures = formData?.nature
     ? formData.nature.split(',').filter(n => n).map(s => s.trim())
     : [];

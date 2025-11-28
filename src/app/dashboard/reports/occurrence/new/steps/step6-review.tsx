@@ -1,7 +1,6 @@
-
 'use client';
 
-import type { OccurrenceFormData, InvolvedPerson, InvolvedCompany } from '../form-context';
+import type { FormData, InvolvedPerson, InvolvedCompany } from '@/types/form';
 import { format } from 'date-fns';
 import { 
     FileText, 
@@ -41,7 +40,7 @@ const capitalize = (s?: string) => {
 };
 
 
-export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
+export function Step6Review({ formData }: { formData: FormData }) {
 
   const involved = formData?.involved ?? [];
   const items = formData?.items ?? { vehicles: [], objects: [], narcotics: [], weapons: [] };
@@ -78,14 +77,14 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
   return (
     <PrintLayout
         title="Boletim de Ocorrência"
-        reportId={formData?.id || 'Não gerado'}
+        reportId={formData?.id ?? 'Não gerado'}
         reportDate={formatDateTime(formData?.communicationDate, formData?.communicationTime)}
     >
         <ReviewSection title="Dados Gerais" hasData={true} icon={FileText}>
                 <div className="grid grid-cols-2 gap-x-4">
                 <p><strong>Data do Fato:</strong> {formatDateTime(formData?.factDate, formData?.factTime)}</p>
-                <p><strong>Origem da Solicitação:</strong> {capitalize(formData?.requestOrigin)}</p>
-                <p><strong>Autoria:</strong> {capitalize(formData?.authorship)}</p>
+                <p><strong>Origem da Solicitação:</strong> {capitalize(formData?.requestOrigin ?? '')}</p>
+                <p><strong>Autoria:</strong> {capitalize(formData?.authorship ?? '')}</p>
                 <p><strong>Flagrante:</strong> {formData?.isFlagrant ? 'Sim' : 'Não'}</p>
                 <p><strong>Ato Infracional:</strong> {formData?.isInfraction ? 'Sim' : 'Não'}</p>
                 <p><strong>Violência Doméstica:</strong> {formData?.isDomesticViolence ? 'Sim' : 'Não'}</p>
@@ -182,7 +181,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             )}
         </ReviewSection>
 
-        {items.vehicles.length > 0 && 
+        {(items?.vehicles ?? []).length > 0 && 
             <ReviewSection title="Veículos" hasData={true} icon={Car}>
                 <table className="print-table">
                     <thead>
@@ -211,7 +210,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             </ReviewSection>
         }
         
-        {items.objects.length > 0 &&
+        {(items?.objects ?? []).length > 0 &&
             <ReviewSection title="Objetos" hasData={true} icon={Box}>
                 <table className="print-table">
                     <thead>
@@ -234,7 +233,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             </ReviewSection>
         }
 
-        {items.narcotics.length > 0 &&
+        {(items?.narcotics ?? []).length > 0 &&
             <ReviewSection title="Entorpecentes" hasData={true} icon={Pill}>
                 <table className="print-table">
                     <thead>
@@ -259,7 +258,7 @@ export function Step6Review({ formData }: { formData: OccurrenceFormData }) {
             </ReviewSection>
         }
         
-        {items.weapons.length > 0 &&
+        {(items?.weapons ?? []).length > 0 &&
             <ReviewSection title="Armas" hasData={true} icon={Target}>
                 <table className="print-table">
                     <thead>
