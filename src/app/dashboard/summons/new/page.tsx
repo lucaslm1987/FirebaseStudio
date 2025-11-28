@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -21,7 +22,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { allTeamMembers, roles, viaturas, type TeamMember } from '../../reports/occurrence/new/form-context';
 import { PlusCircle, Trash2, User } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
 
@@ -85,6 +86,7 @@ export default function NewSummonsPage() {
     const { user } = useUser();
     const [formData, setFormData] = useState<SummonsData>({ id: '', ...getInitialData() });
     const [selectedMember, setSelectedMember] = useState('');
+    const { toast } = useToast();
 
     useEffect(() => {
         // Generate ID only on the client side to avoid hydration errors
@@ -142,7 +144,9 @@ export default function NewSummonsPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!firestore || !user) {
-             toast.error('Erro de Autenticação', {
+             toast({
+                variant: 'destructive',
+                title: 'Erro de Autenticação',
                 description: 'Usuário não encontrado. Faça login novamente.',
             });
             return;
@@ -157,13 +161,16 @@ export default function NewSummonsPage() {
             const summonsDocRef = doc(firestore, 'summons', cleanedData.id);
             setDocumentNonBlocking(summonsDocRef, cleanedData, { merge: true });
             
-            toast.success('Talão Emitido!', {
+            toast({
+                title: 'Talão Emitido!',
                 description: `O talão ${formData.id} foi salvo com sucesso.`,
             });
             router.push('/dashboard/summons');
         } catch (error) {
             console.error("Failed to save summons:", error);
-            toast.error('Erro ao Salvar', {
+            toast({
+                variant: 'destructive',
+                title: 'Erro ao Salvar',
                 description: 'Não foi possível salvar o talão.',
             });
         }
