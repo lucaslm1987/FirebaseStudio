@@ -39,7 +39,7 @@ import { Step5Narrative } from './steps/step5-narrative';
 import { Step6Review } from './steps/step6-review';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 // Helper function to clean data for Firestore
 const cleanDataForFirestore = (data: any): any => {
@@ -85,6 +85,7 @@ function NewOccurrenceReportContent() {
   const { user } = useUser();
   const firestore = useFirestore();
   const [isClearAlertOpen, setIsClearAlertOpen] = useState(false);
+  const { toast } = useToast();
 
 
   const handleNext = () => {

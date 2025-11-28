@@ -116,3 +116,15 @@
         @apply flex items-center gap-2 text-base font-semibold mb-2 text-primary;
     }
 }
+
+@media print {
+  body {
+    background-image: none !important;
+  }
+  .print-hidden {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}

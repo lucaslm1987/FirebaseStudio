@@ -42,13 +42,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   
   // While loading on the client or if the user is not yet determined, show a loading state.
   // This prevents hydration errors and content flashing.
-  if (!isClient || isUserLoading || !user) {
+  if (!isClient || isUserLoading) {
     return (
         <div className="flex h-screen w-screen items-center justify-center">
             <p>Carregando...</p>
         </div>
     )
   }
+  
+  if (!user) {
+    return null; // or a redirect component
+  }
+
 
   return (
     <div className="flex min-h-screen w-full flex-col">

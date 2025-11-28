@@ -12,7 +12,7 @@ interface PrintLayoutProps {
 
 export function PrintLayout({ title, reportId, reportDate, reportIdLabel = 'Nº Ocorrência:', children }: PrintLayoutProps) {
     return (
-        <div className="print-container">
+        <div className="print-container bg-white text-black">
             <header className="print-header">
                 <div>
                     <h2 className="text-2xl font-bold">{title}</h2>
