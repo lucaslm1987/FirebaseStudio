@@ -72,12 +72,12 @@ export function LoginForm() {
   }, [auth, router]);
 
   useEffect(() => {
-    if (!isUserLoading && user) {
+    if (user && !isUserLoading) {
       router.push('/dashboard');
     }
   }, [user, isUserLoading, router]);
   
-  if (isUserLoading || isVerifying || user) {
+  if (isUserLoading || isVerifying) {
       return (
           <div className="flex h-screen w-screen items-center justify-center">
               <p className="text-white">Carregando...</p>
