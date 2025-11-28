@@ -205,7 +205,7 @@ function NewOccurrenceReportContent() {
             Criar Boletim de Ocorrência
           </h1>
           <p className="text-sm text-muted-foreground font-mono">
-              Nº: {formData.id}
+              Nº: {formData?.id || 'Carregando...'}
           </p>
           <Button variant="outline" size="sm" onClick={handleClearForm}>
               <XCircle className="mr-2 h-4 w-4" />
@@ -352,5 +352,3 @@ export default function NewOccurrenceReportPage() {
         </OccurrenceFormProvider>
     )
 }
-
-    
