@@ -1,12 +1,24 @@
 
 import { Shield } from 'lucide-react';
 import { LoginForm } from '@/components/login-form';
+import Image from 'next/image';
+import imageData from '@/lib/placeholder-images.json';
 
 export default function LoginPage() {
+  const loginBackground = imageData.loginBackground;
   return (
-    <div className="min-h-screen bg-[url('/pcar.png')] bg-cover bg-center">
-      <div className="min-h-screen w-full flex-col items-center justify-center bg-black/60 p-4 flex">
-        <div className="flex items-center gap-2 mb-6">
+    <div className="relative min-h-screen w-full">
+      <Image
+        src={loginBackground.src}
+        alt={loginBackground.alt}
+        fill
+        sizes="100vw"
+        className="object-cover"
+        priority
+        data-ai-hint={loginBackground['data-ai-hint']}
+      />
+      <div className="absolute inset-0 flex min-h-screen w-full flex-col items-center justify-center bg-black/60 p-4">
+        <div className="mb-6 flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Shield className="h-6 w-6" />
           </div>

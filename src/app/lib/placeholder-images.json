@@ -1,0 +1,10 @@
+
+{
+  "loginBackground": {
+    "src": "/pcar.png",
+    "alt": "Police car at night with lights on",
+    "width": 1920,
+    "height": 1080,
+    "data-ai-hint": "police car"
+  }
+}

@@ -45,7 +45,7 @@ const VehicleSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData.items.vehicles.map(vehicle => (
+                    {formData?.items?.vehicles?.map(vehicle => (
                         <VehicleCard 
                             key={vehicle.id}
                             vehicle={vehicle}
@@ -54,7 +54,7 @@ const VehicleSection = () => {
                         />
                     ))}
                 </div>
-                 {formData.items.vehicles.length === 0 && (
+                 {formData?.items?.vehicles?.length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhum veículo adicionado.</p>
                     </div>
@@ -93,7 +93,7 @@ const ObjectSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData.items.objects.map(object => (
+                    {formData?.items?.objects?.map(object => (
                         <ObjectCard 
                             key={object.id}
                             object={object}
@@ -102,7 +102,7 @@ const ObjectSection = () => {
                         />
                     ))}
                 </div>
-                 {formData.items.objects.length === 0 && (
+                 {formData?.items?.objects?.length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhum objeto adicionado.</p>
                     </div>
@@ -141,7 +141,7 @@ const NarcoticSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData.items.narcotics.map(narcotic => (
+                    {formData?.items?.narcotics?.map(narcotic => (
                         <NarcoticCard 
                             key={narcotic.id}
                             narcotic={narcotic}
@@ -150,7 +150,7 @@ const NarcoticSection = () => {
                         />
                     ))}
                 </div>
-                 {formData.items.narcotics.length === 0 && (
+                 {formData?.items?.narcotics?.length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhum entorpecente adicionado.</p>
                     </div>
@@ -189,7 +189,7 @@ const WeaponSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData.items.weapons.map(weapon => (
+                    {formData?.items?.weapons?.map(weapon => (
                         <WeaponCard 
                             key={weapon.id}
                             weapon={weapon}
@@ -198,7 +198,7 @@ const WeaponSection = () => {
                         />
                     ))}
                 </div>
-                 {formData.items.weapons.length === 0 && (
+                 {formData?.items?.weapons?.length === 0 && (
                     <div className="rounded-md border min-h-[80px] p-4 bg-muted/30 flex items-center justify-center">
                         <p className="text-sm text-muted-foreground">Nenhuma arma adicionada.</p>
                     </div>
