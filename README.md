@@ -1,5 +1,17 @@
-# Firebase Studio
+# FirebaseStudio
 
-This is a NextJS starter in Firebase Studio.
+Projeto Next.js + Firebase otimizado para export estático.
 
-To get started, take a look at src/app/page.tsx.
+---
+
+## ✅ Pré-requisitos
+- Node.js 18+
+- Firebase CLI (`npm install -g firebase-tools`)
+
+---
+
+## 🚀 Como rodar localmente
+```bash
+npm install
+npm run dev
+```
