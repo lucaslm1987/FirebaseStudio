@@ -37,6 +37,7 @@ export function LoginForm() {
       return;
     }
 
+    // Processa o link de login se presente na URL
     if (isSignInWithEmailLink(auth, window.location.href)) {
       let storedEmail = window.localStorage.getItem('emailForSignIn');
       if (!storedEmail) {
@@ -49,7 +50,9 @@ export function LoginForm() {
         signInWithEmailLink(auth, storedEmail, window.location.href)
           .then(() => {
             window.localStorage.removeItem('emailForSignIn');
-            // onAuthStateChanged listener will handle redirect
+            // O onAuthStateChanged do Firebase e o middleware cuidarão do redirecionamento
+            // ao navegar para uma rota protegida.
+             router.push('/dashboard');
           })
           .catch((error) => {
             console.error('Login failed:', error);
@@ -67,23 +70,18 @@ export function LoginForm() {
         setIsVerifying(false);
       }
     } else {
+        // Se não for um link de login, apenas termina a verificação.
         setIsVerifying(false);
     }
   }, [auth, router]);
-
+  
   useEffect(() => {
-    if (user && !isUserLoading) {
+    // Se o usuário já está logado (ex: sessão anterior), o middleware o redirecionará
+    // ao tentar acessar /dashboard. Se ele está na página de login, podemos enviá-lo para lá.
+    if(user && !isUserLoading) {
       router.push('/dashboard');
     }
   }, [user, isUserLoading, router]);
-  
-  if (isUserLoading || isVerifying) {
-      return (
-          <div className="flex h-screen w-screen items-center justify-center">
-              <p className="text-white">Carregando...</p>
-          </div>
-      )
-  }
 
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +90,7 @@ export function LoginForm() {
     setIsLoading(true);
 
     const actionCodeSettings = {
-      url: window.location.origin, // Use origin for link resilience
+      url: window.location.href, // Envia para a mesma página para processar o link
       handleCodeInApp: true,
     };
 
@@ -112,6 +110,15 @@ export function LoginForm() {
       setIsLoading(false);
     }
   };
+  
+  // Exibe "Carregando..." enquanto o Firebase verifica o estado de autenticação ou o link.
+  if (isUserLoading || isVerifying) {
+      return (
+          <div className="flex items-center justify-center p-6">
+              <p className="text-white text-center">Verificando autenticação...</p>
+          </div>
+      )
+  }
 
   return (
     <Card className="w-full max-w-sm bg-card/80 backdrop-blur-sm">
