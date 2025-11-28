@@ -281,7 +281,7 @@ function NewOccurrenceReportContent() {
                           Ocorrência Salva com Sucesso
                       </h2>
                       <p className="mb-6 text-muted-foreground">
-                          ID do Relatório: {formData.id}
+                          ID do Relatório: {formData?.id}
                       </p>
                       <div className="flex flex-col items-center gap-6">
                           <div className="flex w-full max-w-sm flex-col gap-2 sm:flex-row">
