@@ -48,14 +48,14 @@ export function Step5Narrative() {
                 id="narrative"
                 placeholder="Descreva a cronologia dos fatos, desde o conhecimento inicial até o desfecho. Inclua as ações tomadas pela equipe."
                 rows={12}
-                value={formData.narrative || ''}
+                value={formData?.narrative ?? ''}
                 onChange={handleChange}
                 required
             />
         </div>
         <div className="space-y-4">
             <Label>Solução</Label>
-            <RadioGroup value={formData.solutionType} onValueChange={handleRadioChange} className="flex flex-col gap-3">
+            <RadioGroup value={formData?.solutionType} onValueChange={handleRadioChange} className="flex flex-col gap-3">
                 <div className="flex items-center space-x-2">
                     <RadioGroupItem value="register" id="sol-register" />
                     <Label htmlFor="sol-register">BO para registro</Label>
@@ -66,13 +66,13 @@ export function Step5Narrative() {
                 </div>
             </RadioGroup>
 
-            {formData.solutionType === 'police_station' && (
+            {formData?.solutionType === 'police_station' && (
                 <div className="space-y-2 pl-6 animate-in fade-in-0 slide-in-from-top-4 duration-300">
                     <Label htmlFor="solutionPoliceReport">Nº do BO da Polícia Civil</Label>
                     <Input
                         id="solutionPoliceReport"
                         placeholder="AB1234/2024"
-                        value={formData.solutionPoliceReport || ''}
+                        value={formData?.solutionPoliceReport || ''}
                         onChange={handleChange}
                         className="w-full max-w-xs"
                     />
@@ -84,7 +84,7 @@ export function Step5Narrative() {
                 Equipe Responsável
             </h3>
             <div className="space-y-2 rounded-md border p-4 bg-muted/30">
-                {formData.team.length > 0 ? (
+                {formData?.team?.length > 0 ? (
                     formData.team.map((member) => (
                         <div key={member.name} className="flex justify-between items-center">
                             <span className="font-medium">{member.name}</span>
