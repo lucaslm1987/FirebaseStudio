@@ -7,9 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Shield, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/firebase';
-import { withAuth } from '@/components/with-auth';
 
-function DashboardLayout({ children }: { children: ReactNode }) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const auth = useAuth();
 
@@ -43,5 +42,3 @@ function DashboardLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
-export default withAuth(DashboardLayout);
