@@ -45,7 +45,7 @@ const VehicleSection = () => {
                 </Button>
 
                 <div className="mt-4 space-y-4">
-                    {formData?.items?.vehicles?.map(vehicle => (
+                    {(formData?.items?.vehicles ?? []).map(vehicle => (
                         <VehicleCard 
                             key={vehicle.id}
                             vehicle={vehicle}
