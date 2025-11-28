@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Shield, LogOut } from 'lucide-react';
@@ -19,18 +19,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  useEffect(() => {
-    // Wait until on the client and auth state is determined
-    if (isClient && !isUserLoading && !user) {
+    // Se o carregamento terminou e não há usuário, redireciona para o login.
+    if (!isUserLoading && !user) {
       router.push('/');
     }
-  }, [user, isUserLoading, router, isClient]);
+  }, [user, isUserLoading, router]);
   
 
   const handleSignOut = async () => {
@@ -40,9 +35,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     router.push('/');
   };
   
-  // While loading on the client or if the user is not yet determined, show a loading state.
-  // This prevents hydration errors and content flashing.
-  if (!isClient || isUserLoading) {
+  // Enquanto o status de autenticação está sendo verificado, mostra uma tela de carregamento.
+  if (isUserLoading) {
     return (
         <div className="flex h-screen w-screen items-center justify-center">
             <p>Carregando...</p>
@@ -50,11 +44,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     )
   }
   
+  // Se após o carregamento, o usuário ainda não existir, não renderiza nada
+  // pois o useEffect acima fará o redirecionamento.
   if (!user) {
-    return null; // or a redirect component
+    return null;
   }
 
-
+  // Se chegou aqui, o usuário está carregado e existe. Renderiza o layout.
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-card/80 backdrop-blur-sm px-4 sm:px-6 print:hidden">

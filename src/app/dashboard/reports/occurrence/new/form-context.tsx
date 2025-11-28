@@ -511,8 +511,16 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
         if (!prev) return null;
         return {
             ...prev,
-            involved: prev.involved.map(i => i.id === involvedId ? { ...i, ...updatedData } : i)
-        };
+            involved: prev.involved.map(i => {
+              if (i.id !== involvedId) return i;
+          
+              return {
+                ...i,
+                ...updatedData,
+                type: i.type, 
+              };
+            })
+          };
     });
   }, []);
 
