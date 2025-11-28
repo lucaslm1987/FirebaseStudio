@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -172,7 +172,7 @@ function NewOccurrenceReportContent() {
   if (!formData || formData.id === 'Loading...') {
     return (
         <div className="flex h-full items-center justify-center">
-            <p>Carregando formulário...</p>
+            <p>Carregando dados do formulário...</p>
         </div>
     )
   }
@@ -334,9 +334,23 @@ function NewOccurrenceReportContent() {
 
 
 export default function NewOccurrenceReportPage() {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     return (
         <OccurrenceFormProvider>
-            <NewOccurrenceReportContent />
+            {isClient ? (
+                <NewOccurrenceReportContent />
+            ) : (
+                <div className="flex h-full items-center justify-center">
+                    <p>Carregando formulário...</p>
+                </div>
+            )}
         </OccurrenceFormProvider>
     )
 }
+
+    

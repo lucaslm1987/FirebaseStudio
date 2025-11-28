@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -27,7 +26,7 @@ export function Step3Involved() {
   const handleEditPerson = (person: InvolvedPerson) => {
     setSelectedPerson(person);
     setIsPersonFormOpen(true);
-  }
+  };
 
   const handleAddCompany = () => {
     setSelectedCompany(undefined);
@@ -39,89 +38,93 @@ export function Step3Involved() {
     setIsCompanyFormOpen(true);
   };
 
+  // 🔥 Fallback seguro caso formData venha null
+  const involvedList = formData?.involved ?? [];
+
   return (
     <div className="space-y-6">
-        <PersonForm 
-            isOpen={isPersonFormOpen} 
-            setIsOpen={setIsPersonFormOpen}
-            personData={selectedPerson}
-        />
-        <CompanyForm 
-            isOpen={isCompanyFormOpen}
-            setIsOpen={setIsCompanyFormOpen}
-            companyData={selectedCompany}
-        />
+      <PersonForm 
+        isOpen={isPersonFormOpen} 
+        setIsOpen={setIsPersonFormOpen}
+        personData={selectedPerson}
+      />
 
-        <div className="text-center">
-            <h3 className="text-lg font-medium">Pessoas Envolvidas</h3>
-            <p className="text-muted-foreground text-sm">Adicione as pessoas físicas ou jurídicas relacionadas à ocorrência.</p>
-        </div>
+      <CompanyForm 
+        isOpen={isCompanyFormOpen}
+        setIsOpen={setIsCompanyFormOpen}
+        companyData={selectedCompany}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <UserPlus className="h-5 w-5 text-primary"/>
-                        Pessoa Física
-                    </CardTitle>
-                    <CardDescription>Para indivíduos como vítimas, testemunhas, autores, etc.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Button className="w-full" onClick={handleAddPerson}>
-                        Adicionar Pessoa Física
-                    </Button>
-                </CardContent>
-            </Card>
+      <div className="text-center">
+        <h3 className="text-lg font-medium">Pessoas Envolvidas</h3>
+        <p className="text-muted-foreground text-sm">Adicione as pessoas físicas ou jurídicas relacionadas à ocorrência.</p>
+      </div>
 
-            <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Building2 className="h-5 w-5 text-primary"/>
-                        Pessoa Jurídica
-                    </CardTitle>
-                    <CardDescription>Para empresas, organizações ou outras entidades.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Button className="w-full" onClick={handleAddCompany}>
-                        Adicionar Pessoa Jurídica
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-primary"/>
+              Pessoa Física
+            </CardTitle>
+            <CardDescription>Para indivíduos como vítimas, testemunhas, autores, etc.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full" onClick={handleAddPerson}>
+              Adicionar Pessoa Física
+            </Button>
+          </CardContent>
+        </Card>
 
-        <div className="mt-8">
-            <h4 className="font-medium mb-4">Envolvidos Adicionados:</h4>
-            {formData.involved.length > 0 ? (
-                <div className="space-y-4">
-                    {formData.involved.map(involved => {
-                        if (involved.type === 'person') {
-                            return (
-                                <InvolvedPersonCard 
-                                    key={involved.id}
-                                    person={involved as InvolvedPerson}
-                                    onEdit={() => handleEditPerson(involved as InvolvedPerson)}
-                                    onRemove={() => removeInvolved(involved.id)}
-                                />
-                            )
-                        } else if (involved.type === 'company') {
-                            return (
-                                <InvolvedCompanyCard
-                                    key={involved.id}
-                                    company={involved as InvolvedCompany}
-                                    onEdit={() => handleEditCompany(involved as InvolvedCompany)}
-                                    onRemove={() => removeInvolved(involved.id)}
-                                />
-                            )
-                        }
-                        return null;
-                    })}
-                </div>
-            ) : (
-                <div className="rounded-md border min-h-[100px] p-4 bg-muted/30 flex items-center justify-center">
-                    <p className="text-sm text-muted-foreground">Nenhum envolvido adicionado ainda.</p>
-                </div>
-            )}
-        </div>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary"/>
+              Pessoa Jurídica
+            </CardTitle>
+            <CardDescription>Para empresas, organizações ou outras entidades.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full" onClick={handleAddCompany}>
+              Adicionar Pessoa Jurídica
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <h4 className="font-medium mb-4">Envolvidos Adicionados:</h4>
+        {involvedList.length > 0 ? (
+            <div className="space-y-4">
+                {involvedList.map(involved => {
+                    if (involved.type === 'person') {
+                        return (
+                            <InvolvedPersonCard 
+                                key={involved.id}
+                                person={involved as InvolvedPerson}
+                                onEdit={() => handleEditPerson(involved as InvolvedPerson)}
+                                onRemove={() => removeInvolved(involved.id)}
+                            />
+                        )
+                    } else if (involved.type === 'company') {
+                        return (
+                            <InvolvedCompanyCard
+                                key={involved.id}
+                                company={involved as InvolvedCompany}
+                                onEdit={() => handleEditCompany(involved as InvolvedCompany)}
+                                onRemove={() => removeInvolved(involved.id)}
+                            />
+                        )
+                    }
+                    return null;
+                })}
+            </div>
+        ) : (
+            <div className="rounded-md border min-h-[100px] p-4 bg-muted/30 flex items-center justify-center">
+                <p className="text-sm text-muted-foreground">Nenhum envolvido adicionado ainda.</p>
+            </div>
+        )}
+      </div>
     </div>
   );
 }
