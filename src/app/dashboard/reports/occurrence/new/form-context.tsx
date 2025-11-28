@@ -211,7 +211,7 @@ interface OccurrenceFormContextType {
   removeTeamMember: (name: string) => void;
   updateTeamMember: (name: string, field: keyof Omit<TeamMember, 'name'>, value: any) => void;
   addInvolved: (involved: InvolvedPerson | InvolvedCompany) => void;
-  updateInvolved: (involvedId: string, updatedData: Partial<InvolvedPerson | InvolvedCompany>) => void;
+  updateInvolved: (involvedId: string, updatedData: Partial<InvolvedPerson> | Partial<InvolvedCompany>) => void;
   removeInvolved: (involvedId: string) => void;
   resetForm: () => void;
 }
@@ -506,7 +506,7 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     });
   }, []);
 
-  const updateInvolved = useCallback((involvedId: string, updatedData: Partial<InvolvedPerson | InvolvedCompany>) => {
+  const updateInvolved = useCallback((involvedId: string, updatedData: Partial<InvolvedPerson> | Partial<InvolvedCompany>) => {
     setFormData(prev => {
         if (!prev) return null;
         return {
@@ -587,4 +587,5 @@ export const useOccurrenceForm = () => {
   return context;
 };
 
+    
     

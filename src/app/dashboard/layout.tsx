@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { Shield, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Shield, LogOut, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,21 +12,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Menu } from 'lucide-react';
-import { useUser, useAuth } from '@/firebase';
+import { useAuth } from '@/firebase';
+import { withAuth } from '@/components/with-auth';
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const auth = useAuth();
-  const { user, isUserLoading } = useUser();
-
-  useEffect(() => {
-    // Se o carregamento terminou e não há usuário, redireciona para o login.
-    if (!isUserLoading && !user) {
-      router.push('/');
-    }
-  }, [user, isUserLoading, router]);
-  
 
   const handleSignOut = async () => {
     if (auth) {
@@ -34,23 +25,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
     router.push('/');
   };
-  
-  // Enquanto o status de autenticação está sendo verificado, mostra uma tela de carregamento.
-  if (isUserLoading) {
-    return (
-        <div className="flex h-screen w-screen items-center justify-center">
-            <p>Carregando...</p>
-        </div>
-    )
-  }
-  
-  // Se após o carregamento, o usuário ainda não existir, não renderiza nada
-  // pois o useEffect acima fará o redirecionamento.
-  if (!user) {
-    return null;
-  }
 
-  // Se chegou aqui, o usuário está carregado e existe. Renderiza o layout.
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-card/80 backdrop-blur-sm px-4 sm:px-6 print:hidden">
@@ -84,3 +59,5 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+export default withAuth(DashboardLayout);
