@@ -506,23 +506,28 @@ export const OccurrenceFormProvider = ({ children }: { children: ReactNode }) =>
     });
   }, []);
 
-  const updateInvolved = useCallback((involvedId: string, updatedData: Partial<InvolvedPerson> | Partial<InvolvedCompany>) => {
-    setFormData(prev => {
-        if (!prev) return null;
-        return {
-            ...prev,
-            involved: prev.involved.map(i => {
-              if (i.id !== involvedId) return i;
-          
-              return {
-                ...i,
-                ...updatedData,
-                type: i.type, 
-              };
-            })
-          };
+  const updateInvolved = useCallback(
+  (involvedId: string, updatedData: Partial<InvolvedPerson> | Partial<InvolvedCompany>) => {
+    setFormData((prev) => {
+      if (!prev) return null;
+
+      return {
+        ...prev,
+        involved: prev.involved.map((i) => {
+          if (i.id !== involvedId) return i;
+
+          // Garante que o tipo não muda e que o objeto final respeita o tipo original
+          return {
+            ...i,
+            ...(updatedData as any),
+            type: i.type as "person" | "company",
+          } as InvolvedPerson | InvolvedCompany;
+        }),
+      };
     });
-  }, []);
+  },
+  []
+);
 
   const removeInvolved = useCallback((involvedId: string) => {
     setFormData(prev => {
@@ -588,4 +593,6 @@ export const useOccurrenceForm = () => {
 };
 
     
+    
+
     
